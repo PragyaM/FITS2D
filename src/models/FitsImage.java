@@ -19,11 +19,13 @@ public class FitsImage{
 	private int hduWidth;
 	private int hduHeight;
 	
+	//TODO handle uncaught exceptions
 	public FitsImage(Fits fitsFile) throws FitsException, IOException{
 		this.fitsFile = fitsFile;
 		setupImage();
 	}
 	
+	//TODO handle uncaught exceptions
 	private void setupImage() throws FitsException, IOException{
 		//grab image data from FITS file
 		hdu = (ImageHDU) fitsFile.getHDU(0);
@@ -45,6 +47,7 @@ public class FitsImage{
 		return this.image;
 	}
 	
+	//TODO handle uncaught exceptions
 	public Image getScaledImage(Dimension size) throws FitsException{
 		if (size.getHeight()/size.getWidth() == hduHeight/hduWidth){
 			return image.getScaledInstance((int) size.getWidth(), (int) size.getHeight(), 0);
