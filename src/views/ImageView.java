@@ -17,26 +17,27 @@ import nom.tam.fits.FitsException;
 @SuppressWarnings("serial")
 public class ImageView extends JPanel{
 	
-	public ImageView(BorderLayout borderLayout){
+	private MainWindow parent;
+	
+	public ImageView(BorderLayout borderLayout, MainWindow parent){
 		super(borderLayout);
-        calculateImageSize();
+		this.parent = parent;
 		this.setVisible(true);
 	}
 	
-	public Dimension calculateImageSize(){
-		return new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width/2, 
-				Toolkit.getDefaultToolkit().getScreenSize().height/2);
+	public Dimension calculateMaximumImageSize(){
+		return new Dimension(parent.getWidth(), parent.getHeight() - 50); //TODO: replace 50 with reference to tool-panel height
 	}
 	
 	public void addImage(Fits fitsFile) throws FitsException, IOException{
 		JLabel imageLabel = new JLabel();
 		FitsImage fitsImage = new FitsImage(fitsFile);
-		Dimension requiredImageSize = calculateImageSize();
-		ImageIcon imageIcon = new ImageIcon(fitsImage.getScaledImage(requiredImageSize));
+		Dimension maximumImageSize = calculateMaximumImageSize();
+		ImageIcon imageIcon = new ImageIcon(fitsImage.getScaledImage(maximumImageSize));
 		
 	    //add image to the view
 		imageLabel.setIcon(imageIcon);
-		imageLabel.setSize(new Dimension(imageIcon.getIconWidth()/2, imageIcon.getIconHeight()/2));
+		imageLabel.setSize(new Dimension(imageIcon.getIconWidth(), imageIcon.getIconHeight()));
 		
 		this.add(imageLabel, BorderLayout.CENTER);
 		this.setBackground(Color.WHITE);

@@ -37,7 +37,7 @@ public class FitsImage{
 	    float[] img = (float[]) tiler.getTile(new int[]{0, 0}, hdu.getAxes());
 	    
 	    //write image data
-	    BufferedImage im = new BufferedImage(hduWidth, hduHeight, BufferedImage.TYPE_BYTE_GRAY);
+	    BufferedImage im = new BufferedImage(hduWidth, hduHeight, BufferedImage.TYPE_BYTE_BINARY);
 		WritableRaster raster = im.getRaster();
 		raster.setPixels(0, 0, hduWidth, hduHeight, img);
 		this.image = im;
@@ -48,11 +48,16 @@ public class FitsImage{
 	}
 	
 	//TODO handle uncaught exceptions
-	public Image getScaledImage(Dimension size) throws FitsException{
-		if (size.getHeight()/size.getWidth() == hduHeight/hduWidth){
-			return image.getScaledInstance((int) size.getWidth(), (int) size.getHeight(), 0);
+	public Image getScaledImage(Dimension maxSize) throws FitsException{
+		if (maxSize.getHeight()/maxSize.getWidth() == hduHeight/hduWidth){
+			return image.getScaledInstance((int) maxSize.getWidth(), (int) maxSize.getHeight(), 0);
+		} 
+		else{
+			double ratio = (maxSize.getWidth()/hduWidth);
+			int imgWidth = (int) maxSize.getWidth();
+			int imgHeight = (int) (hduHeight*ratio);
+			return image.getScaledInstance(imgWidth, imgHeight, 0);
 		}
-		return image.getScaledInstance(hdu.getAxes()[1]/5, hdu.getAxes()[0]/5, 0);
 	}
 
 }

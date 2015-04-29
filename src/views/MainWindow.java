@@ -5,9 +5,7 @@ import java.awt.Toolkit;
 import java.io.IOException;
 
 import javax.swing.JFrame;
-import javax.swing.JMenuBar;
 
-import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import views.top_bar_menu.TopBarMenu;
 import controllers.GUIController;
@@ -18,6 +16,7 @@ public class MainWindow extends JFrame{
 	private TopBarMenu topBarMenu;
 	
 	public MainWindow(){
+		super();
 		this.setTitle("FITS Viewer");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(Toolkit.getDefaultToolkit().getScreenSize());
@@ -25,7 +24,7 @@ public class MainWindow extends JFrame{
 	
 	//TODO handle uncaught exceptions
 	public void addImageViewPanel() throws FitsException, IOException{
-        imageView = new ImageView(new BorderLayout());
+        imageView = new ImageView(new BorderLayout(), this);
         this.add(imageView, BorderLayout.CENTER);
 	}
 	

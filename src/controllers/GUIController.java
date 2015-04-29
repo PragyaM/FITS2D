@@ -25,6 +25,7 @@ public class GUIController implements ActionListener{
 		ui.addImageViewPanel();
 		ui.addTopBarMenu(this);
 		ui.setVisible(true);
+		
 	}
 
 	@Override
