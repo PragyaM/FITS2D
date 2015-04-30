@@ -1,16 +1,21 @@
 package controllers;
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.io.IOException;
 
+import javafx.application.Application;
+import javafx.stage.Stage;
 import nom.tam.fits.FitsException;
-import views.MainWindow;
 
-public class Main {
+public class Main extends Application{
+	
+	//TODO handle uncaught exception
+	@Override
+	public void start(Stage primaryStage) throws FitsException, IOException {
+		GUIController guiController = new GUIController();
+		guiController.start(primaryStage);
+	}
 	
 	public static void main(String[] args) throws FitsException, IOException{
-		GUIController guiController = new GUIController();
-		guiController.start();
+		launch(args);
 	}
 }
