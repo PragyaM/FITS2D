@@ -3,6 +3,7 @@ package controllers;
 import java.io.IOException;
 
 import javafx.event.EventHandler;
+import javafx.scene.input.ZoomEvent;
 import javafx.stage.Stage;
 import nom.tam.fits.FitsException;
 import views.MainWindow;
@@ -20,6 +21,8 @@ public class GUIController{
 		ui.addTopMenuBar(this);
 		ui.addImageViewBox();
 		ui.display();
+		
+		ui.getImageViewBox().setOnZoom(ui.zoomImage());
 	}
 	
 	public EventHandler<javafx.event.ActionEvent> openFits(){

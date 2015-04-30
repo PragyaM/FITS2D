@@ -5,9 +5,11 @@ import java.io.File;
 import java.io.IOException;
 
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -91,5 +93,13 @@ public class MainWindow{
 	
 	public TopMenuBar getTopMenuBar(){
 		return topMenuBar;
+	}
+
+	public EventHandler<? super ZoomEvent> zoomImage() {
+		return (final ZoomEvent e) -> {
+			double zoomFactor = e.getTotalZoomFactor();
+			imageViewBox.setScaleX(zoomFactor);
+			imageViewBox.setScaleY(zoomFactor);
+		};
 	}
 }
