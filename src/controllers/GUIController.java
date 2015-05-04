@@ -2,8 +2,9 @@ package controllers;
 
 import java.io.IOException;
 
+import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.input.ZoomEvent;
 import javafx.stage.Stage;
 import nom.tam.fits.FitsException;
 import views.MainWindow;
@@ -11,7 +12,7 @@ import views.MainWindow;
 public class GUIController{
 	private MainWindow ui;
 
-	public GUIController(){
+	public GUIController(Application app){
 		//this is where previously customized configurations should be applied
 	}
 	
@@ -21,11 +22,17 @@ public class GUIController{
 		ui.addTopMenuBar(this);
 		ui.addImageViewBox();
 		ui.display();
-		
 		ui.getImageViewBox().setOnZoom(ui.zoomImage());
 	}
 	
 	public EventHandler<javafx.event.ActionEvent> openFits(){
 		return ui.showFitsFileChooser();
+	}
+	
+	public EventHandler<javafx.event.ActionEvent> setImageScrollBarsEnabled(Boolean bool){
+		return (final ActionEvent e) -> {
+			if (bool) ui.getImageViewBox().enableScrollBars();
+			else  ui.getImageViewBox().disableScrollBars();
+		};
 	}
 }

@@ -11,7 +11,7 @@ public class Main extends Application{
 	//TODO handle uncaught exception
 	@Override
 	public void start(Stage primaryStage) throws FitsException, IOException {
-		GUIController guiController = new GUIController();
+		GUIController guiController = new GUIController(this);
 		guiController.start(primaryStage);
 	}
 	

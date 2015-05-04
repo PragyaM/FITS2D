@@ -5,12 +5,14 @@ import java.io.File;
 import java.io.IOException;
 
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
+import javafx.geometry.VPos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.ZoomEvent;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.transform.Scale;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import nom.tam.fits.Fits;
@@ -23,7 +25,7 @@ public class MainWindow{
 	private TopMenuBar topMenuBar;
 	
 	private Scene scene;
-	private StackPane root;
+	private GridPane root;
 	private Stage stage;
 	
 	public MainWindow(Stage primaryStage){
@@ -33,7 +35,9 @@ public class MainWindow{
 		stage.setTitle("FITS Image Viewer");
 		stage.setResizable(true);
 		try {
-			root = new StackPane();
+			root = new GridPane();
+			root.setHgap(10);
+			root.setVgap(10);
 			scene = new Scene(root,Toolkit.getDefaultToolkit().getScreenSize().width, 
 					Toolkit.getDefaultToolkit().getScreenSize().height);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
@@ -57,11 +61,12 @@ public class MainWindow{
 	                
 			//fetch selected file and handle appropriately
 			File file = fileChooser.showOpenDialog(stage);
-            System.out.println("Opening: " + file.getName() + ".");
+            System.out.println("Opening: " + file.getName());
             Fits fitsFile;
 			try {
 				fitsFile = new Fits(file);
 				getImageViewBox().addImage(fitsFile);
+				getImageViewBox().setVisible(true);
 			} catch (FitsException e2) {
 				// TODO Notify user that the selected file is not a FITS file with image data
 				e2.printStackTrace();
@@ -74,16 +79,18 @@ public class MainWindow{
 	
 	public void addImageViewBox(){
         imageViewBox = new FitsImageViewBox();
-        root.getChildren().add(imageViewBox);
-        StackPane.setAlignment(imageViewBox, Pos.TOP_CENTER);
-        imageViewBox.setVisible(true);
+        Group g1 = new Group();
+        g1.getChildren().add(imageViewBox);
+        root.add(imageViewBox, 0, 2);
+        GridPane.setValignment(g1, VPos.CENTER);
+		imageViewBox.setPrefSize(scene.getWidth(), scene.getHeight()/1.5);
         stage.show();
 	}
 	
 	public void addTopMenuBar(GUIController p){
 		topMenuBar = new TopMenuBar(p);
-        root.getChildren().add(topMenuBar);
-        StackPane.setAlignment(topMenuBar, Pos.TOP_LEFT);
+        root.getChildren().add(new Pane(topMenuBar));
+        GridPane.setValignment(topMenuBar, VPos.TOP);
         topMenuBar.setVisible(true);
 	}
 	
@@ -97,9 +104,11 @@ public class MainWindow{
 
 	public EventHandler<? super ZoomEvent> zoomImage() {
 		return (final ZoomEvent e) -> {
-			double zoomFactor = e.getTotalZoomFactor();
-			imageViewBox.setScaleX(zoomFactor);
-			imageViewBox.setScaleY(zoomFactor);
+			double zoomFactor = e.getZoomFactor();
+			Scale scale = new Scale();
+			scale.setX(zoomFactor);
+			scale.setY(zoomFactor);
+			imageViewBox.getImageView().getTransforms().add(scale);
 		};
 	}
 }
