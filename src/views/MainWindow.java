@@ -17,12 +17,14 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
+import views.tools_area.ToolsAreaBox;
 import views.top_bar_menu.TopMenuBar;
 import controllers.GUIController;
 
 public class MainWindow{
 	private FitsImageViewBox imageViewBox;
 	private TopMenuBar topMenuBar;
+	private ToolsAreaBox toolsArea;
 	
 	private Scene scene;
 	private GridPane root;
@@ -92,6 +94,13 @@ public class MainWindow{
         root.getChildren().add(new Pane(topMenuBar));
         GridPane.setValignment(topMenuBar, VPos.TOP);
         topMenuBar.setVisible(true);
+	}
+	
+	public void addToolsAreaBox(){
+		toolsArea = new ToolsAreaBox();
+		root.add(toolsArea, 0, 3);
+		GridPane.setValignment(toolsArea, VPos.BASELINE);
+		toolsArea.setVisible(true);
 	}
 	
 	public FitsImageViewBox getImageViewBox(){
