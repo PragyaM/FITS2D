@@ -1,5 +1,6 @@
 package views.top_bar_menu;
 
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -28,9 +29,9 @@ public class TopMenuBar extends MenuBar{
 	
 	private void addWindowMenu(){
 		Menu windowMenu = new Menu("Window");
-		MenuItem toggleImageScroll = new MenuItem("Show image scrollbars");
+		CheckMenuItem toggleImageScroll = new CheckMenuItem("Show image scrollbars");
 		windowMenu.getItems().add(toggleImageScroll);
-		toggleImageScroll.setOnAction(app.setImageScrollBarsEnabled(true));
+		toggleImageScroll.setOnAction(app.toggleImageScrollbars(toggleImageScroll));
 		this.getMenus().add(windowMenu);
 	}
 	

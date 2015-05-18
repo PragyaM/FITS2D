@@ -5,6 +5,7 @@ import java.io.IOException;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.CheckMenuItem;
 import javafx.stage.Stage;
 import nom.tam.fits.FitsException;
 import views.MainWindow;
@@ -21,6 +22,7 @@ public class GUIController{
 		ui = new MainWindow(primaryStage);
 		ui.addTopMenuBar(this);
 		ui.addImageViewBox();
+		ui.addToolsAreaBox();
 		ui.display();
 		ui.getImageViewBox().setOnZoom(ui.zoomImage());
 	}
@@ -29,9 +31,11 @@ public class GUIController{
 		return ui.showFitsFileChooser();
 	}
 	
-	public EventHandler<javafx.event.ActionEvent> setImageScrollBarsEnabled(Boolean bool){
+	public EventHandler<javafx.event.ActionEvent> toggleImageScrollbars(CheckMenuItem toggle){
 		return (final ActionEvent e) -> {
-			if (bool) ui.getImageViewBox().enableScrollBars();
+			if (toggle.isSelected()) {
+				ui.getImageViewBox().enableScrollBars();
+			}
 			else  ui.getImageViewBox().disableScrollBars();
 		};
 	}
