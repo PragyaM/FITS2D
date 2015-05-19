@@ -31,7 +31,6 @@ public class BuildFitsImage {
 	public FitsImage call() throws FitsException, IOException{
 		
 		//grab image data from FITS file
-		
 		hdu = (ImageHDU) fitsFile.getHDU(0);
 		hduWidth = hdu.getAxes()[1];
 		hduHeight = hdu.getAxes()[0];
@@ -39,23 +38,35 @@ public class BuildFitsImage {
 		System.out.println("bunit: " + hdu.getBUnit());
 
 		//use image tiler to retrieve data for the full image
-		
 		ImageTiler tiler = hdu.getTiler();
 		float[] img = (float[]) tiler.getTile(new int[]{0, 0}, hdu.getAxes());
 
 		//write image data
-
 		BufferedImage im = new BufferedImage(hduWidth, hduHeight, BufferedImage.TYPE_3BYTE_BGR);
 		WritableRaster raster = im.getRaster();
+		writeColourImage(img, raster);
 		
+		//convert image to a format that can be displayed
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ImageIO.write(im, "png", out);
+		out.flush();
+		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+
+		FitsImage fitsImage = new FitsImage(in, fitsFile, hdu);
+		//TODO: set properties of fitsImage
+
+		return fitsImage;
+	}
+	
+	public void writeColourImage(float[] imageData, WritableRaster raster){
 		double max = hdu.getMaximumValue();
-		double cutOff = max * 0.75;
+		double cutOff = max * 0.01;
 		
-		int colBandRange = 16777215;
+		int colBandRange = 780 - 380;  //16777215;
 		float segmentSize = (float) (cutOff/colBandRange);
 
-		for (int i = 0; i < img.length; i++){
-			float val = (float) (img[i]);
+		for (int i = 0; i < imageData.length; i++){
+			float val = (float) (imageData[i]);
 			int x = i % hduWidth;
 			int y = i / hduWidth;
 			if (val == Double.NaN || val <= 0) {
@@ -69,59 +80,78 @@ public class BuildFitsImage {
 				raster.setSample(x, y, 2, 255);
 			}
 			else {
-				float colVal = val/segmentSize;
-				Color c = getColorFromFloat(colVal);
-				raster.setSample(x, y, 0, c.getRed()*256);
-				raster.setSample(x, y, 1, c.getGreen()*256);
-				raster.setSample(x, y, 2, c.getBlue()*256);
-				
-				//Old hacky code
-//				if (val < 10){
-//					raster.setSample(x, y, 0, colVal*20);
-//					raster.setSample(x, y, 1, colVal*10);
-//					raster.setSample(x, y, 2, colVal);
-//				}
-//				else if (val < 60){
-//					raster.setSample(x, y, 0, colVal*85);
-//					raster.setSample(x, y, 1, colVal*90);
-//					raster.setSample(x, y, 2, colVal);
-//				}
-//				else if (val <= (int) hdu.getMaximumValue() + offset){
-//					raster.setSample(x, y, 0, colVal*20);
-//					raster.setSample(x, y, 1, colVal*2);
-//					raster.setSample(x, y, 2, colVal*90);
-//				}
-//				else {
-//					raster.setSample(x, y, 0, 0);
-//					raster.setSample(x, y, 1, 0);
-//					raster.setSample(x, y, 2, 0);
-//				}
+				float colVal = val/segmentSize + 380;
+				Color c = getColorFromWavelength(colVal);
+				raster.setSample(x, y, 0, c.getRed()*255);
+				raster.setSample(x, y, 1, c.getGreen()*255);
+				raster.setSample(x, y, 2, c.getBlue()*255);
 			}
 		}
 
-		//convert image to format that can be displayed
-		
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ImageIO.write(im, "png", out);
-		out.flush();
-		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-
-		FitsImage fitsImage = new FitsImage(in, fitsFile, hdu);
-		//TODO: set properties of fitsImage
-
-		return fitsImage;
 	}
 	
-	public Color getColorFromFloat(float fVal){
-		int red = 0;
-		int green = 0;
-		int blue = 0;
+	/**
+	 * @param wavelength - expected to be within the 380 to 780 range (where visible colors can be resolved).
+	 * @return a Color containing calculated RGB values
+	 */
+	public Color getColorFromWavelength(float wavelength){
+		double red = 0;
+		double green = 0;
+		double blue = 0;
+		double SSS;
 		
-		blue = (int) Math.floor(fVal / 256 / 256 );
-		green = (int) Math.floor((fVal - blue * 256 * 256) / 256);
-		red = (int) Math.floor(fVal - blue * 256 * 256 - green * 256);
+		if (wavelength >= 380 && wavelength < 440){
+			red = -(wavelength - 440) / (440 - 350);
+	        green = 0.0;
+	        blue = 1.0;
+		}
+		else if (wavelength >= 440 && wavelength < 490){
+			red = 0.0;
+	        green = (wavelength - 440) / (490 - 440);
+	        blue = 1.0;
+		}
+		else if (wavelength >= 490 && wavelength < 510){
+			red = 0.0;
+	        green = 1.0;
+	        blue = -(wavelength - 510) / (510 - 490);
+		}
+		else if (wavelength >= 510 && wavelength < 580){
+			red = (wavelength - 510) / (580 - 510);
+	        green = 1.0;
+	        blue = 0.0;
+		}
+		else if (wavelength >= 580 && wavelength < 645){
+			red = 1.0;
+	        green = -(wavelength - 645) / (645 - 580);
+	        blue = 0.0;
+		}
+		else if (wavelength >= 645 && wavelength <= 780){
+			red = 1.0;
+	        green = 0.0;
+	        blue = 0.0;
+		}
+	    else{
+	    	red = 0.0;
+	        green = 0.0;
+	        blue = 0.0;
+	    }
 
-		Color c = Color.rgb(red, green, blue);
+	    // intensity correction
+	    if (wavelength >= 380 && wavelength < 420){
+	    	SSS = 0.3 + 0.7*(wavelength - 350) / (420 - 350);
+	    }
+	    else if (wavelength >= 420 && wavelength <= 700){
+	    	SSS = 1.0;
+	    } 
+	    else if (wavelength > 700 && wavelength <= 780){
+	    	SSS = 0.3 + 0.7*(780 - wavelength) / (780 - 700);
+	    } 
+	    else{
+	    	SSS = 0.0;
+	    }
+	    SSS *= 255;
+
+	    Color c = Color.rgb((int)(SSS*red), (int)(SSS*green), (int)(SSS*blue));
 		
 		return c;
 	}

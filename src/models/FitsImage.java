@@ -1,9 +1,6 @@
 package models;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
 
 import javafx.scene.image.Image;
 import nom.tam.fits.Fits;
@@ -21,8 +18,6 @@ public class FitsImage extends Image{
 		this.is = is;
 		this.fitsFile = fitsFile;
 		this.hdu = hdu;
-		
-//		printFitsInfo();
 	}
 	
 	//TODO add methods for manipulating FITS image data
@@ -45,4 +40,6 @@ public class FitsImage extends Image{
 			e.printStackTrace();
 		}
 	}
+	
+	
 }
