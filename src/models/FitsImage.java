@@ -40,6 +40,4 @@ public class FitsImage extends Image{
 			e.printStackTrace();
 		}
 	}
-	
-	
 }

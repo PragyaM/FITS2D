@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
 import views.AnnotationLayer;
 
 
@@ -20,6 +19,7 @@ public class Annotation implements EventHandler<MouseEvent>{
 	}
 
 	public void draw(GraphicsContext gc) {
+		//FIXME: Use Lines instead
 		for (Point p : coordinates){
 			
 		}
@@ -29,8 +29,19 @@ public class Annotation implements EventHandler<MouseEvent>{
 	public void handle(MouseEvent event) {
 		if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)){
 			Point p = new Point((int) event.getX(), (int) event.getY());
-			coordinates.add(p);
-			container.drawPoint(p, Color.WHEAT);
+			coordinates.add(p); //FIXME: write to Lines instead
+			container.getGraphicsContext2D().lineTo(p.x, p.y);
+			container.getGraphicsContext2D().stroke();
+			event.consume();
+		}
+		
+		if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)){
+			container.getGraphicsContext2D().beginPath();
+			event.consume();
+		}
+		
+		if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)){
+			container.getGraphicsContext2D().closePath();
 			event.consume();
 		}
 	}

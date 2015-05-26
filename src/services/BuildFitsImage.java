@@ -68,7 +68,7 @@ public class BuildFitsImage {
 		for (int i = 0; i < imageData.length; i++){
 			float val = (float) (imageData[i]);
 			int x = i % hduWidth;
-			int y = i / hduWidth;
+			int y = (int) Math.ceil(i / hduWidth);
 			if (val == Double.NaN || val <= 0) {
 				raster.setSample(x, y, 0, 0);
 				raster.setSample(x, y, 1, 0);

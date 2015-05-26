@@ -19,8 +19,7 @@ public class AnnotationLayer extends Canvas{
 		gc = this.getGraphicsContext2D();
 		gc.setFill(Color.GREEN);
 		gc.setStroke(Color.WHITE);
-		gc.setLineWidth(5);
-//		gc.fillOval(0, 0, width, height);
+		gc.setLineWidth(2);
 		
 		makeNewAnnotation();
 	}
