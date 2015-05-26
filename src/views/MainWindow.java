@@ -9,6 +9,11 @@ import javafx.event.EventHandler;
 import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -83,7 +88,15 @@ public class MainWindow{
         imageViewBox = new FitsImageViewBox();
         Group g1 = new Group();
         g1.getChildren().add(imageViewBox);
-        root.add(imageViewBox, 0, 2);
+        
+//        TabPane imageLayerControl = new TabPane();
+//        Tab tab = new Tab();
+//        tab.setText("new tab");
+//        imageLayerControl.getTabs().add(tab);
+//        g1.getChildren().add(imageLayerControl);
+        
+        root.add(imageViewBox, 0, 3);
+//        root.add(imageLayerControl, 0, 2);
         GridPane.setValignment(g1, VPos.CENTER);
 		imageViewBox.setPrefSize(scene.getWidth(), scene.getHeight()/1.5);
         stage.show();
@@ -96,9 +109,9 @@ public class MainWindow{
         topMenuBar.setVisible(true);
 	}
 	
-	public void addToolsAreaBox(){
-		toolsArea = new ToolsAreaBox();
-		root.add(toolsArea, 0, 3);
+	public void addToolsAreaBox(GUIController p){
+		toolsArea = new ToolsAreaBox(p);
+		root.add(toolsArea, 0, 4);
 		GridPane.setValignment(toolsArea, VPos.BASELINE);
 		toolsArea.setVisible(true);
 	}
@@ -111,13 +124,14 @@ public class MainWindow{
 		return topMenuBar;
 	}
 
-	public EventHandler<? super ZoomEvent> zoomImage() {
+	public EventHandler<? super ZoomEvent> zoomImage(GUIController app) {
 		return (final ZoomEvent e) -> {
 			double zoomFactor = e.getZoomFactor();
 			Scale scale = new Scale();
 			scale.setX(zoomFactor);
 			scale.setY(zoomFactor);
 			imageViewBox.getImageView().getTransforms().add(scale);
+			//TODO: also zoom the annotations layer, if it exists.
 		};
 	}
 }
