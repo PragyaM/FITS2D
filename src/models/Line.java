@@ -18,6 +18,14 @@ public class Line {
 		this.coordinates = coords;
 	}
 	
+	public Line(){
+		this.coordinates = new ArrayList<Point>();
+	}
+	
+	public void appendPoint(Point p){
+		coordinates.add(p);
+	}
+	
 	public void setupWCS(){
 		//TODO: convert coordinates into WCS
 	}

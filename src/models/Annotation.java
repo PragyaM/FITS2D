@@ -6,42 +6,50 @@ import java.util.ArrayList;
 import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
-import views.AnnotationLayer;
+import javafx.scene.paint.Color;
 
 
 public class Annotation implements EventHandler<MouseEvent>{
 	
-	private ArrayList<Point> coordinates = new ArrayList<Point>();
-	private AnnotationLayer container;
+	private ArrayList<Line> lines = new ArrayList<Line>();
+	private GraphicsContext gc;
+//	private String associatedFileName; //TODO: keep track of which image this annotation was created on
+	private Color color;
 	
-	public Annotation(AnnotationLayer container){
-		this.container = container;
+	public Annotation(GraphicsContext gc){
+		this.gc = gc;
+		this.color = Color.WHITE;
 	}
 
-	public void draw(GraphicsContext gc) {
-		//FIXME: Use Lines instead
-		for (Point p : coordinates){
-			
+	public void draw() {
+		for (Line l : lines){
+			gc.appendSVGPath(l.toSVGPath().getContent());
+			gc.stroke();
 		}
 	}
 
 	@Override
 	public void handle(MouseEvent event) {
+		Line line = new Line();
+		
 		if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)){
 			Point p = new Point((int) event.getX(), (int) event.getY());
-			coordinates.add(p); //FIXME: write to Lines instead
-			container.getGraphicsContext2D().lineTo(p.x, p.y);
-			container.getGraphicsContext2D().stroke();
+			line.appendPoint(p);
+			gc.lineTo(p.x, p.y);
+			gc.stroke();
 			event.consume();
 		}
 		
 		if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)){
-			container.getGraphicsContext2D().beginPath();
+			gc.setStroke(color);
+			gc.beginPath();
+			line = new Line();
 			event.consume();
 		}
 		
 		if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)){
-			container.getGraphicsContext2D().closePath();
+			gc.closePath();
+			lines.add(line);
 			event.consume();
 		}
 	}
