@@ -1,14 +1,16 @@
 package controllers;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ZoomEvent;
+import javafx.scene.control.ToggleButton;
 import javafx.stage.Stage;
+import models.Annotation;
 import nom.tam.fits.FitsException;
 import views.MainWindow;
 
@@ -44,21 +46,26 @@ public class GUIController{
 		};
 	}
 	
-	public EventHandler<? super MouseEvent> setImageViewMode(){
-		setImageViewMode(true);
-		setImageAnnotateMode(false);
-		return (final MouseEvent e) -> {
-			ui.getImageViewBox().setPannable(true);
-		};
-	}
-	
-	public EventHandler<? super MouseEvent> setImageAnnotateMode(){
-		setImageViewMode(false);
-		setImageAnnotateMode(true);
-		return (final MouseEvent e) -> {
-			ui.getImageViewBox().setupAnnotationLayer();
-			ui.getImageViewBox().setPannable(false);
-		};
+	public EventHandler<ActionEvent> toggleDrawMode(ToggleButton toggle){
+//		if (toggle.isSelected()){ //enable drawing mode
+			System.out.println("on");
+			setImageViewMode(false);
+			setImageAnnotateMode(true);
+			return (final ActionEvent e) -> {
+				ui.getImageViewBox().getAnnotationLayer().makeNewAnnotation();
+				ui.getImageViewBox().setPannable(false);
+			};
+//		}
+//		else { //disable drawing mode
+//			System.out.println("off");
+//			setImageViewMode(true);
+//			setImageAnnotateMode(false);
+//			return (final ActionEvent e) -> {
+//				ui.getImageViewBox().getAnnotationLayer().turnAnnotatingOff();
+//				ui.getImageViewBox().setPannable(true);
+//			};
+//		}
+		
 	}
 
 	public boolean isImageViewMode() {
@@ -67,7 +74,7 @@ public class GUIController{
 
 	public void setImageViewMode(boolean imageViewMode) {
 		this.imageViewMode = imageViewMode;
-		System.out.println("viewing: " + imageViewMode);
+//		System.out.println("viewing: " + imageViewMode);
 	}
 
 	public boolean isImageAnnotateMode() {
@@ -76,6 +83,29 @@ public class GUIController{
 
 	public void setImageAnnotateMode(boolean imageAnnotateMode) {
 		this.imageAnnotateMode = imageAnnotateMode;
-		System.out.println("annotating: " + imageAnnotateMode);
+//		System.out.println("annotating: " + imageAnnotateMode);
+	}
+
+	public EventHandler<ActionEvent> saveAnnotations() {
+		return (final ActionEvent e) -> {
+			ui.getImageViewBox().getAnnotationLayer().writeAnnotationsToFile("annotations");
+		};
+	}
+
+	public EventHandler<ActionEvent> openAnnotations() {
+//		return ui.openAnnotationsFromFile();
+		return null;
+	}
+
+	public EventHandler<ActionEvent> toddleAnnotationsVisible(
+			CheckBox hideAnnotationsButton) {
+		return (final ActionEvent e) -> {
+			if (hideAnnotationsButton.isSelected()){
+				ui.getImageViewBox().getAnnotationLayer().hideAnnotations();
+			}
+			else {
+				ui.getImageViewBox().getAnnotationLayer().drawAll();
+			}
+		};
 	}
 }

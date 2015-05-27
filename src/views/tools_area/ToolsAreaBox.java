@@ -11,7 +11,7 @@ public class ToolsAreaBox extends GridPane {
 		setVgap(5);
 		setHgap(5);
 		setPadding(new Insets(10, 15, 10, 15));
-		add(new ColourToolBox(parent), 0, 1);
+//		add(new ColourToolBox(parent), 0, 1);
 		add(new AnnotationToolBox(parent), 1, 1);
 	}
 	

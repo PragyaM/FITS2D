@@ -9,11 +9,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -131,7 +126,22 @@ public class MainWindow{
 			scale.setX(zoomFactor);
 			scale.setY(zoomFactor);
 			imageViewBox.getImageView().getTransforms().add(scale);
-			//TODO: also zoom the annotations layer, if it exists.
+			imageViewBox.getAnnotationLayer().getTransforms().add(scale);
+		};
+	}
+
+	public EventHandler<ActionEvent> openAnnotationsFromFile() {
+		return (final ActionEvent e) -> {
+			//set up file chooser
+			FileChooser fileChooser = new FileChooser();
+			fileChooser.setTitle("Select an annotation file");
+			fileChooser.getExtensionFilters().add(
+	                new FileChooser.ExtensionFilter("Annotation files", "*.txt"));
+	                
+			//fetch selected file and handle appropriately
+			File file = fileChooser.showOpenDialog(stage);
+	        System.out.println("Opening: " + file.getName());
+			this.getImageViewBox().getAnnotationLayer().addAnnotationsFromFile(file);
 		};
 	}
 }

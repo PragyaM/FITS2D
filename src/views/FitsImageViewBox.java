@@ -16,6 +16,7 @@ import services.BuildFitsImage;
 public class FitsImageViewBox extends ScrollPane{
 	private Group g;
 	private ImageView view;
+	private AnnotationLayer annotationLayer;
 	
 	public FitsImageViewBox(){
 		super();
@@ -51,6 +52,7 @@ public class FitsImageViewBox extends ScrollPane{
 		g = new Group(view);
 		this.setContent(g);
 //		setUpTabs();
+		setupAnnotationLayer();
 	}
 	
 	public ImageView getImageView(){
@@ -58,8 +60,13 @@ public class FitsImageViewBox extends ScrollPane{
 	}
 	
 	public void setupAnnotationLayer(){
-		AnnotationLayer annotationLayer = new AnnotationLayer(view.getFitWidth(), view.getFitHeight());
+		annotationLayer = new AnnotationLayer(view.getFitWidth(), view.getFitHeight());
+		annotationLayer.turnAnnotatingOff();
 		g.getChildren().add(annotationLayer);
+	}
+	
+	public AnnotationLayer getAnnotationLayer(){
+		return annotationLayer;
 	}
 	
 	public void disableScrollBars(){

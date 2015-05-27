@@ -21,9 +21,19 @@ public class TopMenuBar extends MenuBar{
 	
 	private void addFileMenu(){
 		Menu fileMenu = new Menu("File");
+		
 		MenuItem openFits = new MenuItem("Open FITS file");
 		fileMenu.getItems().add(openFits);
 		openFits.setOnAction(app.openFits());
+		
+		MenuItem saveAnnotations = new MenuItem("Save Annotations");
+		fileMenu.getItems().add(saveAnnotations);
+		saveAnnotations.setOnAction(app.saveAnnotations());
+		
+		MenuItem openAnnotations = new MenuItem("Open Annotations");
+		fileMenu.getItems().add(openAnnotations);
+		openAnnotations.setOnAction(app.openAnnotations());
+		
 		this.getMenus().add(fileMenu);
 	}
 	

@@ -15,6 +15,7 @@ public class Annotation implements EventHandler<MouseEvent>{
 	private GraphicsContext gc;
 //	private String associatedFileName; //TODO: keep track of which image this annotation was created on
 	private Color color;
+	private Line line;
 	
 	public Annotation(GraphicsContext gc){
 		this.gc = gc;
@@ -23,14 +24,17 @@ public class Annotation implements EventHandler<MouseEvent>{
 
 	public void draw() {
 		for (Line l : lines){
-			gc.appendSVGPath(l.toSVGPath().getContent());
+			gc.setLineWidth(2);
+			gc.setStroke(color);
+			gc.beginPath();
+			gc.appendSVGPath(l.getSVGPath().getContent());
+			gc.closePath();
 			gc.stroke();
 		}
 	}
 
 	@Override
 	public void handle(MouseEvent event) {
-		Line line = new Line();
 		
 		if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)){
 			Point p = new Point((int) event.getX(), (int) event.getY());
@@ -40,18 +44,27 @@ public class Annotation implements EventHandler<MouseEvent>{
 			event.consume();
 		}
 		
-		if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)){
+		else if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)){
 			gc.setStroke(color);
 			gc.beginPath();
 			line = new Line();
 			event.consume();
 		}
 		
-		if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)){
+		else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)){
 			gc.closePath();
 			lines.add(line);
 			event.consume();
 		}
+	}
+	
+	public String toString(){
+		String annotationString = "Colour: " + color.toString();
+		for (Line line : lines){
+			annotationString = annotationString + "\n" +  line.getSVGPath().getContent();
+		}
+		System.out.println(annotationString);
+		return annotationString;
 	}
 
 }
