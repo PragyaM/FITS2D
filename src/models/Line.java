@@ -52,11 +52,15 @@ public class Line {
 	public SVGPath toSVGPath(){
 		String pathString = "";
 		try {
-			pathString = pathString + "M" + coordinates.get(0).x + "," + coordinates.get(0).y + " C";
+			pathString = pathString + "M" + coordinates.get(0).x + "," + coordinates.get(0).y + " ";
 			
 			for (int i = 1; i < coordinates.size(); i++){
-				pathString = pathString + "" + coordinates.get(i).x + "," + coordinates.get(i).y + " ";
+				pathString = pathString + "L" + coordinates.get(i).x + "," + coordinates.get(i).y + " ";
 			}
+			
+			//FIXME: Hacky? this stops line from connecting start and end points:
+			pathString = pathString + "M" + coordinates.get(0).x + "," + coordinates.get(0).y + " ";
+			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
