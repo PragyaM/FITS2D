@@ -28,7 +28,9 @@ public class AnnotationLayer extends Canvas{
 	}
 	
 	public void turnAnnotatingOff(){
-		this.removeEventHandler(MouseEvent.ANY, annotations.get(annotations.size()-1));
+		for (Annotation a : annotations){
+			this.removeEventHandler(MouseEvent.ANY, a);
+		}
 	}
 	
 	public void makeNewAnnotation(){

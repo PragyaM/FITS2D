@@ -22,7 +22,7 @@ public class GUIController{
 	public GUIController(Application app){
 		//this is where previously customized configurations should be applied
 	}
-	
+
 	//TODO handle uncaught exceptions
 	public void start(Stage primaryStage) throws FitsException, IOException{
 		ui = new MainWindow(primaryStage);
@@ -32,11 +32,11 @@ public class GUIController{
 		ui.display();
 		ui.getImageViewBox().setOnZoom(ui.zoomImage(this));
 	}
-	
+
 	public EventHandler<javafx.event.ActionEvent> openFits(){
 		return ui.showFitsFileChooser();
 	}
-	
+
 	public EventHandler<javafx.event.ActionEvent> toggleImageScrollbars(CheckMenuItem toggle){
 		return (final ActionEvent e) -> {
 			if (toggle.isSelected()) {
@@ -45,27 +45,25 @@ public class GUIController{
 			else  ui.getImageViewBox().disableScrollBars();
 		};
 	}
-	
+
 	public EventHandler<ActionEvent> toggleDrawMode(ToggleButton toggle){
-//		if (toggle.isSelected()){ //enable drawing mode
-			System.out.println("on");
-			setImageViewMode(false);
-			setImageAnnotateMode(true);
-			return (final ActionEvent e) -> {
+		return (final ActionEvent e) -> {
+			if (toggle.isSelected()){ //enable drawing mode
+				System.out.println("on");
+				setImageViewMode(false);
+				setImageAnnotateMode(true);
 				ui.getImageViewBox().getAnnotationLayer().makeNewAnnotation();
 				ui.getImageViewBox().setPannable(false);
-			};
-//		}
-//		else { //disable drawing mode
-//			System.out.println("off");
-//			setImageViewMode(true);
-//			setImageAnnotateMode(false);
-//			return (final ActionEvent e) -> {
-//				ui.getImageViewBox().getAnnotationLayer().turnAnnotatingOff();
-//				ui.getImageViewBox().setPannable(true);
-//			};
-//		}
-		
+			}
+			else if (!toggle.isSelected()){ //disable drawing mode
+				System.out.println("off");
+				setImageViewMode(true);
+				setImageAnnotateMode(false);
+				ui.getImageViewBox().getAnnotationLayer().turnAnnotatingOff();
+				ui.getImageViewBox().setPannable(true);
+			}
+		};
+
 	}
 
 	public boolean isImageViewMode() {
@@ -74,7 +72,7 @@ public class GUIController{
 
 	public void setImageViewMode(boolean imageViewMode) {
 		this.imageViewMode = imageViewMode;
-//		System.out.println("viewing: " + imageViewMode);
+		//		System.out.println("viewing: " + imageViewMode);
 	}
 
 	public boolean isImageAnnotateMode() {
@@ -83,7 +81,7 @@ public class GUIController{
 
 	public void setImageAnnotateMode(boolean imageAnnotateMode) {
 		this.imageAnnotateMode = imageAnnotateMode;
-//		System.out.println("annotating: " + imageAnnotateMode);
+		//		System.out.println("annotating: " + imageAnnotateMode);
 	}
 
 	public EventHandler<ActionEvent> saveAnnotations() {
@@ -93,7 +91,7 @@ public class GUIController{
 	}
 
 	public EventHandler<ActionEvent> openAnnotations() {
-//		return ui.openAnnotationsFromFile();
+		//		return ui.openAnnotationsFromFile();
 		return null;
 	}
 
