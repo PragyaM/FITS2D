@@ -49,14 +49,12 @@ public class GUIController{
 	public EventHandler<ActionEvent> toggleDrawMode(ToggleButton toggle){
 		return (final ActionEvent e) -> {
 			if (toggle.isSelected()){ //enable drawing mode
-				System.out.println("on");
 				setImageViewMode(false);
 				setImageAnnotateMode(true);
 				ui.getImageViewBox().getAnnotationLayer().makeNewAnnotation();
 				ui.getImageViewBox().setPannable(false);
 			}
 			else if (!toggle.isSelected()){ //disable drawing mode
-				System.out.println("off");
 				setImageViewMode(true);
 				setImageAnnotateMode(false);
 				ui.getImageViewBox().getAnnotationLayer().turnAnnotatingOff();
