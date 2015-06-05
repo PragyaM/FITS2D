@@ -92,7 +92,7 @@ public class GUIController{
 		return ui.openAnnotationsFromFile();
 	}
 
-	public EventHandler<ActionEvent> toddleAnnotationsVisible(
+	public EventHandler<ActionEvent> toggleAnnotationsVisible(
 			CheckBox hideAnnotationsButton) {
 		return (final ActionEvent e) -> {
 			if (hideAnnotationsButton.isSelected()){
