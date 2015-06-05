@@ -35,6 +35,14 @@ public class Annotation implements EventHandler<MouseEvent>{
 			}
 		}
 	}
+	
+	public void setLines(ArrayList<Line> lines){
+		this.lines = lines;
+	}
+	
+	public void addLine(Line line){
+		this.lines.add(line);
+	}
 
 	@Override
 	public void handle(MouseEvent event) {
@@ -68,7 +76,7 @@ public class Annotation implements EventHandler<MouseEvent>{
 	}
 	
 	public String toString(){
-		String annotationString = "Colour: " + color.toString();
+		String annotationString = ""; //"Colour: " + color.toString();
 		for (Line line : lines){
 			annotationString = annotationString + "\n" +  line.toString();
 		}

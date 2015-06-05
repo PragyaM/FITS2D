@@ -5,6 +5,7 @@ import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javafx.scene.paint.Color;
 
@@ -40,11 +41,20 @@ public class BuildFitsImage {
 		//use image tiler to retrieve data for the full image
 		ImageTiler tiler = hdu.getTiler();
 		float[] img = (float[]) tiler.getTile(new int[]{0, 0}, hdu.getAxes());
+		
+//		ArrayList<Float> mirrorImg = new ArrayList<Float>();
+		float[] mirrorImg = new float[hduWidth * hduHeight];
+		for (int h = hduHeight - 1; h >= 0; h--){
+			for (int w = 0; w < hduWidth; w++){
+				mirrorImg[h * hduWidth + w] = (img[(hduHeight-1 - h)*hduWidth + w]);
+			}
+		}
 
 		//write image data
 		BufferedImage im = new BufferedImage(hduWidth, hduHeight, BufferedImage.TYPE_3BYTE_BGR);
+		
 		WritableRaster raster = im.getRaster();
-		writeColourImage(img, raster);
+		writeColourImage(mirrorImg, raster);
 		
 		//convert image to a format that can be displayed
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -54,7 +64,7 @@ public class BuildFitsImage {
 
 		FitsImage fitsImage = new FitsImage(in, fitsFile, hdu);
 		//TODO: set properties of fitsImage
-
+		
 		return fitsImage;
 	}
 	

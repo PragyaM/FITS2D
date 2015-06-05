@@ -89,8 +89,7 @@ public class GUIController{
 	}
 
 	public EventHandler<ActionEvent> openAnnotations() {
-		//		return ui.openAnnotationsFromFile();
-		return null;
+		return ui.openAnnotationsFromFile();
 	}
 
 	public EventHandler<ActionEvent> toddleAnnotationsVisible(

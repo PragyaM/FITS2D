@@ -135,8 +135,6 @@ public class MainWindow{
 			//set up file chooser
 			FileChooser fileChooser = new FileChooser();
 			fileChooser.setTitle("Select an annotation file");
-			fileChooser.getExtensionFilters().add(
-	                new FileChooser.ExtensionFilter("Annotation files", "*.txt"));
 	                
 			//fetch selected file and handle appropriately
 			File file = fileChooser.showOpenDialog(stage);

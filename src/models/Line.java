@@ -36,7 +36,7 @@ public class Line {
 	}
 	
 	public String toString(){
-		String lineString = "";
+		String lineString = "l ";
 		for (Point p : pixels){
 			lineString = lineString + String.format("%d,%d ", p.x, p.y);
 		}
