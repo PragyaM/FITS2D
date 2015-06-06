@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import javafx.scene.shape.SVGPath;
 
 /**
- * A Line is a collection of Points that can be represented as an SVGPath or as a series of WCS coordinates
+ * A Line is a collection of Points that represent coloured pixels in an annotation
  * 
  * @author Pragya
  */

@@ -9,9 +9,9 @@ import java.util.ArrayList;
  * @author Pragya
  *
  */
-public class LinePlotter {
+public class DrawLine {
 
-	public static ArrayList<Point> makeLine(Point orig, Point dest){
+	public static ArrayList<Point> draw(Point orig, Point dest){
 		
 		ArrayList<Point> points = new ArrayList<Point>();
 		

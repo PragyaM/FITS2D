@@ -14,22 +14,18 @@ public class AnnotationToolBox extends BaseToolBox{
 		super("Annotation Tools");
 		this.app = app;
 		
-//		ToggleButton viewMode = new ToggleButton("viewing");
         ToggleButton drawToolButton = new ToggleButton("Draw Tool");
-        ToggleButton floodFillButton = new ToggleButton("Bucket Tool");
+        ToggleButton fillToolButton = new ToggleButton("Bucket Tool");
         
         ToggleGroup group = new ToggleGroup();
-//        viewMode.setToggleGroup(group);
         drawToolButton.setToggleGroup(group);
-        floodFillButton.setToggleGroup(group);
+        fillToolButton.setToggleGroup(group);
         
-//        this.add(viewMode, 1, 1);
         this.add(drawToolButton, 2, 1);
-        this.add(floodFillButton, 3, 1);
+        this.add(fillToolButton, 3, 1);
         
-//        viewMode.setOnMouseClicked(app.setImageViewMode());
         drawToolButton.setOnAction(app.toggleDrawMode(drawToolButton));
-        floodFillButton.setOnAction(app.toggleDrawMode(null));
+        fillToolButton.setOnAction(app.toggleFillMode(fillToolButton));
         
         CheckBox hideAnnotationsButton = new CheckBox();
         add(hideAnnotationsButton, 2, 2);

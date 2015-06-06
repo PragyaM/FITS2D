@@ -51,17 +51,33 @@ public class GUIController{
 			if (toggle.isSelected()){ //enable drawing mode
 				setImageViewMode(false);
 				setImageAnnotateMode(true);
-				ui.getImageViewBox().getAnnotationLayer().makeNewAnnotation();
+				ui.getImageViewBox().getAnnotationLayer().turnDrawModeOn();
 				ui.getImageViewBox().setPannable(false);
 			}
 			else if (!toggle.isSelected()){ //disable drawing mode
 				setImageViewMode(true);
 				setImageAnnotateMode(false);
-				ui.getImageViewBox().getAnnotationLayer().turnAnnotatingOff();
+				ui.getImageViewBox().getAnnotationLayer().turnDrawModeOff();
 				ui.getImageViewBox().setPannable(true);
 			}
 		};
-
+	}
+	
+	public EventHandler<ActionEvent> toggleFillMode(ToggleButton toggle) {
+		return (final ActionEvent e) -> {
+			if (toggle.isSelected()){ //enable fill mode
+				setImageViewMode(false);
+				setImageAnnotateMode(true);
+				ui.getImageViewBox().getAnnotationLayer().turnFillModeOn();
+				ui.getImageViewBox().setPannable(false);
+			}
+			else if (!toggle.isSelected()){ //disable fill mode
+				setImageViewMode(true);
+				setImageAnnotateMode(false);
+				ui.getImageViewBox().getAnnotationLayer().turnFillModeOff();
+				ui.getImageViewBox().setPannable(true);
+			}
+		};
 	}
 
 	public boolean isImageViewMode() {
@@ -70,7 +86,6 @@ public class GUIController{
 
 	public void setImageViewMode(boolean imageViewMode) {
 		this.imageViewMode = imageViewMode;
-		//		System.out.println("viewing: " + imageViewMode);
 	}
 
 	public boolean isImageAnnotateMode() {
@@ -79,7 +94,6 @@ public class GUIController{
 
 	public void setImageAnnotateMode(boolean imageAnnotateMode) {
 		this.imageAnnotateMode = imageAnnotateMode;
-		//		System.out.println("annotating: " + imageAnnotateMode);
 	}
 
 	public EventHandler<ActionEvent> saveAnnotations() {

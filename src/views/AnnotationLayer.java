@@ -19,15 +19,46 @@ import models.Line;
 public class AnnotationLayer extends Canvas{
 	private ArrayList<Annotation> annotations;
 	private GraphicsContext gc;
+	private Annotation currentAnnotation;
+	public enum Mode {NONE, DRAW, FILL};
+	public Mode mode;
 
 	public AnnotationLayer(double width, double height){
 		super(width, height);
 		annotations = new ArrayList<Annotation>();
 		gc = this.getGraphicsContext2D();
 		gc.setLineWidth(2);
-
+		mode = Mode.NONE;
 		makeNewAnnotation();
 	}
+	
+	public void turnDrawModeOn(){
+		//TODO: turn cursor into pencil
+		if (currentAnnotation == null){
+			makeNewAnnotation();
+		} else this.addEventHandler(MouseEvent.ANY, currentAnnotation);
+		mode = Mode.DRAW;
+	}
+	
+	public void turnDrawModeOff(){
+		turnAnnotatingOff();
+		mode = Mode.NONE;
+	}
+	
+	public void turnFillModeOn(){
+		//TODO: turn cursor into bucket
+		if (currentAnnotation == null){
+			makeNewAnnotation();
+		} else this.addEventHandler(MouseEvent.ANY, currentAnnotation);
+		mode = Mode.FILL;
+	}
+	
+	public void turnFillModeOff(){
+		turnAnnotatingOff();
+		mode = Mode.NONE;
+	}
+	
+	
 
 	public void turnAnnotatingOff(){
 		for (Annotation a : annotations){
@@ -35,10 +66,10 @@ public class AnnotationLayer extends Canvas{
 		}
 	}
 
-	public void makeNewAnnotation(){
-		Annotation a = new Annotation(gc);
-		this.addEventHandler(MouseEvent.ANY, a);
-		annotations.add(a);
+	private void makeNewAnnotation(){
+		currentAnnotation = new Annotation(this);
+		this.addEventHandler(MouseEvent.ANY, currentAnnotation);
+		annotations.add(currentAnnotation);
 	}
 
 	public void drawAll(){
@@ -106,7 +137,7 @@ public class AnnotationLayer extends Canvas{
 			//Check for "FitsImageViewerAnnotations" at beginning of file to validate format
 			if (reader.readLine().equalsIgnoreCase("FitsImageViewerAnnotations")){ //continue
 				String line;
-				Annotation annotation = new Annotation(gc);
+				Annotation annotation = new Annotation(this);
 
 				System.out.println("fetching annotations from file");
 
@@ -121,7 +152,7 @@ public class AnnotationLayer extends Canvas{
 					}
 					else if (line.equalsIgnoreCase("*")){
 						annotations.add(annotation);
-						annotation = new Annotation(gc);
+						annotation = new Annotation(this);
 					}
 				}
 			}
