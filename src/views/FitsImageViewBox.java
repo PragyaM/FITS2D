@@ -17,6 +17,7 @@ public class FitsImageViewBox extends ScrollPane{
 	private Group g;
 	private ImageView view;
 	private AnnotationLayer annotationLayer;
+	private FitsImage fitsImage;
 	
 	public FitsImageViewBox(){
 		super();
@@ -37,8 +38,8 @@ public class FitsImageViewBox extends ScrollPane{
 	
 	public void addImage(Fits fitsFile) throws FitsException, IOException{
 		//retrieve image from FITS file
-		FitsImage fitsImage = new BuildFitsImage(fitsFile).call();
-		Image image = fitsImage;
+		fitsImage = new BuildFitsImage(fitsFile).call();
+		Image image = fitsImage.getImage();
 		
 		//prepare the view which holds the image
 		view = new ImageView(image);
@@ -77,5 +78,9 @@ public class FitsImageViewBox extends ScrollPane{
 	public void enableScrollBars(){
 		setHbarPolicy(ScrollBarPolicy.ALWAYS);
 		setVbarPolicy(ScrollBarPolicy.ALWAYS);
+	}
+	
+	public FitsImage getFitsImage(){
+		return fitsImage;
 	}
 }

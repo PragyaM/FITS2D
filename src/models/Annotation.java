@@ -44,6 +44,10 @@ public class Annotation implements EventHandler<MouseEvent>{
 	public void setLines(ArrayList<Line> lines){
 		this.lines = lines;
 	}
+	
+	public ArrayList<Line> getLines(){
+		return lines;
+	}
 
 	public void addLine(Line line){
 		this.lines.add(line);

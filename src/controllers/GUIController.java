@@ -1,6 +1,8 @@
 package controllers;
 
+import java.awt.Point;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -9,7 +11,10 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ToggleButton;
 import javafx.stage.Stage;
+import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
+import nom.tam.util.BufferedFile;
+import services.CreateMask;
 import views.MainWindow;
 
 public class GUIController{
@@ -112,6 +117,25 @@ public class GUIController{
 			}
 			else {
 				ui.getImageViewBox().getAnnotationLayer().drawAll();
+			}
+		};
+	}
+
+	public EventHandler<ActionEvent> createMaskFromSelection() {
+		return (final ActionEvent e) -> {
+			ArrayList<Point> fullSelection = ui.getImageViewBox().getAnnotationLayer().getSelectedArea();
+			try {
+				Fits maskFits = CreateMask.mapToFits(fullSelection, ui.getImageViewBox().getFitsImage());
+				
+				BufferedFile bf = new BufferedFile("img.fits", "rw");
+				maskFits.write(bf);
+				bf.close();
+			} catch (FitsException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
 		};
 	}

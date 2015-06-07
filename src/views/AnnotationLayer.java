@@ -118,8 +118,15 @@ public class AnnotationLayer extends Canvas{
 	}
 
 		
-	public void cutSelection(){
+	public ArrayList<Point> getSelectedArea(){
 		//TODO create mask using "selection" annotations
+		ArrayList<Point> fullSelection = new ArrayList<Point>();
+		for (Annotation a : selections){
+			for (Line l : a.getLines()){
+				fullSelection.addAll(l.getPixels());
+			}
+		}
+		return fullSelection;
 	}
 		
 
