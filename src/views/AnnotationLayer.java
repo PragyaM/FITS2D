@@ -110,7 +110,7 @@ public class AnnotationLayer extends Canvas{
 	}
 	
 	private void makeNewSelection(){
-		currentSelection = new Annotation(this, Color.GRAY);
+		currentSelection = new Annotation(this, Color.YELLOW);
 		this.addEventHandler(MouseEvent.ANY, currentSelection);
 		selections.add(currentSelection);
 	}
