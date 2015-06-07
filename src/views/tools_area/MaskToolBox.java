@@ -12,17 +12,17 @@ public class MaskToolBox extends BaseToolBox{
 		super("Masking Tools");
 		this.app = app;
 
-		ToggleButton drawToolButton = new ToggleButton("Draw Tool");
-		ToggleButton fillToolButton = new ToggleButton("Bucket Tool");
-
-		ToggleGroup group = new ToggleGroup();
-		drawToolButton.setToggleGroup(group);
-		fillToolButton.setToggleGroup(group);
-
-		this.add(drawToolButton, 2, 1);
-		this.add(fillToolButton, 3, 1);
-
-		drawToolButton.setOnAction(app.toggleDrawMode(drawToolButton));
-		fillToolButton.setOnAction(app.toggleFillMode(fillToolButton));
+//		ToggleButton drawToolButton = new ToggleButton("Draw Tool");
+//		ToggleButton fillToolButton = new ToggleButton("Bucket Tool");
+//
+//		ToggleGroup group = new ToggleGroup();
+//		drawToolButton.setToggleGroup(group);
+//		fillToolButton.setToggleGroup(group);
+//
+//		this.add(drawToolButton, 2, 1);
+//		this.add(fillToolButton, 3, 1);
+//
+//		drawToolButton.setOnAction(app.toggleDrawMode(drawToolButton));
+//		fillToolButton.setOnAction(app.toggleFillMode(fillToolButton));
 	}
 }

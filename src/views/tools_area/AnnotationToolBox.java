@@ -35,9 +35,8 @@ public class AnnotationToolBox extends BaseToolBox{
 		drawMaskToolButton.setOnAction(app.toggleMaskDrawMode(drawMaskToolButton));
 		fillMaskToolButton.setOnAction(app.toggleMaskFillMode(fillMaskToolButton));
         
-        CheckBox hideAnnotationsButton = new CheckBox();
+        CheckBox hideAnnotationsButton = new CheckBox("Hide Annotations");
         add(hideAnnotationsButton, 2, 2);
-        add(new Label("Hide Annotations"), 3, 2);
         hideAnnotationsButton.setOnAction(app.toggleAnnotationsVisible(hideAnnotationsButton));
 	}
 }

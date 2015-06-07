@@ -25,10 +25,10 @@ public class Annotation implements EventHandler<MouseEvent>{
 	private PixelWriter pw;
 	private AnnotationLayer canvas;
 
-	public Annotation(AnnotationLayer canvas){
+	public Annotation(AnnotationLayer canvas, Color color){
 		this.canvas = canvas;
 		this.gc = canvas.getGraphicsContext2D();
-		this.color = Color.WHITE;
+		this.color = color;
 		this.pw = gc.getPixelWriter();
 	}
 
@@ -52,7 +52,7 @@ public class Annotation implements EventHandler<MouseEvent>{
 	@Override
 	public void handle(MouseEvent event) {
 
-		if (canvas.mode==Mode.DRAW){
+		if (canvas.mode==Mode.ANNOTATE_DRAW || canvas.mode==Mode.MASK_DRAW){
 			if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)){
 				Point p = new Point((int) event.getX(), (int) event.getY());
 
@@ -80,7 +80,7 @@ public class Annotation implements EventHandler<MouseEvent>{
 				event.consume();
 			}
 		}
-		else if (canvas.mode==Mode.FILL){
+		else if (canvas.mode==Mode.ANNOTATE_FILL || canvas.mode==Mode.MASK_FILL){
 			if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED)){
 				line = new Line();
 				Point p = new Point((int) event.getX(), (int) event.getY());
