@@ -38,6 +38,7 @@ public class AnnotationLayer extends Canvas{
 	public void setDrawMode(Boolean enabled){
 		if (enabled){
 			//TODO: turn cursor into pencil
+			turnSelectingOff();
 			if (currentAnnotation == null){
 				makeNewAnnotation();
 			} else this.addEventHandler(MouseEvent.ANY, currentAnnotation);
@@ -51,6 +52,7 @@ public class AnnotationLayer extends Canvas{
 	public void setFillMode(Boolean enabled){
 		if (enabled){
 			//TODO: turn cursor into bucket
+			turnSelectingOff();
 			if (currentAnnotation == null){
 				makeNewAnnotation();
 			} else this.addEventHandler(MouseEvent.ANY, currentAnnotation);
@@ -64,6 +66,7 @@ public class AnnotationLayer extends Canvas{
 	public void setMaskDrawMode(Boolean enabled){
 		if (enabled){
 			//TODO: turn cursor into pencil
+			turnAnnotatingOff();
 			if (currentSelection == null){
 				makeNewSelection();
 			} else this.addEventHandler(MouseEvent.ANY, currentSelection);
@@ -77,6 +80,7 @@ public class AnnotationLayer extends Canvas{
 	public void setMaskFillMode(Boolean enabled){
 		if (enabled){
 			//TODO: turn cursor into bucket
+			turnAnnotatingOff();
 			if (currentSelection == null){
 				makeNewSelection();
 			} else this.addEventHandler(MouseEvent.ANY, currentSelection);
@@ -111,9 +115,15 @@ public class AnnotationLayer extends Canvas{
 		selections.add(currentSelection);
 	}
 
-	public void drawAll(){
+	public void drawAllAnnotations(){
 		for (Annotation annotation : annotations) {
 			annotation.draw();
+		}
+	}
+	
+	public void drawAllSelections(){
+		for (Annotation a : selections) {
+			a.draw();
 		}
 	}
 
@@ -132,6 +142,7 @@ public class AnnotationLayer extends Canvas{
 
 	public void hideAnnotations(){
 		gc.clearRect(0, 0, this.getWidth(), this.getHeight());
+		drawAllSelections();
 	}
 
 	public void writeAnnotationsToFile(String fname){
@@ -197,7 +208,7 @@ public class AnnotationLayer extends Canvas{
 		}
 
 		//Annotations can now be rendered
-		drawAll();
+		drawAllAnnotations();
 	}
 
 	public Line lineFromString(String lString){

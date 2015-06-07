@@ -116,7 +116,7 @@ public class GUIController{
 				ui.getImageViewBox().getAnnotationLayer().hideAnnotations();
 			}
 			else {
-				ui.getImageViewBox().getAnnotationLayer().drawAll();
+				ui.getImageViewBox().getAnnotationLayer().drawAllAnnotations();
 			}
 		};
 	}
