@@ -79,6 +79,40 @@ public class GUIController{
 			}
 		};
 	}
+	
+	public EventHandler<ActionEvent> toggleMaskDrawMode(ToggleButton toggle){
+		return (final ActionEvent e) -> {
+			if (toggle.isSelected()){ //enable drawing mode
+				setImageViewMode(false);
+				setImageAnnotateMode(true);
+				ui.getImageViewBox().getAnnotationLayer().turnDrawModeOn();
+				ui.getImageViewBox().setPannable(false);
+			}
+			else if (!toggle.isSelected()){ //disable drawing mode
+				setImageViewMode(true);
+				setImageAnnotateMode(false);
+				ui.getImageViewBox().getAnnotationLayer().turnDrawModeOff();
+				ui.getImageViewBox().setPannable(true);
+			}
+		};
+	}
+	
+	public EventHandler<ActionEvent> toggleMaskFillMode(ToggleButton toggle) {
+		return (final ActionEvent e) -> {
+			if (toggle.isSelected()){ //enable fill mode
+				setImageViewMode(false);
+				setImageAnnotateMode(true);
+				ui.getImageViewBox().getAnnotationLayer().turnFillModeOn();
+				ui.getImageViewBox().setPannable(false);
+			}
+			else if (!toggle.isSelected()){ //disable fill mode
+				setImageViewMode(true);
+				setImageAnnotateMode(false);
+				ui.getImageViewBox().getAnnotationLayer().turnFillModeOff();
+				ui.getImageViewBox().setPannable(true);
+			}
+		};
+	}
 
 	public boolean isImageViewMode() {
 		return imageViewMode;

@@ -13,6 +13,7 @@ public class ToolsAreaBox extends GridPane {
 		setPadding(new Insets(10, 15, 10, 15));
 //		add(new ColourToolBox(parent), 0, 1);
 		add(new AnnotationToolBox(parent), 1, 1);
+//		add(new MaskToolBox(parent), 2, 1);
 	}
 	
 }
