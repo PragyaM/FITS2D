@@ -17,6 +17,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
+import nom.tam.util.BufferedFile;
 import views.tools_area.ToolsAreaBox;
 import views.top_bar_menu.TopMenuBar;
 import controllers.GUIController;
@@ -142,5 +143,26 @@ public class MainWindow{
 	        System.out.println("Opening: " + file.getName());
 			this.getImageViewBox().getAnnotationLayer().addAnnotationsFromFile(file);
 		};
+	}
+
+	public BufferedFile showSaveDialog(String type) {
+		FileChooser fileChooser = new FileChooser();
+		  
+        //Set extension filter
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("FITS files (*.fits)", "*.fits");
+        fileChooser.getExtensionFilters().add(extFilter);
+        
+        //Show save file dialog
+        File file = fileChooser.showSaveDialog(stage);
+        
+        if(file != null){
+            try {
+				return new BufferedFile(file, "rw") ;
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.out.println("Invalid file");
+			}
+        }
+		return null;
 	}
 }

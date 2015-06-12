@@ -127,15 +127,15 @@ public class GUIController{
 			try {
 				Fits maskFits = CreateMask.mapToFits(fullSelection, ui.getImageViewBox().getFitsImage(), (int) ui.getImageViewBox().getAnnotationLayer().getWidth(), (int) ui.getImageViewBox().getAnnotationLayer().getHeight());
 				
-				BufferedFile bf = new BufferedFile("img.fits", "rw");
+				BufferedFile bf = ui.showSaveDialog("FITS");
 				maskFits.write(bf);
 				bf.close();
 			} catch (FitsException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
+				System.out.println(e1.getMessage());
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
+				System.out.println(e1.getMessage());
 			}
 		};
 	}
