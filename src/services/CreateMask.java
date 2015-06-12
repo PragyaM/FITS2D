@@ -48,8 +48,10 @@ public class CreateMask {
 	private static float[][] setMaskValues(float[][] data, ArrayList<Point> maskPoints, FitsImage fitsImage, int cw, int ch){
 
 		for (Point p : maskPoints){
-			Point dataPos = fitsImage.getDataPosition(p, cw, ch);
-			data[dataPos.y][dataPos.x] = fitsImage.getValueAt(dataPos);
+			ArrayList<Point> dataPositions = fitsImage.getDataPositions(p, cw, ch);
+			for (Point dataPos : dataPositions){
+				data[dataPos.y][dataPos.x] = fitsImage.getValueAt(dataPos);
+			}
 		}
 
 		return data;

@@ -6,11 +6,13 @@ import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
-import javax.imageio.ImageIO;
+import java.util.ArrayList;
 
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+
+import javax.imageio.ImageIO;
+
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.ImageHDU;
@@ -57,13 +59,21 @@ public class FitsImage{
 		System.out.println(processingFriendlyData.length + ", " + processingFriendlyData[0].length);
 	}
 	
-	public Point getDataPosition(Point p, int cWidth, int cHeight){
-		int x = (p.x * width)/cWidth;
-		int y = (p.y * height)/cHeight;
+	public ArrayList<Point> getDataPositions(Point p, int cWidth, int cHeight){
+		ArrayList<Point> points = new ArrayList<Point>();
+		int x0 = (p.x * width)/cWidth;
+		int y0 = (p.y * height)/cHeight;
 		
-		Point pos = new Point(x, height - y);
-		System.out.println(pos.x + ", " + pos.y);
-		return pos;
+		int x1 = x0 + width/cWidth;
+		int y1 = y0 + height/cHeight;
+		
+		for (int x = x0; x <= x1; x++){
+			for (int y = y0; y <= y1; y++){
+				Point pos = new Point(x, height - y);
+				points.add(pos);
+			}
+		}
+		return points;
 	}
 	
 	public float getValueAt(Point p){
