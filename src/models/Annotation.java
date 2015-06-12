@@ -8,6 +8,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.transform.NonInvertibleTransformException;
 import services.DrawLine;
 import services.FillRegion;
 import views.AnnotationLayer;
@@ -66,6 +67,7 @@ public class Annotation implements EventHandler<MouseEvent>{
 					pw.setColor(pixel.x, pixel.y, color);
 				}
 				currentPoint = p;
+				
 
 				event.consume();
 			}

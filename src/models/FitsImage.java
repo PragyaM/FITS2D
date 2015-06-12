@@ -57,14 +57,17 @@ public class FitsImage{
 		System.out.println(processingFriendlyData.length + ", " + processingFriendlyData[0].length);
 	}
 	
-	public Point getDataPosition(Point p){
-		Point pos = new Point(height - p.y, p.x);
+	public Point getDataPosition(Point p, int cWidth, int cHeight){
+		int x = (p.x * width)/cWidth;
+		int y = (p.y * height)/cHeight;
+		
+		Point pos = new Point(x, height - y);
 		System.out.println(pos.x + ", " + pos.y);
 		return pos;
 	}
 	
 	public float getValueAt(Point p){
-		return processingFriendlyData[p.x][p.y];
+		return processingFriendlyData[p.y][p.x];
 	}
 	
 	public Fits getFitsFile(){
@@ -88,7 +91,6 @@ public class FitsImage{
 	public void writeImage() throws IOException{
 		//write image data
 		BufferedImage im = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
-//		BufferedImage im = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY);
 		
 		WritableRaster raster = im.getRaster();
 		setImageColours(imageFriendlyData, raster);

@@ -125,7 +125,7 @@ public class GUIController{
 		return (final ActionEvent e) -> {
 			ArrayList<Point> fullSelection = ui.getImageViewBox().getAnnotationLayer().getSelectedArea();
 			try {
-				Fits maskFits = CreateMask.mapToFits(fullSelection, ui.getImageViewBox().getFitsImage());
+				Fits maskFits = CreateMask.mapToFits(fullSelection, ui.getImageViewBox().getFitsImage(), (int) ui.getImageViewBox().getAnnotationLayer().getWidth(), (int) ui.getImageViewBox().getAnnotationLayer().getHeight());
 				
 				BufferedFile bf = new BufferedFile("img.fits", "rw");
 				maskFits.write(bf);

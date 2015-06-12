@@ -64,6 +64,7 @@ public class MainWindow{
 			//fetch selected file and handle appropriately
 			File file = fileChooser.showOpenDialog(stage);
             System.out.println("Opening: " + file.getName());
+            //TODO: return null if cancelled
             Fits fitsFile;
 			try {
 				fitsFile = new Fits(file);
