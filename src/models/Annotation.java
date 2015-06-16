@@ -8,7 +8,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.transform.NonInvertibleTransformException;
 import services.DrawLine;
 import services.FillRegion;
 import views.AnnotationLayer;
@@ -17,11 +16,11 @@ import views.AnnotationLayer.Mode;
 
 public class Annotation implements EventHandler<MouseEvent>{
 
-	private ArrayList<Line> lines = new ArrayList<Line>();
+	private ArrayList<Region> regions = new ArrayList<Region>();
 	private GraphicsContext gc;
 	//	private String associatedFileName; //TODO: keep track of which image this annotation was created on
 	private Color color;
-	private Line line;
+	private Region region;
 	private Point currentPoint;
 	private PixelWriter pw;
 	private AnnotationLayer canvas;
@@ -34,24 +33,24 @@ public class Annotation implements EventHandler<MouseEvent>{
 	}
 
 	public void draw() {
-		for (Line line : lines){
-			for (Point pixel : line.getPixels()){
+		for (Region region : regions){
+			for (Point pixel : region.getPixels()){
 				gc.getPixelWriter().setColor(pixel.x, pixel.y, color);
 				gc.fillRect(pixel.x, pixel.y, 0, 0);
 			}
 		}
 	}
 
-	public void setLines(ArrayList<Line> lines){
-		this.lines = lines;
+	public void setRegions(ArrayList<Region> regions){
+		this.regions = regions;
 	}
 	
-	public ArrayList<Line> getLines(){
-		return lines;
+	public ArrayList<Region> getRegions(){
+		return regions;
 	}
 
-	public void addLine(Line line){
-		this.lines.add(line);
+	public void addRegion(Region region){
+		this.regions.add(region);
 	}
 
 	@Override
@@ -62,7 +61,7 @@ public class Annotation implements EventHandler<MouseEvent>{
 				Point p = new Point((int) event.getX(), (int) event.getY());
 
 				ArrayList<Point> freshPixels = (DrawLine.draw(currentPoint, p));
-				line.appendPoints(freshPixels);
+				region.addAll(freshPixels);
 				for (Point pixel : freshPixels){
 					pw.setColor(pixel.x, pixel.y, color);
 				}
@@ -73,7 +72,7 @@ public class Annotation implements EventHandler<MouseEvent>{
 			}
 
 			else if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)){
-				line = new Line();
+				region = new Region();
 				Point p = new Point((int) event.getX(), (int) event.getY());
 				currentPoint = p;
 
@@ -81,23 +80,23 @@ public class Annotation implements EventHandler<MouseEvent>{
 			}
 
 			else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)){
-				lines.add(line);
+				regions.add(region);
 
 				event.consume();
 			}
 		}
 		else if (canvas.mode==Mode.ANNOTATE_FILL || canvas.mode==Mode.MASK_FILL){
 			if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED)){
-				line = new Line();
+				region = new Region();
 				Point p = new Point((int) event.getX(), (int) event.getY());
 				
 				ArrayList<Point> freshPixels = (FillRegion.fill(canvas, p));
-				line.appendPoints(freshPixels);
+				region.addAll(freshPixels);
 				for (Point pixel : freshPixels){
 					pw.setColor(pixel.x, pixel.y, color);
 				}
 				
-				lines.add(line);
+				regions.add(region);
 				event.consume();
 			}
 		}		
@@ -105,8 +104,8 @@ public class Annotation implements EventHandler<MouseEvent>{
 
 	public String toString(){
 		String annotationString = ""; //"Colour: " + color.toString();
-		for (Line line : lines){
-			annotationString = annotationString + "\n" +  line.toString();
+		for (Region region : regions){
+			annotationString = annotationString + "\n" +  region.toString();
 		}
 		return annotationString;
 	}

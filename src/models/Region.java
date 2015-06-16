@@ -3,31 +3,29 @@ package models;
 import java.awt.Point;
 import java.util.ArrayList;
 
-import javafx.scene.shape.SVGPath;
-
 /**
- * A Line is a collection of Points that represent coloured pixels in an annotation
+ * A Region is a collection of Points that represent coloured pixels in an annotation
  * 
  * @author Pragya
  */
-public class Line {
+public class Region {
 	
 	private ArrayList<Point> pixels;
 	
-	public Line(ArrayList<Point> pixels){
+	public Region(ArrayList<Point> pixels){
 		this.pixels = pixels;
 	}
 	
-	public Line(){
+	public Region(){
 		this.pixels = new ArrayList<Point>();
 	}
 	
 	
-	public void appendPoints(ArrayList<Point> points){
+	public void addAll(ArrayList<Point> points){
 		this.pixels.addAll(points);
 	}
 	
-	public void appendPoint(Point p){
+	public void add(Point p){
 		this.pixels.add(p);
 	}
 	
@@ -36,11 +34,11 @@ public class Line {
 	}
 	
 	public String toString(){
-		String lineString = "l ";
+		String regionString = "r ";
 		for (Point p : pixels){
-			lineString = lineString + String.format("%d,%d ", p.x, p.y);
+			regionString = regionString + String.format("%d,%d ", p.x, p.y);
 		}
-		return lineString;
+		return regionString;
 	}
 
 }

@@ -15,7 +15,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import models.Annotation;
-import models.Line;
+import models.Region;
 
 public class AnnotationLayer extends Canvas{
 	private ArrayList<Annotation> annotations;
@@ -116,7 +116,9 @@ public class AnnotationLayer extends Canvas{
 	}
 
 	public void drawAllAnnotations(){
+		System.out.println("reaching here");
 		for (Annotation annotation : annotations) {
+			System.out.println("drawing an annotation");
 			annotation.draw();
 		}
 	}
@@ -132,7 +134,7 @@ public class AnnotationLayer extends Canvas{
 		//TODO create mask using "selection" annotations
 		ArrayList<Point> fullSelection = new ArrayList<Point>();
 		for (Annotation a : selections){
-			for (Line l : a.getLines()){
+			for (Region l : a.getRegions()){
 				fullSelection.addAll(l.getPixels());
 			}
 		}
@@ -151,7 +153,7 @@ public class AnnotationLayer extends Canvas{
 		String annotationsString = "FitsImageViewerAnnotations";
 
 		for (Annotation a : annotations){
-			annotationsString = annotationsString + "\n*\n" + a.toString();
+			annotationsString = annotationsString + "\n*" + a.toString();
 		}
 
 		try {
@@ -169,12 +171,8 @@ public class AnnotationLayer extends Canvas{
 	}
 
 	public void addAnnotationsFromFile(File aFile){
-		System.out.println("Reaching here");
-
 		BufferedReader reader = null;
 		try {
-
-			System.out.println("inside try block");
 			reader = new BufferedReader(new FileReader(aFile));
 
 			//Check for "FitsImageViewerAnnotations" at beginning of file to validate format
@@ -182,16 +180,12 @@ public class AnnotationLayer extends Canvas{
 				String line;
 				Annotation annotation = new Annotation(this, Color.WHITE);
 
-				System.out.println("fetching annotations from file");
-
 				//Delimit annotations with "*"
 				while ((line = reader.readLine()) != null){
-					//Within annotations, delimit lines by newline
+					//Within annotations, delimit regions by newline
 
-					System.out.println("fetching lines from file");
-
-					if (line.startsWith("l")){
-						annotation.addLine(lineFromString(line));
+					if (line.startsWith("r")){
+						annotation.addRegion(regionFromString(line));
 					}
 					else if (line.equalsIgnoreCase("*")){
 						annotations.add(annotation);
@@ -211,23 +205,21 @@ public class AnnotationLayer extends Canvas{
 		drawAllAnnotations();
 	}
 
-	public Line lineFromString(String lString){
-		lString = lString.substring(1, lString.length()-1);
-		String[] coords = lString.split(" ");
-		Line line = new Line();
+	public Region regionFromString(String rString){
+		rString = rString.substring(1, rString.length()-1);
+		rString = rString.trim();
+		String[] coords = rString.split(" ");
+		Region region = new Region();
 
 		for (int i = 0; i<coords.length; i++){
 			try{
-				System.out.println(coords[i]);
 				String[] coord = coords[i].split(",");
-				System.out.println(coord[0]);
-				System.out.println(coord[1]);
-				line.appendPoint(new Point(Integer.parseInt(coord[0]), Integer.parseInt(coord[1])));
+				region.add(new Point(Integer.parseInt(coord[0]), Integer.parseInt(coord[1])));
 			} catch(Exception e){
 				e.printStackTrace();
 			}
 		}
-		return line;
+		return region;
 	}
 	
 	//methods to add later:
