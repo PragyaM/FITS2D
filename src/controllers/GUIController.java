@@ -27,7 +27,7 @@ public class GUIController{
 
 	//TODO handle uncaught exceptions
 	public void start(Stage primaryStage) throws FitsException, IOException{
-		ui = new MainWindow(primaryStage);
+		ui = new MainWindow(primaryStage, this);
 		ui.addTopMenuBar(this);
 		ui.addImageViewBox();
 		ui.addToolsAreaBox(this);
@@ -140,5 +140,9 @@ public class GUIController{
 				System.out.println(e1.getMessage());
 			}
 		};
+	}
+	
+	public void handle(Exception e) {
+		ui.displayMessage(e.getMessage());
 	}
 }

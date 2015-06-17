@@ -16,35 +16,41 @@ import javax.imageio.ImageIO;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.ImageHDU;
-import nom.tam.image.ImageTiler;
+import nom.tam.image.StandardImageTiler;
+import nom.tam.util.ArrayFuncs;
+import controllers.GUIController;
 
 public class FitsImage{
 	private ImageHDU hdu;
 	private Fits fitsFile;
-	private ImageTiler tiler;
+	private StandardImageTiler tiler;
 	private int width;
 	private int height;
 	
 	private float[] imageFriendlyData;
 	private float[][] processingFriendlyData;
 	private Image image;
+	private GUIController controller;
 	
 	//TODO handle uncaught exceptions
-	public FitsImage(Fits fitsFile) throws FitsException, IOException{
+	public FitsImage(Fits fitsFile, GUIController controller) throws FitsException, IOException{
+		this.controller = controller;
 		this.fitsFile = fitsFile;
 		this.hdu = (ImageHDU) fitsFile.getHDU(0);;
 		width = hdu.getAxes()[1];
 		height = hdu.getAxes()[0];
-		this.tiler = hdu.getTiler();
+		this.tiler =  hdu.getTiler();
 		prepareData();
 		writeImage();
 	}
 	
 	private void prepareData(){
+		
 		float[] img = null;
 		try {
-			img = (float[]) tiler.getTile(new int[]{0, 0}, hdu.getAxes());
-			processingFriendlyData = (float[][]) hdu.getKernel();
+			Object dataArray = tiler.getTile(new int[]{0, 0}, hdu.getAxes());
+			img = (float[]) ArrayFuncs.convertArray(dataArray, float.class);
+			processingFriendlyData =  (float[][]) ArrayFuncs.convertArray(hdu.getKernel(), float.class);//(float[][]) hdu.getKernel();
 			imageFriendlyData = new float[width * height];
 			for (int h = height - 1; h >= 0; h--){
 				for (int w = 0; w < width; w++){

@@ -18,9 +18,11 @@ public class FitsImageViewBox extends ScrollPane{
 	private ImageView view;
 	private AnnotationLayer annotationLayer;
 	private FitsImage fitsImage;
+	private MainWindow container;
 	
-	public FitsImageViewBox(){
+	public FitsImageViewBox(MainWindow container){
 		super();
+		this.container = container;
 		this.setPannable(true);
 		setFitToWidth(true);
 		setFitToHeight(true);
@@ -38,7 +40,7 @@ public class FitsImageViewBox extends ScrollPane{
 	
 	public void addImage(Fits fitsFile) throws FitsException, IOException{
 		//retrieve image from FITS file
-		fitsImage = new BuildFitsImage(fitsFile).call();
+		fitsImage = new BuildFitsImage(fitsFile, container.getController()).call();
 		Image image = fitsImage.getImage();
 		
 		//prepare the view which holds the image
