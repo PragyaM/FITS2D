@@ -1,6 +1,7 @@
 package controllers;
 
 import java.awt.Point;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -101,7 +102,8 @@ public class GUIController{
 
 	public EventHandler<ActionEvent> saveAnnotations() {
 		return (final ActionEvent e) -> {
-			ui.getImageViewBox().getAnnotationLayer().writeAnnotationsToFile("annotations");
+			File file = (File) ui.showSaveDialog("TXT");
+			ui.getImageViewBox().getAnnotationLayer().writeAnnotationsToFile(file);
 		};
 	}
 
@@ -127,7 +129,7 @@ public class GUIController{
 			try {
 				Fits maskFits = CreateMask.mapToFits(fullSelection, ui.getImageViewBox().getFitsImage(), (int) ui.getImageViewBox().getAnnotationLayer().getWidth(), (int) ui.getImageViewBox().getAnnotationLayer().getHeight());
 				
-				BufferedFile bf = ui.showSaveDialog("FITS");
+				BufferedFile bf = new BufferedFile(ui.showSaveDialog("FITS"), "rw");
 				maskFits.write(bf);
 				bf.close();
 			} catch (FitsException e1) {

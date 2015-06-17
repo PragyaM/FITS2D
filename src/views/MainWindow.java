@@ -145,23 +145,19 @@ public class MainWindow{
 		};
 	}
 
-	public BufferedFile showSaveDialog(String type) {
+	public File showSaveDialog(String type) {
 		FileChooser fileChooser = new FileChooser();
 		  
         //Set extension filter
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("FITS files (*.fits)", "*.fits");
+		String ext = "*." + type.toLowerCase();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(type + " files (" + ext + ")", ext);
         fileChooser.getExtensionFilters().add(extFilter);
         
         //Show save file dialog
         File file = fileChooser.showSaveDialog(stage);
         
         if(file != null){
-            try {
-				return new BufferedFile(file, "rw") ;
-			} catch (IOException e) {
-				e.printStackTrace();
-				System.out.println("Invalid file");
-			}
+            return file;
         }
 		return null;
 	}

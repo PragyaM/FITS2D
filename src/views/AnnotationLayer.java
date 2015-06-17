@@ -147,8 +147,7 @@ public class AnnotationLayer extends Canvas{
 		drawAllSelections();
 	}
 
-	public void writeAnnotationsToFile(String fname){
-		File aFile = new File(fname);
+	public void writeAnnotationsToFile(File aFile){
 		BufferedWriter writer = null;
 		String annotationsString = "FitsImageViewerAnnotations";
 
