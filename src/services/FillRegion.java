@@ -23,7 +23,7 @@ public class FillRegion {
 	private static GraphicsContext gc;
 	private static Canvas canvas;
 	
-	public static ArrayList<Point> fill(Canvas c, Point orig){
+	public static ArrayList<Point> fill(Canvas c, Point origin){
 		ArrayList<Point> points = new ArrayList<Point>();
 		
 		//setup required information:
@@ -31,47 +31,36 @@ public class FillRegion {
 		width = (int) canvas.getWidth();
 		height = (int) canvas.getHeight();
 		gc = canvas.getGraphicsContext2D();
-		wImg = new WritableImage((int) canvas.getWidth(), (int) canvas.getHeight());
+		wImg = new WritableImage(width, height); //FIXME: doesn't take zoom into account
 		pWrite = gc.getPixelWriter();
 		updatePixelReader();
 		
-		Color target = pRead.getColor(orig.x, orig.y);
-		Color replacement = Color.RED;
-		Point node = orig;
-
-		int width = (int) canvas.getWidth();
-		int height = (int) canvas.getHeight();
-		Deque<Point> queue = new LinkedList<Point>();
-		do {
-			int x = node.x;
-			int y = node.y;
-			while (x > 0 && pRead.getColor(x - 1, y).equals(target)) {
-				x--;
-			}
-			boolean spanUp = false;
-			boolean spanDown = false;
-			while (x < width && pRead.getColor(x, y).equals(target)) {
-				pWrite.setColor(x, y, replacement);
-				updatePixelReader();
-				points.add(new Point(x, y));  //add to points
-				if (!spanUp && y > 0 && pRead.getColor(x, y - 1).equals(target)) {
-					queue.add(new Point(x, y - 1));
-					spanUp = true;
-				} else if (spanUp && y > 0 && !(pRead.getColor(x, y - 1).equals(target))) {
-					spanUp = false;
-				}
-				if (!spanDown && y < height - 1 && pRead.getColor(x, y + 1).equals(target)) {
-					queue.add(new Point(x, y + 1));
-					spanDown = true;
-				} else if (spanDown && y < height - 1 && !(pRead.getColor(x, y + 1).equals(target))) {
-					spanDown = false;
-				}
-				x++;
-			}
-		} while ((node = queue.pollFirst()) != null);
-
+		Color target = pRead.getColor(origin.x, origin.y);
+		points = doFill(origin, target, Color.RED, points);
+		
 		return points;
-
+	}
+	
+	//FIXME: Make this iterative instead of recursive
+	private static ArrayList<Point> doFill(Point node, Color target, Color replacement, ArrayList<Point> points){
+		if (target.equals(replacement)){
+			return points;
+		}
+		else if (!(pRead.getColor(node.x, node.y).equals(target))){
+			return points;
+		}
+		else if (node.x < 0 || node.y < 0 || node.x > width || node.y > height){
+			return points;
+		}
+		pWrite.setColor(node.x, node.y, replacement);
+		points.add(node);
+		updatePixelReader();
+		
+		doFill(new Point(node.x-1, node.y), target, replacement, points);
+		doFill(new Point(node.x+1, node.y), target, replacement, points);
+		doFill(new Point(node.x, node.y-1), target, replacement, points);
+		doFill(new Point(node.x, node.y+1), target, replacement, points);
+		return points;
 	}
 	
 	private static void updatePixelReader(){
@@ -80,4 +69,5 @@ public class FillRegion {
 		canvas.snapshot(sp, wImg);
 		pRead = wImg.getPixelReader();
 	}
+
 }
