@@ -4,31 +4,17 @@ This README would normally document whatever steps are necessary to get your app
 
 ### What is this repository for? ###
 
-* Quick summary
-A FITS Visualiser Application implemented in Java (Java 8 with JavaFX).
-* Version
-0.1.0
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
-
-### How do I get set up? ###
-
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
+* A FITS Visualiser Application implemented in Java (Java 8 with JavaFX).
+* Current version: 0.1.0
+ - Can open and view 2D FITS images, zooming and panning work on trackpad
+ - Annotating images with freeform draw and bucket tool (note, bucket tool will not work when used on entire canvas)
+ - Hiding, showing, saving and loading annotations
+ - Creating new mask FITS image from selection (by drawing with mask tool)
+ 
+* Releases can be found in the 'releases' folder
 
 ### Who do I talk to? ###
 
-* Repo owner or admin
-Owner/Admin: Pragya Mohan
+* Owner/Admin: Pragya Mohan
 
-This project will only be open for external contributions after November 2015.
-* Other community or team contact
+* This project will only be open for external contributions after November 2015.
