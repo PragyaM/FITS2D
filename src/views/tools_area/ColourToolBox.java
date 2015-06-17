@@ -2,14 +2,13 @@ package views.tools_area;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
-import javafx.scene.layout.GridPane;
+import controllers.GUIController;
 
-public class ColourToolBox extends GridPane{
+public class ColourToolBox extends BaseToolBox{
 
-	public ColourToolBox(){
-		super();
-		setVgap(5);
-		setHgap(5);
+	public ColourToolBox(GUIController parent){
+		super("Colour Tools");
+		
 		Slider redSlider = new Slider();
 		Slider greenSlider = new Slider();
 		Slider bluelider = new Slider();
