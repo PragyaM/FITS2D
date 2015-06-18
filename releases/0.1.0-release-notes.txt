@@ -1,0 +1,14 @@
+Build 0.1.0 Release Notes
+
+Added features:
+ - Open and view 2D FITS images, zooming and panning work on trackpad
+ - Annotate images with freeform draw and bucket tool
+ - Hide, show, save and load annotations
+ - Create new mask FITS image from selection (by drawing with mask tool)
+
+Known issues:
+ - Different FITS images can have data values in different formats (float, double, int, long, short), these formats are being handled when opening FITS images, so any FITS image can be viewed (ideally), but it is not handled when created FITS images from a mask selection. This means that images including the main ones that I have used for testing (69_scaled_tin69.fits and 169_scaled_tin69.fits) which have data in the float format will allow you to create a mask. On other images, this won’t work, and the mask created will look the same as the original image.
+ - Fill tool does not work when used on entire canvas
+ - Fill tool does not work when zoomed in
+ - Zooming out too far flips the image
+ - Zoom always pivots at the top left corner of the image, but it should be pivoting from the origin point of the zoom gesture.

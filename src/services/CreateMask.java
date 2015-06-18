@@ -8,6 +8,7 @@ import models.FitsImage;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.FitsFactory;
+import nom.tam.util.ArrayFuncs;
 
 public class CreateMask {
 
@@ -17,7 +18,7 @@ public class CreateMask {
 
 		maskFits.addHDU(fitsImage.getHDU());
 
-		float[][] oldData = (float[][]) fitsImage.getHDU().getKernel();
+		float[][] oldData = (float[][]) ArrayFuncs.convertArray(fitsImage.getHDU().getKernel(), float.class);
 
 		float[][] newData = new float[oldData.length][oldData[0].length];
 		newData = setAll(newData, Float.NaN);
@@ -26,7 +27,7 @@ public class CreateMask {
 		maskFits.addHDU(FitsFactory.HDUFactory(newData));
 
 
-		float[][] img = (float[][]) maskFits.getHDU(0).getKernel();
+		float[][] img = (float[][]) ArrayFuncs.convertArray(maskFits.getHDU(0).getKernel(), float.class);
 		for (int i=0; i<img.length; i += 1) {
 			for (int j=0; j<img[i].length; j += 1) {
 				img[i][j] = newData[i][j];
