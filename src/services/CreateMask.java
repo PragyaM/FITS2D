@@ -18,16 +18,16 @@ public class CreateMask {
 
 		maskFits.addHDU(fitsImage.getHDU());
 
-		float[][] oldData = (float[][]) ArrayFuncs.convertArray(fitsImage.getHDU().getKernel(), float.class);
+		double[][] oldData = (double[][]) ArrayFuncs.convertArray(fitsImage.getHDU().getKernel(), double.class);
 
-		float[][] newData = new float[oldData.length][oldData[0].length];
-		newData = setAll(newData, Float.NaN);
+		double[][] newData = new double[oldData.length][oldData[0].length];
+		newData = setAll(newData, Double.NaN);
 		newData = setMaskValues(newData, maskPoints, fitsImage, cWidth, cHeight);
 
 		maskFits.addHDU(FitsFactory.HDUFactory(newData));
 
 
-		float[][] img = (float[][]) ArrayFuncs.convertArray(maskFits.getHDU(0).getKernel(), float.class);
+		double[][] img = (double[][]) ArrayFuncs.convertArray(maskFits.getHDU(0).getKernel(), double.class);
 		for (int i=0; i<img.length; i += 1) {
 			for (int j=0; j<img[i].length; j += 1) {
 				img[i][j] = newData[i][j];
@@ -37,7 +37,7 @@ public class CreateMask {
 		return maskFits;
 	}
 
-	private static float[][] setAll(float[][] data, float value){
+	private static double[][] setAll(double[][] data, double value){
 		for (int i=0; i<data.length; i++){
 			for (int j=0; j<data[i].length; j++){
 				data[i][j] = value;
@@ -46,7 +46,7 @@ public class CreateMask {
 		return data;
 	}
 
-	private static float[][] setMaskValues(float[][] data, ArrayList<Point> maskPoints, FitsImage fitsImage, int cw, int ch){
+	private static double[][] setMaskValues(double[][] data, ArrayList<Point> maskPoints, FitsImage fitsImage, int cw, int ch){
 
 		for (Point p : maskPoints){
 			ArrayList<Point> dataPositions = fitsImage.getDataPositions(p, cw, ch);

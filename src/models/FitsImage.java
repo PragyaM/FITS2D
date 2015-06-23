@@ -6,6 +6,7 @@ import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 
 import javafx.scene.image.Image;
@@ -27,8 +28,8 @@ public class FitsImage{
 	private int width;
 	private int height;
 	
-	private float[] imageFriendlyData;
-	private float[][] processingFriendlyData;
+	private double[] imageFriendlyData;
+	private double[][] processingFriendlyData;
 	private Image image;
 	private GUIController controller;
 	
@@ -46,12 +47,12 @@ public class FitsImage{
 	
 	private void prepareData(){
 		
-		float[] img = null;
+		double[] img = null;
 		try {
 			Object dataArray = tiler.getTile(new int[]{0, 0}, hdu.getAxes());
-			img = (float[]) ArrayFuncs.convertArray(dataArray, float.class);
-			processingFriendlyData =  (float[][]) ArrayFuncs.convertArray(hdu.getKernel(), float.class);//(float[][]) hdu.getKernel();
-			imageFriendlyData = new float[width * height];
+			img = (double[]) ArrayFuncs.convertArray(dataArray, double.class);
+			processingFriendlyData =  (double[][]) ArrayFuncs.convertArray(hdu.getKernel(), double.class);//(float[][]) hdu.getKernel();
+			imageFriendlyData = new double[width * height];
 			for (int h = height - 1; h >= 0; h--){
 				for (int w = 0; w < width; w++){
 					imageFriendlyData[h * width + w] = (img[(height-1 - h)*width + w]);
@@ -60,7 +61,6 @@ public class FitsImage{
 		} catch (IOException | FitsException e) {
 			e.printStackTrace();
 		}
-		
 		
 		System.out.println(processingFriendlyData.length + ", " + processingFriendlyData[0].length);
 	}
@@ -82,7 +82,7 @@ public class FitsImage{
 		return points;
 	}
 	
-	public float getValueAt(Point p){
+	public double getValueAt(Point p){
 		return processingFriendlyData[p.y][p.x];
 	}
 	
@@ -94,7 +94,7 @@ public class FitsImage{
 		return image;
 	}
 
-	public float[][] getData(){
+	public double[][] getData(){
 		return processingFriendlyData;
 	}
 	
@@ -106,7 +106,7 @@ public class FitsImage{
 	
 	public void writeImage() throws IOException{
 		//write image data
-		BufferedImage im = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+		BufferedImage im = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
 		
 		WritableRaster raster = im.getRaster();
 		setImageColours(imageFriendlyData, raster);
@@ -120,42 +120,39 @@ public class FitsImage{
 		image = new Image(in);
 	}
 	
-	private void setImageColours(float[] imageData, WritableRaster raster){
+	private void setImageColours(double[] imageData, WritableRaster raster){
 		double max = hdu.getMaximumValue();
-		double cutOff = max * 0.01;
+		double cutOff = max * 0.03;
 		
-		int colBandRange = 780 - 380;  //16777215;
-		float segmentSize = (float) (cutOff/colBandRange);
+		int colBandRange = 250;
+		double segmentSize = (double) (cutOff/colBandRange);
 
 		for (int i = 0; i < imageData.length; i++){
-			float val = (float) (imageData[i]);
+			double val = (double) (imageData[i]);
 			int x = i % width;
 			int y = (int) Math.ceil(i / width);
-			if (val == Double.NaN || val <= 0) {
+			if (isNaN(val) || val <= 0) {
 				raster.setSample(x, y, 0, 0);
-				raster.setSample(x, y, 1, 0);
-				raster.setSample(x, y, 2, 0);
 			} 
 			else if (val > cutOff){
-				raster.setSample(x, y, 0, 255);
-				raster.setSample(x, y, 1, 255);
-				raster.setSample(x, y, 2, 255);
+				raster.setSample(x, y, 0, 250);
 			}
 			else {
-				float colVal = val/segmentSize + 380;
-				Color c = getColorFromWavelength(colVal);
-				raster.setSample(x, y, 0, c.getRed()*255);
-				raster.setSample(x, y, 1, c.getGreen()*255);
-				raster.setSample(x, y, 2, c.getBlue()*255);
+				double colVal = val/segmentSize;
+				raster.setSample(x, y, 0, colVal);
 			}
 		}
+	}
+	
+	private boolean isNaN(double d){
+		return d != d;
 	}
 	
 	/**
 	 * @param wavelength - expected to be within the 380 to 780 range (where visible colors can be resolved).
 	 * @return a Color containing calculated RGB values
 	 */
-	public Color getColorFromWavelength(float wavelength){
+	public Color getColorFromWavelength(double wavelength){
 		double red = 0;
 		double green = 0;
 		double blue = 0;
