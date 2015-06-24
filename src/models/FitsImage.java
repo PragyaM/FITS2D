@@ -6,7 +6,6 @@ import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 
 import javafx.scene.image.Image;
@@ -122,7 +121,7 @@ public class FitsImage{
 	
 	private void setImageColours(double[] imageData, WritableRaster raster){
 		double max = hdu.getMaximumValue();
-		double cutOff = max * 0.03;
+		double cutOff = max * 0.025;
 		
 		int colBandRange = 250;
 		double segmentSize = (double) (cutOff/colBandRange);
