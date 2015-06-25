@@ -13,6 +13,12 @@ This README would normally document whatever steps are necessary to get your app
  
 * Releases can be found in the 'releases' folder
 
+* Dependencies
+nom tam fits library: http://heasarc.gsfc.nasa.gov/docs/heasarc/fits/java/v1.0/v1.12.0/
+Apache Commons compression library: https://commons.apache.org/proper/commons-compress/
+Java 1.8
+If you are on Linux, you may require OpenJFX.
+
 ### Who do I talk to? ###
 
 * Owner/Admin: Pragya Mohan
