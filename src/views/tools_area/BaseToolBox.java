@@ -17,7 +17,7 @@ public abstract class BaseToolBox extends GridPane{
 		add(headingLabel, 0, 0);
 		headingLabel.setPadding(new Insets(0, 0, 5, 0));
 		
-		this.setStyle("-fx-border: 2px solid; -fx-border-color: orange; -fx-border-radius: 5;");
+		this.setStyle("-fx-border: solid; -size: 2px; -fx-border-color: orange; -fx-border-radius: 5;");
 	}
 
 }
