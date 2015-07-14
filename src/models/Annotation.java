@@ -35,8 +35,7 @@ public class Annotation implements EventHandler<MouseEvent>{
 	public void draw() {
 		for (Region region : regions){
 			for (Point pixel : region.getPixels()){
-				gc.getPixelWriter().setColor(pixel.x, pixel.y, color);
-				gc.fillRect(pixel.x, pixel.y, 0, 0);
+				pw.setColor(pixel.x, pixel.y, color);
 			}
 		}
 	}

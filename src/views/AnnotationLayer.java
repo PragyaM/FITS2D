@@ -116,9 +116,7 @@ public class AnnotationLayer extends Canvas{
 	}
 
 	public void drawAllAnnotations(){
-		System.out.println("reaching here");
 		for (Annotation annotation : annotations) {
-			System.out.println("drawing an annotation");
 			annotation.draw();
 		}
 	}
@@ -152,7 +150,7 @@ public class AnnotationLayer extends Canvas{
 		String annotationsString = "FitsImageViewerAnnotations";
 
 		for (Annotation a : annotations){
-			annotationsString = annotationsString + "\n*" + a.toString();
+			annotationsString = annotationsString + a.toString() + "\n*\n";
 		}
 
 		try {
@@ -181,7 +179,7 @@ public class AnnotationLayer extends Canvas{
 
 				//Delimit annotations with "*"
 				while ((line = reader.readLine()) != null){
-					//Within annotations, delimit regions by newline
+					//Within annotations, delimit regions by "r"
 
 					if (line.startsWith("r")){
 						annotation.addRegion(regionFromString(line));
