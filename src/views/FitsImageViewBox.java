@@ -85,4 +85,8 @@ public class FitsImageViewBox extends ScrollPane{
 	public FitsImage getFitsImage(){
 		return fitsImage;
 	}
+
+	public void refreshImage() {
+		view.setImage(fitsImage.getImage());
+	}
 }

@@ -126,6 +126,10 @@ public class MainWindow{
 	public TopMenuBar getTopMenuBar(){
 		return topMenuBar;
 	}
+	
+	public ToolsAreaBox getToolsAreaBox(){
+		return toolsArea;
+	}
 
 	public EventHandler<? super ZoomEvent> zoomImage(GUIController app) {
 		return (final ZoomEvent e) -> {

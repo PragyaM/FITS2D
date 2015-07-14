@@ -28,6 +28,8 @@ public class FitsImage{
 	private int height;
 	
 	private double[] imageFriendlyData;
+	private Color nanColour;
+	
 	private double[][] processingFriendlyData;
 	private Image image;
 	private GUIController controller;
@@ -40,6 +42,7 @@ public class FitsImage{
 		width = hdu.getAxes()[1];
 		height = hdu.getAxes()[0];
 		this.tiler =  hdu.getTiler();
+		setNanColour(controller.getNanColour());
 		prepareData();
 		writeImage();
 	}
@@ -50,7 +53,7 @@ public class FitsImage{
 		try {
 			Object dataArray = tiler.getTile(new int[]{0, 0}, hdu.getAxes());
 			img = (double[]) ArrayFuncs.convertArray(dataArray, double.class);
-			processingFriendlyData =  (double[][]) ArrayFuncs.convertArray(hdu.getKernel(), double.class);//(float[][]) hdu.getKernel();
+			processingFriendlyData =  (double[][]) ArrayFuncs.convertArray(hdu.getKernel(), double.class);
 			imageFriendlyData = new double[width * height];
 			for (int h = height - 1; h >= 0; h--){
 				for (int w = 0; w < width; w++){
@@ -105,7 +108,7 @@ public class FitsImage{
 	
 	public void writeImage() throws IOException{
 		//write image data
-		BufferedImage im = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
+		BufferedImage im = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		
 		WritableRaster raster = im.getRaster();
 		setImageColours(imageFriendlyData, raster);
@@ -117,6 +120,10 @@ public class FitsImage{
 		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 
 		image = new Image(in);
+	}
+	
+	public void setNanColour(Color replacement) throws IOException{
+		nanColour = replacement;
 	}
 	
 	private void setImageColours(double[] imageData, WritableRaster raster){
@@ -131,14 +138,14 @@ public class FitsImage{
 			int x = i % width;
 			int y = (int) Math.ceil(i / width);
 			if (isNaN(val) || val <= 0) {
-				raster.setSample(x, y, 0, 0);
+				raster.setPixel(x, y, new double[]{nanColour.getRed()*250, nanColour.getGreen()*250, nanColour.getBlue()*250, nanColour.getOpacity()*250});
 			} 
 			else if (val > cutOff){
-				raster.setSample(x, y, 0, 250);
+				raster.setPixel(x, y, new double[]{250, 250, 250,250});
 			}
 			else {
 				double colVal = val/segmentSize;
-				raster.setSample(x, y, 0, colVal);
+				raster.setPixel(x, y, new double[]{colVal, colVal, colVal, 250});
 			}
 		}
 	}
@@ -237,5 +244,9 @@ public class FitsImage{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public Color getNanColour() {
+		return nanColour;
 	}
 }

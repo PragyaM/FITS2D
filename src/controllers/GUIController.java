@@ -8,9 +8,12 @@ import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.AccessibleAttribute;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
@@ -144,5 +147,34 @@ public class GUIController{
 	
 	public void handle(Exception e) {
 		ui.displayMessage(e.getMessage());
+	}
+
+	public EventHandler<ActionEvent> changeNanColour() {
+		// TODO Auto-generated method stub
+		return (final ActionEvent e) -> {
+			Color nanColour = ((ColorPicker) e.getSource()).getValue();
+			try {
+				ui.getImageViewBox().getFitsImage().setNanColour(nanColour);
+				refreshImage();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		};
+	}
+	
+	public void refreshImage(){
+		try {
+			ui.getImageViewBox().getFitsImage().writeImage();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ui.getImageViewBox().refreshImage();
+	}
+
+	public Color getNanColour() {
+		// TODO Auto-generated method stub
+		return ui.getToolsAreaBox().getColourToolBox().getNanColourPickerColour();
 	}
 }
