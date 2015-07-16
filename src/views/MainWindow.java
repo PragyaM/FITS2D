@@ -134,11 +134,12 @@ public class MainWindow{
 	public EventHandler<? super ZoomEvent> zoomImage(GUIController app) {
 		return (final ZoomEvent e) -> {
 			double zoomFactor = e.getZoomFactor();
-			Scale scale = new Scale();
-			scale.setX(zoomFactor);
-			scale.setY(zoomFactor);
+			double pivotX = e.getX();
+			double pivotY = e.getY();
+			Scale scale = new Scale(zoomFactor, zoomFactor, pivotX, pivotY); //FIXME setting a pivot point appears to have no effect
 			imageViewBox.getImageView().getTransforms().add(scale);
 			imageViewBox.getAnnotationLayer().getTransforms().add(scale);
+			imageViewBox.getAnnotationLayer().getGraphicsContext2D().scale(zoomFactor, zoomFactor);
 		};
 	}
 
