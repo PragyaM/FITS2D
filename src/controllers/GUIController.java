@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.AccessibleAttribute;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ColorPicker;
@@ -164,12 +163,7 @@ public class GUIController{
 	}
 	
 	public void refreshImage(){
-		try {
-			ui.getImageViewBox().getFitsImage().writeImage();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		ui.getImageViewBox().getFitsImage().writeImage();
 		ui.getImageViewBox().refreshImage();
 	}
 
