@@ -89,7 +89,7 @@ public class Annotation implements EventHandler<MouseEvent>{
 				region = new Region();
 				Point p = new Point((int) event.getX(), (int) event.getY());
 				
-				ArrayList<Point> freshPixels = (FillRegion.fill(canvas, p));
+				ArrayList<Point> freshPixels = (FillRegion.fill(canvas, p, color));
 				region.addAll(freshPixels);
 				for (Point pixel : freshPixels){
 					pw.setColor(pixel.x, pixel.y, color);

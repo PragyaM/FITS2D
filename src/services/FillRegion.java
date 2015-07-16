@@ -2,72 +2,26 @@ package services;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Deque;
-import java.util.LinkedList;
 
-import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.PixelReader;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
 public class FillRegion {
 	
-	private static int width;
-	private static int height;
-	private static WritableImage wImg;
-	private static PixelReader pRead;
-	private static PixelWriter pWrite;
-	private static GraphicsContext gc;
-	private static Canvas canvas;
-	
-	public static ArrayList<Point> fill(Canvas c, Point origin){
-		ArrayList<Point> points = new ArrayList<Point>();
+	public static ArrayList<Point> fill(Canvas c, Point orig, Color replacementColor){
 		
-		//setup required information:
-		canvas = c;
-		width = (int) canvas.getWidth();
-		height = (int) canvas.getHeight();
-		gc = canvas.getGraphicsContext2D();
-		wImg = new WritableImage(width, height); //FIXME: doesn't take zoom into account
-		pWrite = gc.getPixelWriter();
-		updatePixelReader();
-		
-		Color target = pRead.getColor(origin.x, origin.y);
-		points = doFill(origin, target, Color.RED, points);
-		
-		return points;
-	}
-	
-	//FIXME: Make this iterative instead of recursive
-	private static ArrayList<Point> doFill(Point node, Color target, Color replacement, ArrayList<Point> points){
-		if (target.equals(replacement)){
-			return points;
-		}
-		else if (!(pRead.getColor(node.x, node.y).equals(target))){
-			return points;
-		}
-		else if (node.x < 0 || node.y < 0 || node.x > width || node.y > height){
-			return points;
-		}
-		pWrite.setColor(node.x, node.y, replacement);
-		points.add(node);
-		updatePixelReader();
-		
-		doFill(new Point(node.x-1, node.y), target, replacement, points);
-		doFill(new Point(node.x+1, node.y), target, replacement, points);
-		doFill(new Point(node.x, node.y-1), target, replacement, points);
-		doFill(new Point(node.x, node.y+1), target, replacement, points);
-		return points;
-	}
-	
-	private static void updatePixelReader(){
-		SnapshotParameters sp = new SnapshotParameters();
-	    sp.setFill(Color.TRANSPARENT);
-		canvas.snapshot(sp, wImg);
-		pRead = wImg.getPixelReader();
-	}
+		DoFill doFill = new DoFill(c, orig, replacementColor);
+		Thread t = new Thread(doFill);
+		t.setDaemon(true);
+		t.start();
 
+		try {
+			t.join(0);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		return doFill.getPoints();
+		
+	}
 }
