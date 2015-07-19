@@ -24,7 +24,6 @@ public class CreateMask {
 		
 		//get base type of original data
 		Class type = ArrayFuncs.getBaseClass(fitsImage.getHDU().getKernel());
-		maskFits.addHDU(FitsFactory.HDUFactory(ArrayFuncs.convertArray(newData, type)));
 		
 		if (type == float.class){
 			float[][] floatArray = (float[][]) maskFits.getHDU(0).getKernel();
