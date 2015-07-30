@@ -8,11 +8,11 @@ import controllers.GUIController;
 public class MaskToolBox extends BaseToolBox{
 	
 	public MaskToolBox(GUIController controller, ToggleGroup group){
-		super("Masking Tools");
+		super("Region Cutting Tools");
 		
-		ToggleButton drawMaskToolButton = new ToggleButton("Mask Draw Tool");
-		ToggleButton fillMaskToolButton = new ToggleButton("Mask Bucket Tool");
-		Button createMaskButton = new Button("Create Mask From Selection");
+		ToggleButton drawMaskToolButton = new ToggleButton("Region Draw Tool");
+		ToggleButton fillMaskToolButton = new ToggleButton("Region Bucket Tool");
+		Button createMaskButton = new Button("Cut Region From Selection");
 		
 		drawMaskToolButton.setToggleGroup(group);
 		fillMaskToolButton.setToggleGroup(group);
