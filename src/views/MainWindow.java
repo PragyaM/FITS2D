@@ -2,9 +2,7 @@ package views;
 
 import java.awt.Toolkit;
 import java.io.File;
-import java.io.IOException;
 
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.VPos;
 import javafx.scene.Group;
@@ -17,8 +15,6 @@ import javafx.scene.transform.Scale;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import nom.tam.fits.Fits;
-import nom.tam.fits.FitsException;
 import views.tools_area.ToolsAreaBox;
 import views.top_bar_menu.TopMenuBar;
 import controllers.GUIController;
@@ -60,31 +56,19 @@ public class MainWindow{
 		return controller;
 	}
 	
-	public EventHandler<javafx.event.ActionEvent> showFitsFileChooser(){
-		return (final ActionEvent e) -> {
+	public File openFile(String title, String type) {
 			//set up file chooser
 			FileChooser fileChooser = new FileChooser();
-			fileChooser.setTitle("Select a FITS image file");
-			fileChooser.getExtensionFilters().add(
-	                new FileChooser.ExtensionFilter("FITS files", "*.fits"));
+			fileChooser.setTitle(title);
+			if (!type.isEmpty()){
+				fileChooser.getExtensionFilters().add(
+		                new FileChooser.ExtensionFilter(type + " files", "*." + type.toLowerCase()));
+			}
 	                
 			//fetch selected file and handle appropriately
 			File file = fileChooser.showOpenDialog(stage);
-            System.out.println("Opening: " + file.getName());
-            //TODO: return null if cancelled
-            Fits fitsFile;
-			try {
-				fitsFile = new Fits(file);
-				getImageViewBox().addImage(fitsFile);
-				getImageViewBox().setVisible(true);
-			} catch (FitsException e2) {
-				// TODO Notify user that the selected file is not a FITS file with image data
-				e2.printStackTrace();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		};
+	        System.out.println("Opening: " + file.getName());
+			return file;
 	}
 	
 	public void addImageViewBox(){
@@ -140,19 +124,6 @@ public class MainWindow{
 			imageViewBox.getImageView().getTransforms().add(scale);
 			imageViewBox.getAnnotationLayer().getTransforms().add(scale);
 			imageViewBox.getAnnotationLayer().getGraphicsContext2D().scale(zoomFactor, zoomFactor);
-		};
-	}
-
-	public EventHandler<ActionEvent> openAnnotationsFromFile() {
-		return (final ActionEvent e) -> {
-			//set up file chooser
-			FileChooser fileChooser = new FileChooser();
-			fileChooser.setTitle("Select an annotation file");
-	                
-			//fetch selected file and handle appropriately
-			File file = fileChooser.showOpenDialog(stage);
-	        System.out.println("Opening: " + file.getName());
-			this.getImageViewBox().getAnnotationLayer().addAnnotationsFromFile(file);
 		};
 	}
 

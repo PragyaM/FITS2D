@@ -19,11 +19,11 @@ public class AnnotationToolBox extends BaseToolBox{
         this.add(drawToolButton, 0, 1);
         this.add(fillToolButton, 1, 1);
         
-        drawToolButton.setOnAction(controller.toggleDrawMode(drawToolButton));
-        fillToolButton.setOnAction(controller.toggleFillMode(fillToolButton));
+        drawToolButton.setOnAction(controller.getAnnotationsController().toggleDrawMode(drawToolButton));
+        fillToolButton.setOnAction(controller.getAnnotationsController().toggleFillMode(fillToolButton));
         
         CheckBox hideAnnotationsButton = new CheckBox("Hide Annotations");
         add(hideAnnotationsButton, 0, 2);
-        hideAnnotationsButton.setOnAction(controller.toggleAnnotationsVisible(hideAnnotationsButton));
+        hideAnnotationsButton.setOnAction(controller.getAnnotationsController().toggleAnnotationsVisible(hideAnnotationsButton));
 	}
 }

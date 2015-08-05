@@ -25,14 +25,16 @@ public class AnnotationLayer extends Canvas{
 	private Annotation currentSelection;
 	public enum Mode {NONE, ANNOTATE_DRAW, ANNOTATE_FILL, MASK_DRAW, MASK_FILL};
 	public Mode mode;
+	private FitsImageViewBox container;
 
-	public AnnotationLayer(double width, double height){
+	public AnnotationLayer(double width, double height, FitsImageViewBox viewBox){
 		super(width, height);
 		annotations = new ArrayList<Annotation>();
 		selections = new ArrayList<Annotation>();
 		gc = this.getGraphicsContext2D();
 		gc.setLineWidth(2);
 		mode = Mode.NONE;
+		this.container = viewBox;
 	}
 	
 	public void setDrawMode(Boolean enabled){
@@ -43,9 +45,11 @@ public class AnnotationLayer extends Canvas{
 				makeNewAnnotation();
 			} else this.addEventHandler(MouseEvent.ANY, currentAnnotation);
 			mode = Mode.ANNOTATE_DRAW;
+			container.setPannable(false);
 		} else {
 			turnAnnotatingOff();
 			mode = Mode.NONE;
+			container.setPannable(true);
 		}
 	}
 	
@@ -57,9 +61,11 @@ public class AnnotationLayer extends Canvas{
 				makeNewAnnotation();
 			} else this.addEventHandler(MouseEvent.ANY, currentAnnotation);
 			mode = Mode.ANNOTATE_FILL;
+			container.setPannable(false);
 		} else {
 			turnAnnotatingOff();
 			mode = Mode.NONE;
+			container.setPannable(true);
 		}
 	}
 	
@@ -71,9 +77,11 @@ public class AnnotationLayer extends Canvas{
 				makeNewSelection();
 			} else this.addEventHandler(MouseEvent.ANY, currentSelection);
 			mode = Mode.MASK_DRAW;
+			container.setPannable(false);
 		} else {
 			turnSelectingOff();
 			mode = Mode.NONE;
+			container.setPannable(true);
 		}
 	}
 	
@@ -85,9 +93,11 @@ public class AnnotationLayer extends Canvas{
 				makeNewSelection();
 			} else this.addEventHandler(MouseEvent.ANY, currentSelection);
 			mode = Mode.MASK_FILL;
+			container.setPannable(false);
 		} else {
 			turnSelectingOff();
 			mode = Mode.NONE;
+			container.setPannable(true);
 		}
 	}
 

@@ -1,28 +1,22 @@
 package controllers;
 
-import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.AccessibleAttribute;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ColorPicker;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
-import nom.tam.util.BufferedFile;
-import services.CreateMask;
 import views.MainWindow;
 
 public class GUIController{
 	private MainWindow ui;
+	private AnnotationsController annotationsController;
 
 	public GUIController(Application app){
 		//this is where previously customized configurations should be applied
@@ -31,15 +25,36 @@ public class GUIController{
 	//TODO handle uncaught exceptions
 	public void start(Stage primaryStage) throws FitsException, IOException{
 		ui = new MainWindow(primaryStage, this);
+		annotationsController = new AnnotationsController(ui);
 		ui.addTopMenuBar(this);
 		ui.addImageViewBox();
 		ui.addToolsAreaBox(this);
 		ui.display();
 		ui.getImageViewBox().setOnZoom(ui.zoomImage(this));
 	}
+	
+	public AnnotationsController getAnnotationsController(){
+		return annotationsController;
+	}
 
 	public EventHandler<javafx.event.ActionEvent> openFits(){
-		return ui.showFitsFileChooser();
+		return (final ActionEvent e) -> {
+			//set up file chooser
+			File file = ui.openFile("Select a FITS image file", "FITS");
+            Fits fitsFile;
+			try {
+				fitsFile = new Fits(file);
+				ui.getImageViewBox().addImage(fitsFile);
+				ui.getImageViewBox().setVisible(true);
+				annotationsController.initialise(this, ui.getImageViewBox().getAnnotationLayer(), ui.getImageViewBox());
+			} catch (FitsException e2) {
+				// TODO Notify user that the selected file is not a FITS file with image data
+				e2.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		};
 	}
 
 	public EventHandler<javafx.event.ActionEvent> toggleImageScrollbars(CheckMenuItem toggle){
@@ -48,100 +63,6 @@ public class GUIController{
 				ui.getImageViewBox().enableScrollBars();
 			}
 			else  ui.getImageViewBox().disableScrollBars();
-		};
-	}
-
-	public EventHandler<ActionEvent> toggleDrawMode(ToggleButton toggle){
-		return (final ActionEvent e) -> {
-			if (toggle.isSelected()){ //enable drawing mode
-				ui.getImageViewBox().getAnnotationLayer().setDrawMode(true);
-				ui.getImageViewBox().setPannable(false);
-			}
-			else if (!toggle.isSelected()){ //disable drawing mode
-				ui.getImageViewBox().getAnnotationLayer().setDrawMode(false);
-				ui.getImageViewBox().setPannable(true);
-			}
-		};
-	}
-	
-	public EventHandler<ActionEvent> toggleFillMode(ToggleButton toggle) {
-		return (final ActionEvent e) -> {
-			if (toggle.isSelected()){ //enable fill mode
-				ui.getImageViewBox().getAnnotationLayer().setFillMode(true);
-				ui.getImageViewBox().setPannable(false);
-			}
-			else if (!toggle.isSelected()){ //disable fill mode
-				ui.getImageViewBox().getAnnotationLayer().setFillMode(false);
-				ui.getImageViewBox().setPannable(true);
-			}
-		};
-	}
-	
-	public EventHandler<ActionEvent> toggleMaskDrawMode(ToggleButton toggle){
-		return (final ActionEvent e) -> {
-			if (toggle.isSelected()){ //enable drawing mode
-				ui.getImageViewBox().getAnnotationLayer().setMaskDrawMode(true);
-				ui.getImageViewBox().setPannable(false);
-			}
-			else if (!toggle.isSelected()){ //disable drawing mode
-				ui.getImageViewBox().getAnnotationLayer().setMaskDrawMode(false);
-				ui.getImageViewBox().setPannable(true);
-			}
-		};
-	}
-	
-	public EventHandler<ActionEvent> toggleMaskFillMode(ToggleButton toggle) {
-		return (final ActionEvent e) -> {
-			if (toggle.isSelected()){ //enable fill mode
-				ui.getImageViewBox().getAnnotationLayer().setMaskFillMode(true);
-				ui.getImageViewBox().setPannable(false);
-			}
-			else if (!toggle.isSelected()){ //disable fill mode
-				ui.getImageViewBox().getAnnotationLayer().setMaskFillMode(false);
-				ui.getImageViewBox().setPannable(true);
-			}
-		};
-	}
-
-	public EventHandler<ActionEvent> saveAnnotations() {
-		return (final ActionEvent e) -> {
-			File file = (File) ui.showSaveDialog("TXT");
-			ui.getImageViewBox().getAnnotationLayer().writeAnnotationsToFile(file);
-		};
-	}
-
-	public EventHandler<ActionEvent> openAnnotations() {
-		return ui.openAnnotationsFromFile();
-	}
-
-	public EventHandler<ActionEvent> toggleAnnotationsVisible(
-			CheckBox hideAnnotationsButton) {
-		return (final ActionEvent e) -> {
-			if (hideAnnotationsButton.isSelected()){
-				ui.getImageViewBox().getAnnotationLayer().hideAnnotations();
-			}
-			else {
-				ui.getImageViewBox().getAnnotationLayer().drawAllAnnotations();
-			}
-		};
-	}
-
-	public EventHandler<ActionEvent> createMaskFromSelection() {
-		return (final ActionEvent e) -> {
-			ArrayList<Point> fullSelection = ui.getImageViewBox().getAnnotationLayer().getSelectedArea();
-			try {
-				Fits maskFits = CreateMask.mapToFits(fullSelection, ui.getImageViewBox().getFitsImage(), (int) ui.getImageViewBox().getAnnotationLayer().getWidth(), (int) ui.getImageViewBox().getAnnotationLayer().getHeight());
-				
-				BufferedFile bf = new BufferedFile(ui.showSaveDialog("FITS"), "rw");
-				maskFits.write(bf);
-				bf.close();
-			} catch (FitsException e1) {
-				e1.printStackTrace();
-				System.out.println(e1.getMessage());
-			} catch (IOException e1) {
-				e1.printStackTrace();
-				System.out.println(e1.getMessage());
-			}
 		};
 	}
 	

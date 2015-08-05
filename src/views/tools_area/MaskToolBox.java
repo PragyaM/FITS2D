@@ -21,8 +21,8 @@ public class MaskToolBox extends BaseToolBox{
 		this.add(fillMaskToolButton, 1, 1);
 		this.add(createMaskButton, 2, 1);
 		
-		drawMaskToolButton.setOnAction(controller.toggleMaskDrawMode(drawMaskToolButton));
-		fillMaskToolButton.setOnAction(controller.toggleMaskFillMode(fillMaskToolButton));
-		createMaskButton.setOnAction(controller.createMaskFromSelection());
+		drawMaskToolButton.setOnAction(controller.getAnnotationsController().toggleMaskDrawMode(drawMaskToolButton));
+		fillMaskToolButton.setOnAction(controller.getAnnotationsController().toggleMaskFillMode(fillMaskToolButton));
+		createMaskButton.setOnAction(controller.getAnnotationsController().createMaskFromSelection());
 	}
 }

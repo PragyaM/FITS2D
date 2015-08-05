@@ -28,11 +28,11 @@ public class TopMenuBar extends MenuBar{
 		
 		MenuItem saveAnnotations = new MenuItem("Save Annotations");
 		fileMenu.getItems().add(saveAnnotations);
-		saveAnnotations.setOnAction(app.saveAnnotations());
+		saveAnnotations.setOnAction(app.getAnnotationsController().saveAnnotations());
 		
 		MenuItem openAnnotations = new MenuItem("Open Annotations");
 		fileMenu.getItems().add(openAnnotations);
-		openAnnotations.setOnAction(app.openAnnotations());
+		openAnnotations.setOnAction(app.getAnnotationsController().openAnnotations());
 		
 		this.getMenus().add(fileMenu);
 	}
