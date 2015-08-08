@@ -10,7 +10,7 @@ public class FillRegion {
 	
 	public static ArrayList<Point> fill(Canvas c, Point orig, Color replacementColor){
 		
-		DoFill doFill = new DoFill(c, orig, replacementColor);
+		FillRegionTask doFill = new FillRegionTask(c, orig, replacementColor);
 		Thread t = new Thread(doFill);
 		t.setDaemon(true);
 		t.start();
