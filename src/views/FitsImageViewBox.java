@@ -63,7 +63,7 @@ public class FitsImageViewBox extends ScrollPane{
 	}
 	
 	public void setupAnnotationLayer(){
-		annotationLayer = new AnnotationLayer(view.minWidth(view.getFitHeight()), view.getFitHeight(), this);
+		annotationLayer = new AnnotationLayer(view.minWidth(view.getImage().getHeight()), view.minHeight(view.getImage().getWidth()), this);
 		annotationLayer.turnAnnotatingOff();
 		g.getChildren().add(annotationLayer);
 	}
