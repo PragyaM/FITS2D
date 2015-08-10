@@ -115,11 +115,9 @@ public class AnnotationsController {
 				maskFits.write(bf);
 				bf.close();
 			} catch (FitsException e1) {
-				e1.printStackTrace();
 				System.out.println(e1.getMessage());
 			} catch (IOException e1) {
-				e1.printStackTrace();
-				System.out.println(e1.getMessage());
+				System.out.println("cancelled");
 			}
 		};
 	}

@@ -49,10 +49,10 @@ public class GUIController{
 				annotationsController.initialise(this, ui.getImageViewBox().getAnnotationLayer(), ui.getImageViewBox());
 			} catch (FitsException e2) {
 				// TODO Notify user that the selected file is not a FITS file with image data
-				e2.printStackTrace();
+				System.out.println(e2.getMessage());
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				System.out.println("Cancelled.");
 			}
 		};
 	}
