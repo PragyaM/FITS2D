@@ -32,6 +32,9 @@ public class CreateMask {
 		Object data = newData;
 		ArrayFuncs.convertArray(data, type);
 		maskFits.addHDU(Fits.makeHDU(data));
+		
+		//set WCS reference coordinate values:
+		maskFits.getHDU(0).addValue("CRVAL1", 0.0, "Corrected RA");
 
 		return maskFits;
 	}

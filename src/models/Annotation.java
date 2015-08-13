@@ -12,6 +12,7 @@ import services.DrawLine;
 import services.FillRegion;
 import views.AnnotationLayer;
 import views.AnnotationLayer.Mode;
+import views.FitsImageViewBox;
 
 
 public class Annotation implements EventHandler<MouseEvent>{
@@ -24,9 +25,11 @@ public class Annotation implements EventHandler<MouseEvent>{
 	private Point currentPoint;
 	private PixelWriter pw;
 	private AnnotationLayer canvas;
+	private FitsImage image;
 
-	public Annotation(AnnotationLayer canvas, Color color){
+	public Annotation(AnnotationLayer canvas, FitsImage image, Color color){
 		this.canvas = canvas;
+		this.image = image;
 		this.gc = canvas.getGraphicsContext2D();
 		this.color = color;
 		this.pw = gc.getPixelWriter();

@@ -114,13 +114,13 @@ public class AnnotationLayer extends Canvas{
 	}
 
 	private void makeNewAnnotation(){
-		currentAnnotation = new Annotation(this, Color.WHITE);
+		currentAnnotation = new Annotation(this, container.getFitsImage(), Color.WHITE);
 		this.addEventHandler(MouseEvent.ANY, currentAnnotation);
 		annotations.add(currentAnnotation);
 	}
 	
 	private void makeNewSelection(){
-		currentSelection = new Annotation(this, Color.YELLOW);
+		currentSelection = new Annotation(this, container.getFitsImage(), Color.YELLOW);
 		this.addEventHandler(MouseEvent.ANY, currentSelection);
 		selections.add(currentSelection);
 	}
@@ -185,7 +185,7 @@ public class AnnotationLayer extends Canvas{
 			//Check for "FitsImageViewerAnnotations" at beginning of file to validate format
 			if (reader.readLine().equalsIgnoreCase("FitsImageViewerAnnotations")){ //continue
 				String line;
-				Annotation annotation = new Annotation(this, Color.WHITE);
+				Annotation annotation = new Annotation(this, container.getFitsImage(), Color.WHITE);
 
 				//Delimit annotations with "*"
 				while ((line = reader.readLine()) != null){
@@ -196,7 +196,7 @@ public class AnnotationLayer extends Canvas{
 					}
 					else if (line.equalsIgnoreCase("*")){
 						annotations.add(annotation);
-						annotation = new Annotation(this, Color.WHITE);
+						annotation = new Annotation(this, container.getFitsImage(), Color.WHITE);
 					}
 				}
 			}
