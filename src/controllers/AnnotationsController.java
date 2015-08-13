@@ -20,7 +20,7 @@ import views.MainWindow;
 public class AnnotationsController {
 	
 	private AnnotationLayer annotationLayer;
-	private FitsImageViewBox container;
+	private FitsImageViewBox imageViewBox;
 	
 	private MainWindow ui;
 	
@@ -28,9 +28,9 @@ public class AnnotationsController {
 		this.ui = mainWindow;
 	}
 	
-	public void initialise(GUIController guiController, AnnotationLayer annotationLayer, FitsImageViewBox viewBox){
-		this.annotationLayer = annotationLayer;
-		this.container = viewBox;
+	public void initialise(FitsImageViewBox imageViewBox){
+		this.imageViewBox = imageViewBox;
+		this.annotationLayer = imageViewBox.getAnnotationLayer();
 	}
 	
 	public EventHandler<ActionEvent> toggleDrawMode(ToggleButton toggle){
@@ -107,7 +107,7 @@ public class AnnotationsController {
 		return (final ActionEvent e) -> {
 			ArrayList<Point> fullSelection = annotationLayer.getSelectedArea();
 			try {
-				Fits maskFits = CreateMask.mapToFits(fullSelection, container.getFitsImage(), 
+				Fits maskFits = CreateMask.mapToFits(fullSelection, imageViewBox.getFitsImage(), 
 						(int) annotationLayer.getWidth(), 
 						(int) annotationLayer.getHeight());
 				

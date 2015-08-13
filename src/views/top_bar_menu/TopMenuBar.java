@@ -41,7 +41,7 @@ public class TopMenuBar extends MenuBar{
 		Menu windowMenu = new Menu("Window");
 		CheckMenuItem toggleImageScroll = new CheckMenuItem("Show image scrollbars");
 		windowMenu.getItems().add(toggleImageScroll);
-		toggleImageScroll.setOnAction(app.toggleImageScrollbars(toggleImageScroll));
+		toggleImageScroll.setOnAction(app.getImageController().toggleImageScrollbars(toggleImageScroll));
 		this.getMenus().add(windowMenu);
 	}
 	

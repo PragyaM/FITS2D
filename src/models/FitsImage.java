@@ -20,6 +20,7 @@ import nom.tam.fits.ImageHDU;
 import nom.tam.image.StandardImageTiler;
 import nom.tam.util.ArrayFuncs;
 import controllers.GUIController;
+import controllers.ImageController;
 
 public class FitsImage{
 	private ImageHDU hdu;
@@ -33,10 +34,10 @@ public class FitsImage{
 
 	private double[][] processingFriendlyData;
 	private Image image;
-	private GUIController controller;
+	private ImageController controller;
 
 	//TODO handle uncaught exceptions
-	public FitsImage(Fits fitsFile, GUIController controller) throws FitsException, IOException{
+	public FitsImage(Fits fitsFile, ImageController controller) throws FitsException, IOException{
 		this.controller = controller;
 		this.fitsFile = fitsFile;
 		this.hdu = (ImageHDU) fitsFile.getHDU(0);;
@@ -46,6 +47,7 @@ public class FitsImage{
 		setNanColour(controller.getNanColour());
 		prepareData();
 		writeImage();
+		printFitsInfo();
 	}
 
 	private void prepareData(){
@@ -231,16 +233,24 @@ public class FitsImage{
 	//TODO add methods for manipulating FITS image data
 
 	public void printFitsInfo(){
-		float[][] data = (float[][]) hdu.getKernel();
-		for (int i = 0; i < data.length; i++){
-			for (int j = 0; j < data[i].length; j++){
-				System.out.print(data[i][j] + ", ");
-			}
-			System.out.println();
-		}
-
 		System.out.println("Number of HDUs: " + fitsFile.getNumberOfHDUs());
 		System.out.println("Author: " + hdu.getAuthor());
+		//CRVAL1 and CRVAL2 describe the coordinates for the center of the image
+		System.out.println("NAXIS1: " + hdu.getHeader().getDoubleValue("NAXIS1"));
+		System.out.println("NAXIS2: " + hdu.getHeader().getDoubleValue("NAXIS2"));
+		
+		System.out.println("CRVAL1: " + hdu.getHeader().getDoubleValue("CRVAL1"));
+		System.out.println("CRVAL2: " + hdu.getHeader().getDoubleValue("CRVAL2"));
+		
+		System.out.println("CRPIX1: " + hdu.getHeader().getDoubleValue("CRPIX1"));
+		System.out.println("CRPIX2: " + hdu.getHeader().getDoubleValue("CRPIX2"));
+		
+		System.out.println("CDELT1: " + hdu.getHeader().getDoubleValue("CDELT1"));
+		System.out.println("CDELT2: " + hdu.getHeader().getDoubleValue("CDELT2"));
+		
+		System.out.println("CTYPE1: " + hdu.getHeader().getStringValue("CTYPE1"));
+		System.out.println("CTYPE2: " + hdu.getHeader().getStringValue("CTYPE2"));
+		
 		try {
 			System.out.println("BitPix" + hdu.getBitPix());
 		} catch (FitsException e) {
@@ -251,5 +261,13 @@ public class FitsImage{
 
 	public Color getNanColour() {
 		return nanColour;
+	}
+	
+	public double getCRVAL1(){
+		return hdu.getHeader().getDoubleValue("CRVAL1");
+	}
+	
+	public double getCRVAL2(){
+		return hdu.getHeader().getDoubleValue("CRVAL2");
 	}
 }
