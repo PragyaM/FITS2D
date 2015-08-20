@@ -6,6 +6,7 @@ import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -16,10 +17,10 @@ import javax.imageio.ImageIO;
 
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
+import nom.tam.fits.Header;
 import nom.tam.fits.ImageHDU;
 import nom.tam.image.StandardImageTiler;
 import nom.tam.util.ArrayFuncs;
-import controllers.GUIController;
 import controllers.ImageController;
 
 public class FitsImage{
@@ -103,6 +104,14 @@ public class FitsImage{
 
 	public double[][] getData(){
 		return processingFriendlyData;
+	}
+	
+	public String getHeaderString(){
+		Header hdr = hdu.getHeader();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream ps = new PrintStream(baos);
+		hdr.dumpHeader(ps);
+		return baos.toString();
 	}
 
 	public ImageHDU getHDU(){
@@ -235,21 +244,25 @@ public class FitsImage{
 	public void printFitsInfo(){
 		System.out.println("Number of HDUs: " + fitsFile.getNumberOfHDUs());
 		System.out.println("Author: " + hdu.getAuthor());
-		//CRVAL1 and CRVAL2 describe the coordinates for the center of the image
-		System.out.println("NAXIS1: " + hdu.getHeader().getDoubleValue("NAXIS1"));
-		System.out.println("NAXIS2: " + hdu.getHeader().getDoubleValue("NAXIS2"));
-		
-		System.out.println("CRVAL1: " + hdu.getHeader().getDoubleValue("CRVAL1"));
-		System.out.println("CRVAL2: " + hdu.getHeader().getDoubleValue("CRVAL2"));
-		
-		System.out.println("CRPIX1: " + hdu.getHeader().getDoubleValue("CRPIX1"));
-		System.out.println("CRPIX2: " + hdu.getHeader().getDoubleValue("CRPIX2"));
-		
-		System.out.println("CDELT1: " + hdu.getHeader().getDoubleValue("CDELT1"));
-		System.out.println("CDELT2: " + hdu.getHeader().getDoubleValue("CDELT2"));
-		
-		System.out.println("CTYPE1: " + hdu.getHeader().getStringValue("CTYPE1"));
-		System.out.println("CTYPE2: " + hdu.getHeader().getStringValue("CTYPE2"));
+
+//		System.out.println("NAXIS1: " + hdu.getHeader().getDoubleValue("NAXIS1"));
+//		System.out.println("NAXIS2: " + hdu.getHeader().getDoubleValue("NAXIS2"));
+//		
+//		System.out.println("CRVAL1: " + hdu.getHeader().getDoubleValue("CRVAL1"));
+//		System.out.println("CRVAL2: " + hdu.getHeader().getDoubleValue("CRVAL2"));
+//		
+//		System.out.println("CRPIX1: " + hdu.getHeader().getDoubleValue("CRPIX1"));
+//		System.out.println("CRPIX2: " + hdu.getHeader().getDoubleValue("CRPIX2"));
+//		
+//		System.out.println("CDELT1: " + hdu.getHeader().getDoubleValue("CDELT1"));
+//		System.out.println("CDELT2: " + hdu.getHeader().getDoubleValue("CDELT2"));
+//		
+//		System.out.println("CTYPE1: " + hdu.getHeader().getStringValue("CTYPE1"));
+//		System.out.println("CTYPE2: " + hdu.getHeader().getStringValue("CTYPE2"));
+//		
+//		System.out.println("CROTA1: " + hdu.getHeader().getDoubleValue("CROTA1"));
+//		System.out.println("CROTA2: " + hdu.getHeader().getDoubleValue("CROTA2"));
+		System.out.println(getHeaderString());
 		
 		try {
 			System.out.println("BitPix" + hdu.getBitPix());

@@ -1,20 +1,24 @@
 package services;
 
 import java.awt.Point;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 
 import javafx.scene.shape.Rectangle;
 import models.FitsImage;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
+import nom.tam.fits.Header;
 import nom.tam.util.ArrayFuncs;
 
 public class CreateMask {
 
 	private static Rectangle boundingBox;
 
-	public static Fits mapToFits(ArrayList<Point> maskPoints, FitsImage fitsImage, int cWidth, int cHeight) throws FitsException, IOException {
+	public static Fits mapToFits(ArrayList<Point> maskPoints, FitsImage fitsImage, 
+			int cWidth, int cHeight) throws FitsException, IOException {
 		//Get corresponding values from FITS data
 		Fits maskFits = new Fits();
 
@@ -34,12 +38,35 @@ public class CreateMask {
 		maskFits.addHDU(Fits.makeHDU(data));
 		
 		//set WCS reference coordinate values:
-		maskFits.getHDU(0).addValue("CRVAL1", 0.0, "Corrected RA");
+		setWCSRefs(maskFits, fitsImage);
 
 		return maskFits;
 	}
+	
+	private static void setWCSRefs(Fits newFits, FitsImage oldFits){
+		Header oldHeader = oldFits.getHDU().getHeader();
+		for (int i = 0; i < oldHeader.getNumberOfCards(); i++){
+			try {
+				newFits.getHDU(0).getHeader().addLine(oldHeader.nextCard());
+			} catch (FitsException | IOException e) {
+				e.printStackTrace();
+			}
+		}
+		//now adjust WCS values:
+		try {
+			newFits.getHDU(0).addValue("CRPIX1", 
+					oldHeader.getDoubleValue("CRPIX1") - boundingBox.getX(),
+					"X pixel of tangent point");
+			newFits.getHDU(0).addValue("CRPIX2", 
+					oldHeader.getDoubleValue("CRPIX2") - boundingBox.getY(),
+					"Y pixel of tangent point");
+		} catch (FitsException | IOException e) {
+			e.printStackTrace();
+		}
+	}
 
-	private static Rectangle getBoundingBox(FitsImage fitsImage, ArrayList<Point> maskPoints, int width, int height){
+	private static Rectangle getBoundingBox(FitsImage fitsImage, 
+			ArrayList<Point> maskPoints, int width, int height){
 		int minX = Integer.MAX_VALUE;
 		int maxX = 0;
 		int minY = Integer.MAX_VALUE;
@@ -70,15 +97,19 @@ public class CreateMask {
 		return data;
 	}
 
-	private static double[][] setMaskValues(double[][] data, ArrayList<Point> maskPoints, FitsImage fitsImage, int cw, int ch){
+	private static double[][] setMaskValues(double[][] data, ArrayList<Point> maskPoints, 
+			FitsImage fitsImage, int cw, int ch){
 
 		for (Point p : maskPoints){
 			ArrayList<Point> dataPositions = fitsImage.getDataPositions(p, cw, ch);
 			for (Point dataPos : dataPositions){
 				try {
-					data[dataPos.y - (int) boundingBox.getY()][dataPos.x - (int) boundingBox.getX()] = fitsImage.getValueAt(dataPos);
+					data[dataPos.y - (int) boundingBox.getY()][dataPos.x - (int) boundingBox.getX()] 
+							= fitsImage.getValueAt(dataPos);
 				} catch (Exception e) {
-					System.out.println(e.getMessage() + " out of bounds in (" + (dataPos.y - (int) boundingBox.getY()) + ", " + (dataPos.x - (int) boundingBox.getX()) + ")");
+					System.out.println(e.getMessage() + " out of bounds in (" 
+							+ (dataPos.y - (int) boundingBox.getY()) + ", " 
+							+ (dataPos.x - (int) boundingBox.getX()) + ")");
 				}
 			}
 		}
