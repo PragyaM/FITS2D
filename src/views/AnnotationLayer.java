@@ -167,17 +167,18 @@ public class AnnotationLayer extends Canvas{
 		BufferedWriter writer = null;
 		String fileDescriptorString = "FitsImageViewerAnnotations\n";
 		String headerString = this.container.getFitsImage().getHeaderString();
-		String annotationsString = "";
+		StringBuilder annotationsString = new StringBuilder();
 
 		for (Annotation a : annotations){
-			annotationsString = annotationsString + a.toString() + "\n*\n";
+			annotationsString.append(a.toString());
+			annotationsString.append("\n*\n");
 		}
 
 		try {
 			writer = new BufferedWriter(new FileWriter(aFile));
 			writer.write(fileDescriptorString);
 			writer.write(headerString);
-			writer.write(annotationsString);
+			writer.write(annotationsString.toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {

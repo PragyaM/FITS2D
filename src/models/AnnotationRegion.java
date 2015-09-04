@@ -72,12 +72,15 @@ public class AnnotationRegion {
 	}
 	
 	public String toString(){
-		String regionString = "r ";
+		StringBuilder regionString = new StringBuilder("r ");
 		
 		for (Point p : imagePixels){
-			regionString = regionString + String.format("%d,%d ", p.x, p.y);
+			regionString.append(p.x);
+			regionString.append(',');
+			regionString.append(p.y);
+			regionString.append(' ');
 		}
-		return regionString;
+		return regionString.toString();
 	}
 
 }

@@ -119,11 +119,12 @@ public class Annotation implements EventHandler<MouseEvent>{
 	}
 
 	public String toString(){
-		String annotationString = ""; //"Colour: " + color.toString();
+		StringBuilder annotationString = new StringBuilder(); //"Colour: " + color.toString();
 		for (AnnotationRegion region : regions){
-			annotationString = annotationString + "\n" +  region.toString();
+			annotationString.append('\n');
+			annotationString.append(region.toString());
 		}
-		return annotationString;
+		return annotationString.toString();
 	}
 
 }
