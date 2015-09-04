@@ -1,16 +1,14 @@
 package views;
 
+import java.io.File;
 import java.io.IOException;
 
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ZoomEvent;
-import javafx.scene.transform.Scale;
 import models.FitsImage;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
@@ -68,6 +66,8 @@ public class FitsImageViewBox extends ScrollPane{
 	
 	public void setupAnnotationLayer(){
 		annotationLayer = new AnnotationLayer(view.minWidth(view.getImage().getHeight()), view.minHeight(view.getImage().getWidth()), this);
+		System.out.println("Canvas width = " + annotationLayer.getWidth() + "  image width = " + getFitsImage().getWidth());
+		System.out.println("Canvas height = " + annotationLayer.getHeight() + "  image height = " + getFitsImage().getHeight());
 		annotationLayer.turnAnnotatingOff();
 		g.getChildren().add(annotationLayer);
 	}

@@ -7,8 +7,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashSet;
 
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -48,7 +46,6 @@ public class FitsImage{
 		setNanColour(controller.getNanColour());
 		prepareData();
 		writeImage();
-		printFitsInfo();
 	}
 
 	private void prepareData(){
@@ -71,27 +68,18 @@ public class FitsImage{
 		System.out.println(processingFriendlyData.length + ", " + processingFriendlyData[0].length);
 	}
 
-	public ArrayList<Point> getDataPositions(Point p, int cWidth, int cHeight){
-		HashSet<Point> points = new HashSet<Point>();
-		int x0 = (p.x * width)/cWidth;
-		int y0 = (p.y * height)/cHeight;
-
-		int x1 = x0 + width/cWidth;
-		int y1 = y0 + height/cHeight;
-
-		for (int x = x0; x <= x1; x++){
-			for (int y = y0; y <= y1; y++){
-				Point pos = new Point(x, height - y);
-				points.add(pos);
-			}
-		}
-		return (new ArrayList<Point>(points));
-	}
-
 	public double getValueAt(Point p){
 		if (p.x < width && p.y < height && p.x >= 0 && p.y >= 0){
 			return processingFriendlyData[p.y][p.x];
 		} else return processingFriendlyData[0][0];
+	}
+	
+	public int getHeight(){
+		return height;
+	}
+	
+	public int getWidth(){
+		return width;
 	}
 
 	public Fits getFitsFile(){
@@ -239,37 +227,8 @@ public class FitsImage{
 		return c;
 	}
 
-	//TODO add methods for manipulating FITS image data
-
 	public void printFitsInfo(){
-		System.out.println("Number of HDUs: " + fitsFile.getNumberOfHDUs());
-		System.out.println("Author: " + hdu.getAuthor());
-
-//		System.out.println("NAXIS1: " + hdu.getHeader().getDoubleValue("NAXIS1"));
-//		System.out.println("NAXIS2: " + hdu.getHeader().getDoubleValue("NAXIS2"));
-//		
-//		System.out.println("CRVAL1: " + hdu.getHeader().getDoubleValue("CRVAL1"));
-//		System.out.println("CRVAL2: " + hdu.getHeader().getDoubleValue("CRVAL2"));
-//		
-//		System.out.println("CRPIX1: " + hdu.getHeader().getDoubleValue("CRPIX1"));
-//		System.out.println("CRPIX2: " + hdu.getHeader().getDoubleValue("CRPIX2"));
-//		
-//		System.out.println("CDELT1: " + hdu.getHeader().getDoubleValue("CDELT1"));
-//		System.out.println("CDELT2: " + hdu.getHeader().getDoubleValue("CDELT2"));
-//		
-//		System.out.println("CTYPE1: " + hdu.getHeader().getStringValue("CTYPE1"));
-//		System.out.println("CTYPE2: " + hdu.getHeader().getStringValue("CTYPE2"));
-//		
-//		System.out.println("CROTA1: " + hdu.getHeader().getDoubleValue("CROTA1"));
-//		System.out.println("CROTA2: " + hdu.getHeader().getDoubleValue("CROTA2"));
-		System.out.println(getHeaderString());
 		
-		try {
-			System.out.println("BitPix" + hdu.getBitPix());
-		} catch (FitsException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	public Color getNanColour() {

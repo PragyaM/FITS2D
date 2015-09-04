@@ -1,12 +1,12 @@
 package services;
 
+import java.io.File;
 import java.io.IOException;
 
 import models.FitsImage;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.ImageHDU;
-import controllers.GUIController;
 import controllers.ImageController;
 
 public class BuildFitsImage {
