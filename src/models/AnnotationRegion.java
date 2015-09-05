@@ -83,4 +83,17 @@ public class AnnotationRegion {
 		return regionString.toString();
 	}
 
+	public void cropToBounds(double width, double height) {
+		ArrayList<Point> pixelsToDelete = new ArrayList<Point>();
+		
+		for (int i = 0; i < canvasPixels.size(); i++){
+			Point p = canvasPixels.get(i);
+			if (p.x < 0 || p.x >= width || p.y < 0 || p.y >= height) {
+				pixelsToDelete.add(p);
+			}
+		}
+		
+		canvasPixels.removeAll(pixelsToDelete);
+	}
+
 }

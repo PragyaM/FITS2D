@@ -93,6 +93,7 @@ public class Annotation implements EventHandler<MouseEvent>{
 			}
 
 			else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)){
+				region.cropToBounds(canvas.getWidth(), canvas.getHeight());
 				region.generateImagePixels(canvas.getHeight(), image.getHeight());
 				regions.add(region);
 
@@ -111,6 +112,7 @@ public class Annotation implements EventHandler<MouseEvent>{
 					pw.setColor(pixel.x, pixel.y, color);
 				}
 
+				region.cropToBounds(canvas.getWidth(), canvas.getHeight());
 				region.generateImagePixels(canvas.getHeight(), image.getHeight());
 				regions.add(region);
 				event.consume();
