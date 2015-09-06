@@ -9,17 +9,17 @@ public class ToolsAreaBox extends GridPane {
 	
 	private ColourToolBox colourTools;
 	
-	public ToolsAreaBox(GUIController parent){
+	public ToolsAreaBox(GUIController controller){
 		super();
 		setVgap(5);
 		setHgap(5);
 		setPadding(new Insets(10, 15, 10, 15));
 		ToggleGroup group = new ToggleGroup();
 		
-		colourTools = new ColourToolBox(parent, group);
+		colourTools = new ColourToolBox(controller.getImageController(), group);
 		add(colourTools, 0, 1);
-		add(new AnnotationToolBox(parent, group), 1, 1);
-		add(new MaskToolBox(parent, group), 2, 1);
+		add(new AnnotationToolBox(controller.getAnnotationsController(), group), 1, 1);
+		add(new MaskToolBox(controller, group), 2, 1);
 	}
 	
 	public ColourToolBox getColourToolBox(){

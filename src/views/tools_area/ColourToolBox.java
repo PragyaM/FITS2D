@@ -5,15 +5,16 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.paint.Color;
 import controllers.GUIController;
+import controllers.ImageController;
 
 public class ColourToolBox extends BaseToolBox{
 	
 	private ColorPicker nanColourPicker;
-	private GUIController parent;
+	private ImageController parent;
 
-	public ColourToolBox(GUIController parent, ToggleGroup group){
+	public ColourToolBox(ImageController controller, ToggleGroup group){
 		super("Colour Tools");
-		this.parent = parent;
+		this.parent = controller;
 		
 		nanColourPicker = new ColorPicker();
 		nanColourPicker.setPromptText("NaN value display colour");
@@ -21,7 +22,7 @@ public class ColourToolBox extends BaseToolBox{
 		add(new Label("Undefined value colour: "), 0, 1);
 		add(nanColourPicker, 1, 1);
 		
-		nanColourPicker.setOnAction(parent.changeNanColour());
+		nanColourPicker.setOnAction(controller.changeNanColour());
 		nanColourPicker.setValue(Color.BLACK);
 	}
 	

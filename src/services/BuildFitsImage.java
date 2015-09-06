@@ -1,20 +1,21 @@
 package services;
 
+import java.io.File;
 import java.io.IOException;
 
 import models.FitsImage;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.ImageHDU;
-import controllers.GUIController;
+import controllers.ImageController;
 
 public class BuildFitsImage {
 	private Fits fitsFile;
 	private ImageHDU hdu;
-	private GUIController controller;
+	private ImageController controller;
 
 	//TODO handle uncaught exceptions
-	public BuildFitsImage(Fits fitsFile, GUIController controller) throws FitsException, IOException{
+	public BuildFitsImage(Fits fitsFile, ImageController controller) throws FitsException, IOException{
 		this.controller = controller;
 		this.fitsFile = fitsFile;
 	}

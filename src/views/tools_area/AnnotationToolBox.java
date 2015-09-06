@@ -9,13 +9,14 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import controllers.GUIController;
+import controllers.AnnotationsController;
 
 public class AnnotationToolBox extends BaseToolBox{
 	
 	private ListView<String> annotationsList = new ListView<String>();
     private ObservableList<String> items = FXCollections.observableArrayList();
 	
-	public AnnotationToolBox(GUIController controller, ToggleGroup group){
+	public AnnotationToolBox(AnnotationsController controller, ToggleGroup group){
 		super("Annotation Tools");
 		
 		Image imageDraw = new Image(getClass().getResourceAsStream("/resources/pencil112.png"));
@@ -32,12 +33,12 @@ public class AnnotationToolBox extends BaseToolBox{
         this.add(drawToolButton, 0, 1);
         this.add(fillToolButton, 0, 2);
         
-        drawToolButton.setOnAction(controller.getAnnotationsController().toggleDrawMode(drawToolButton));
-        fillToolButton.setOnAction(controller.getAnnotationsController().toggleFillMode(fillToolButton));
+        drawToolButton.setOnAction(controller.toggleDrawMode(drawToolButton));
+        fillToolButton.setOnAction(controller.toggleFillMode(fillToolButton));
         
         CheckBox hideAnnotationsButton = new CheckBox("Hide all");
         add(hideAnnotationsButton, 0, 3);
-        hideAnnotationsButton.setOnAction(controller.getAnnotationsController().toggleAnnotationsVisible(hideAnnotationsButton));
+        hideAnnotationsButton.setOnAction(controller.toggleAnnotationsVisible(hideAnnotationsButton));
         
         addAnnotationItem("Test");
         annotationsList.autosize();

@@ -1,5 +1,6 @@
 package views;
 
+import java.io.File;
 import java.io.IOException;
 
 import javafx.scene.Group;
@@ -12,17 +13,18 @@ import models.FitsImage;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import services.BuildFitsImage;
+import controllers.ImageController;
 
 public class FitsImageViewBox extends ScrollPane{
 	private Group g;
 	private ImageView view;
 	private AnnotationLayer annotationLayer;
 	private FitsImage fitsImage;
-	private MainWindow container;
+	private ImageController controller;
 	
-	public FitsImageViewBox(MainWindow container){
+	public FitsImageViewBox(ImageController controller){
 		super();
-		this.container = container;
+		this.controller = controller;
 		this.setPannable(true);
 		setFitToWidth(true);
 		setFitToHeight(true);
@@ -40,7 +42,7 @@ public class FitsImageViewBox extends ScrollPane{
 	
 	public void addImage(Fits fitsFile) throws FitsException, IOException{
 		//retrieve image from FITS file
-		fitsImage = new BuildFitsImage(fitsFile, container.getController()).call();
+		fitsImage = new BuildFitsImage(fitsFile, controller).call();
 		Image image = fitsImage.getImage();
 		
 		//prepare the view which holds the image
@@ -64,6 +66,8 @@ public class FitsImageViewBox extends ScrollPane{
 	
 	public void setupAnnotationLayer(){
 		annotationLayer = new AnnotationLayer(view.minWidth(view.getImage().getHeight()), view.minHeight(view.getImage().getWidth()), this);
+		System.out.println("Canvas width = " + annotationLayer.getWidth() + "  image width = " + getFitsImage().getWidth());
+		System.out.println("Canvas height = " + annotationLayer.getHeight() + "  image height = " + getFitsImage().getHeight());
 		annotationLayer.turnAnnotatingOff();
 		g.getChildren().add(annotationLayer);
 	}

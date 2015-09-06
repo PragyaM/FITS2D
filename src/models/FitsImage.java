@@ -6,8 +6,7 @@ import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.io.PrintStream;
 
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -16,10 +15,11 @@ import javax.imageio.ImageIO;
 
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
+import nom.tam.fits.Header;
 import nom.tam.fits.ImageHDU;
 import nom.tam.image.StandardImageTiler;
 import nom.tam.util.ArrayFuncs;
-import controllers.GUIController;
+import controllers.ImageController;
 
 public class FitsImage{
 	private ImageHDU hdu;
@@ -33,10 +33,10 @@ public class FitsImage{
 
 	private double[][] processingFriendlyData;
 	private Image image;
-	private GUIController controller;
+	private ImageController controller;
 
 	//TODO handle uncaught exceptions
-	public FitsImage(Fits fitsFile, GUIController controller) throws FitsException, IOException{
+	public FitsImage(Fits fitsFile, ImageController controller) throws FitsException, IOException{
 		this.controller = controller;
 		this.fitsFile = fitsFile;
 		this.hdu = (ImageHDU) fitsFile.getHDU(0);;
@@ -68,27 +68,18 @@ public class FitsImage{
 		System.out.println(processingFriendlyData.length + ", " + processingFriendlyData[0].length);
 	}
 
-	public ArrayList<Point> getDataPositions(Point p, int cWidth, int cHeight){
-		HashSet<Point> points = new HashSet<Point>();
-		int x0 = (p.x * width)/cWidth;
-		int y0 = (p.y * height)/cHeight;
-
-		int x1 = x0 + width/cWidth;
-		int y1 = y0 + height/cHeight;
-
-		for (int x = x0; x <= x1; x++){
-			for (int y = y0; y <= y1; y++){
-				Point pos = new Point(x, height - y);
-				points.add(pos);
-			}
-		}
-		return (new ArrayList<Point>(points));
-	}
-
 	public double getValueAt(Point p){
 		if (p.x < width && p.y < height && p.x >= 0 && p.y >= 0){
 			return processingFriendlyData[p.y][p.x];
 		} else return processingFriendlyData[0][0];
+	}
+	
+	public int getHeight(){
+		return height;
+	}
+	
+	public int getWidth(){
+		return width;
 	}
 
 	public Fits getFitsFile(){
@@ -101,6 +92,14 @@ public class FitsImage{
 
 	public double[][] getData(){
 		return processingFriendlyData;
+	}
+	
+	public String getHeaderString(){
+		Header hdr = hdu.getHeader();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream ps = new PrintStream(baos);
+		hdr.dumpHeader(ps);
+		return baos.toString();
 	}
 
 	public ImageHDU getHDU(){
@@ -228,28 +227,19 @@ public class FitsImage{
 		return c;
 	}
 
-	//TODO add methods for manipulating FITS image data
-
 	public void printFitsInfo(){
-		float[][] data = (float[][]) hdu.getKernel();
-		for (int i = 0; i < data.length; i++){
-			for (int j = 0; j < data[i].length; j++){
-				System.out.print(data[i][j] + ", ");
-			}
-			System.out.println();
-		}
-
-		System.out.println("Number of HDUs: " + fitsFile.getNumberOfHDUs());
-		System.out.println("Author: " + hdu.getAuthor());
-		try {
-			System.out.println("BitPix" + hdu.getBitPix());
-		} catch (FitsException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 	}
 
 	public Color getNanColour() {
 		return nanColour;
+	}
+	
+	public double getCRVAL1(){
+		return hdu.getHeader().getDoubleValue("CRVAL1");
+	}
+	
+	public double getCRVAL2(){
+		return hdu.getHeader().getDoubleValue("CRVAL2");
 	}
 }

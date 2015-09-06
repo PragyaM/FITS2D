@@ -18,6 +18,7 @@ import javafx.stage.StageStyle;
 import views.tools_area.ToolsAreaBox;
 import views.top_bar_menu.TopMenuBar;
 import controllers.GUIController;
+import controllers.ImageController;
 
 public class MainWindow{
 	private FitsImageViewBox imageViewBox;
@@ -70,10 +71,27 @@ public class MainWindow{
 	        System.out.println("Opening: " + file.getName());
 			return file;
 	}
+
+	public File showSaveDialog(String type) {
+		FileChooser fileChooser = new FileChooser();
+		  
+        //Set extension filter
+		String ext = "*." + type.toLowerCase();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(type + " files (" + ext + ")", ext);
+        fileChooser.getExtensionFilters().add(extFilter);
+        
+        //Show save file dialog
+        File file = fileChooser.showSaveDialog(stage);
+        
+        if(file != null){
+            return file;
+        }
+		return null;
+	}
 	
-	public void addImageViewBox(){
-        imageViewBox = new FitsImageViewBox(this);
-        Group g1 = new Group();
+	public void addImageViewBox(FitsImageViewBox imageViewBox){
+		Group g1 = new Group();
+		this.imageViewBox = imageViewBox;
         g1.getChildren().add(imageViewBox);
         
 //        TabPane imageLayerControl = new TabPane();
@@ -83,7 +101,6 @@ public class MainWindow{
 //        g1.getChildren().add(imageLayerControl);
         
         root.add(imageViewBox, 0, 3);
-//        root.add(imageLayerControl, 0, 2);
         GridPane.setValignment(g1, VPos.CENTER);
 		imageViewBox.setPrefSize(scene.getWidth(), scene.getHeight()/1.5);
         stage.show();
@@ -113,35 +130,6 @@ public class MainWindow{
 	
 	public ToolsAreaBox getToolsAreaBox(){
 		return toolsArea;
-	}
-
-	public EventHandler<? super ZoomEvent> zoomImage(GUIController app) {
-		return (final ZoomEvent e) -> {
-			double zoomFactor = e.getZoomFactor();
-			double pivotX = e.getX();
-			double pivotY = e.getY();
-			Scale scale = new Scale(zoomFactor, zoomFactor, pivotX, pivotY); //FIXME setting a pivot point appears to have no effect
-			imageViewBox.getImageView().getTransforms().add(scale);
-			imageViewBox.getAnnotationLayer().getTransforms().add(scale);
-			imageViewBox.getAnnotationLayer().getGraphicsContext2D().scale(zoomFactor, zoomFactor);
-		};
-	}
-
-	public File showSaveDialog(String type) {
-		FileChooser fileChooser = new FileChooser();
-		  
-        //Set extension filter
-		String ext = "*." + type.toLowerCase();
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(type + " files (" + ext + ")", ext);
-        fileChooser.getExtensionFilters().add(extFilter);
-        
-        //Show save file dialog
-        File file = fileChooser.showSaveDialog(stage);
-        
-        if(file != null){
-            return file;
-        }
-		return null;
 	}
 
 	public void displayMessage(String message) {
