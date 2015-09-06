@@ -4,7 +4,6 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.paint.Color;
-import controllers.GUIController;
 import controllers.ImageController;
 
 public class ColourToolBox extends BaseToolBox{

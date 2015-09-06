@@ -19,7 +19,9 @@ public class ToolsAreaBox extends GridPane {
 		colourTools = new ColourToolBox(controller.getImageController(), group);
 		add(colourTools, 0, 1);
 		add(new AnnotationToolBox(controller.getAnnotationsController(), group), 1, 1);
-		add(new MaskToolBox(controller, group), 2, 1);
+		add(new RegionExtractionToolBox(controller, group), 2, 1);
+		
+		this.setId("tool-box-area");
 	}
 	
 	public ColourToolBox getColourToolBox(){

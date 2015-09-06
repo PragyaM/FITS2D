@@ -1,6 +1,5 @@
 package views;
 
-import java.io.File;
 import java.io.IOException;
 
 import javafx.scene.Group;
@@ -30,6 +29,8 @@ public class FitsImageViewBox extends ScrollPane{
 		setFitToHeight(true);
 		autosize();
 		disableScrollBars();
+		this.setId("image-view-box");
+		this.getStyleClass().add("image-view-box");
 	}
 	
 	public void setUpTabs(){
@@ -47,6 +48,7 @@ public class FitsImageViewBox extends ScrollPane{
 		
 		//prepare the view which holds the image
 		view = new ImageView(image);
+		view.setId("view-pane");
 		view.autosize();
 		view.setFitWidth(this.getWidth());
 		view.setFitHeight(this.getHeight());

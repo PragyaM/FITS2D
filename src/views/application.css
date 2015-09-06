@@ -1,5 +1,116 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
 
-.root {
-	-fx-background-color: floralwhite ;
+/* Coolors Exported Palette - coolors.co/254349-7affe8-77bcc4-8398bf-ad7ead */
+/* This one also looks nice: https://coolors.co/292b42-69626d-ddd5d0-94baba-fff6c9 */
+
+* {
+	space-gray-light: #375c63;
+	space-gray: #254349;
+	space-gray-dark: #152023;
+	
+	neon-blue-light: #87ffeb;
+	neon-blue: #7affe8;
+	neon-blue-dark: #6ebfb1;
+	
+	teal-light: #92d3dd;
+	teal: #77bcc4;
+	teal-dark: #70989e;
+	
+	old-purple-light: #a0b4d8;
+	old-purple: #8398bf;
+	old-purple-dark: #778199;
+	
+	old-pink-light: #c69bc6;
+	old-pink: #ad7ead;
+	old-pink-dark: #877087;
 }
+
+.root {
+	-fx-background-color: space-gray-light ;
+}
+
+.button, .toggle-button, .color-picker, .check-box .box{
+	-fx-background-color: teal-light ;
+	-fx-background-radius: 5;
+	-fx-border-color: teal-light ; 
+	-fx-border-radius: 5;
+	-fx-border-width: 1px;
+}
+
+.button:selected, .toggle-button:selected {
+	-fx-background-color: neon-blue-dark  ;
+	-fx-background-radius: 5;
+	-fx-border-color: neon-blue ; 
+	-fx-border-radius: 5;
+	-fx-border-width: 1px;
+}
+
+.button:selected:hover, .toggle-button:selected:hover {
+	-fx-background-color: neon-blue-dark  ;
+	-fx-background-radius: 5;
+	-fx-border-color: teal-light ; 
+	-fx-border-radius: 5;
+	-fx-border-width: 1px;
+}
+
+.button:hover, .toggle-button:hover, .color-picker:hover, .check-box:hover .box {
+	-fx-background-color: teal-light ;
+	-fx-background-radius: 5;
+	-fx-border-color: neon-blue ; 
+	-fx-border-radius: 5;
+	-fx-border-width: 1px;
+}
+
+.button:pressed, .toggle-button:pressed, .color-picker:pressed:selected {
+	-fx-background-color: teal-dark ;
+	-fx-background-radius: 5;
+}
+
+.button:selected:pressed, .toggle-button:selected:pressed {
+	-fx-background-color: teal-dark  ;
+	-fx-background-radius: 5;
+	-fx-border-color: neon-blue ; 
+	-fx-border-radius: 5;
+	-fx-border-width: 1px;
+}
+
+.image-view-box {
+	-fx-background-color: space-gray ;
+	-fx-border-color: space-gray ;
+	-fx-border-width: 2px;
+}
+
+#view-pane {
+	-fx-background-color: space-gray ;
+}
+
+#tool-box-area {
+	-fx-hgap: 20;
+}
+
+#tool-box {
+	-fx-background-color: teal ;
+}
+/*
+.toggle-group {
+	-fx-background-color: orange;
+	-fx-hgap: 2;
+	-fx-vgap: 2;
+} */
+
+.label, .check-box, .button, .toggle-button {
+	-fx-text-fill: space-gray;
+	-fx-font-family: 'Helvetica', Arial, sans-serif;
+	-fx-font-size: 16;
+	-fx-font-style: normal ;
+}
+
+#heading {
+	-fx-text-fill: space-gray-light ;
+	-fx-font-family: 'Helvetica', Arial, sans-serif;
+	-fx-font-size: 15;
+	-fx-font-style: italic ;
+}
+
+
+
