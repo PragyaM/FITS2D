@@ -47,12 +47,12 @@ public class GUIController{
 			//set up file chooser
 			File file = ui.openFile("Select a FITS image file", "FITS");
 			imageController.addImageFromFile(file);
-			
-			annotationsController.initialise(ui.getImageViewBox());
-	};
-}
 
-public void handle(Exception e) {
-	ui.displayMessage(e.getMessage());
-}
+			annotationsController.initialise(ui.getImageViewBox());
+		};
+	}
+
+	public void handle(Exception e) {
+		ui.displayMessage(e.getMessage());
+	}
 }

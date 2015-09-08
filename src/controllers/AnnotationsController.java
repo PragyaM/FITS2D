@@ -18,61 +18,77 @@ import views.FitsImageViewBox;
 import views.MainWindow;
 
 public class AnnotationsController {
-	
+
 	private AnnotationLayer annotationLayer;
 	private FitsImageViewBox imageViewBox;
-	
+
 	private MainWindow ui;
-	
+
 	public AnnotationsController(MainWindow mainWindow){
 		this.ui = mainWindow;
 	}
-	
+
 	public void initialise(FitsImageViewBox imageViewBox){
 		this.imageViewBox = imageViewBox;
 		this.annotationLayer = imageViewBox.getAnnotationLayer();
 	}
-	
+
 	public EventHandler<ActionEvent> toggleDrawMode(ToggleButton toggle){
 		return (final ActionEvent e) -> {
-			if (toggle.isSelected()){ //enable drawing mode
-				annotationLayer.setDrawMode(true);
-			}
-			else if (!toggle.isSelected()){ //disable drawing mode
-				annotationLayer.setDrawMode(false);
+			try {
+				if (toggle.isSelected()){ //enable drawing mode
+					annotationLayer.setDrawMode(true);
+				}
+				else if (!toggle.isSelected()){ //disable drawing mode
+					annotationLayer.setDrawMode(false);
+				}
+			} catch (NullPointerException e1){
+				/*There is no image yet*/
 			}
 		};
 	}
-	
+
 	public EventHandler<ActionEvent> toggleFillMode(ToggleButton toggle) {
 		return (final ActionEvent e) -> {
-			if (toggle.isSelected()){ //enable fill mode
-				annotationLayer.setFillMode(true);
-			}
-			else if (!toggle.isSelected()){ //disable fill mode
-				annotationLayer.setFillMode(false);
+			try {
+				if (toggle.isSelected()){ //enable fill mode
+					annotationLayer.setFillMode(true);
+				}
+				else if (!toggle.isSelected()){ //disable fill mode
+					annotationLayer.setFillMode(false);
+				}
+			} catch (NullPointerException e1){
+				/*There is no image yet*/
 			}
 		};
 	}
-	
+
 	public EventHandler<ActionEvent> toggleMaskDrawMode(ToggleButton toggle){
 		return (final ActionEvent e) -> {
-			if (toggle.isSelected()){ //enable drawing mode
-				annotationLayer.setMaskDrawMode(true);
-			}
-			else if (!toggle.isSelected()){ //disable drawing mode
-				annotationLayer.setMaskDrawMode(false);
+			try {
+				if (toggle.isSelected()){ //enable drawing mode
+					annotationLayer.setMaskDrawMode(true);
+				}
+				else if (!toggle.isSelected()){ //disable drawing mode
+					annotationLayer.setMaskDrawMode(false);
+				}
+			} catch (NullPointerException e1){
+				/*There is no image yet*/
 			}
 		};
 	}
-	
+
 	public EventHandler<ActionEvent> toggleMaskFillMode(ToggleButton toggle) {
 		return (final ActionEvent e) -> {
-			if (toggle.isSelected()){ //enable fill mode
-				annotationLayer.setMaskFillMode(true);
-			}
-			else if (!toggle.isSelected()){ //disable fill mode
-				annotationLayer.setMaskFillMode(false);
+			try {
+				if (toggle.isSelected()){ //enable fill mode
+					annotationLayer.setMaskFillMode(true);
+				}
+				else if (!toggle.isSelected()){ //disable fill mode
+					annotationLayer.setMaskFillMode(false);
+				}
+			} catch (NullPointerException e1){
+				/*There is no image yet*/
 			}
 		};
 	}
@@ -94,11 +110,15 @@ public class AnnotationsController {
 	public EventHandler<ActionEvent> toggleAnnotationsVisible(
 			CheckBox hideAnnotationsButton) {
 		return (final ActionEvent e) -> {
-			if (hideAnnotationsButton.isSelected()){
-				annotationLayer.hideAnnotations();
-			}
-			else {
-				annotationLayer.drawAllAnnotations();
+			try{
+				if (hideAnnotationsButton.isSelected()){
+					annotationLayer.hideAnnotations();
+				}
+				else {
+					annotationLayer.drawAllAnnotations();
+				}
+			} catch (NullPointerException e1){
+				/*annotation layer does not exist yet, so do nothing*/
 			}
 		};
 	}
@@ -110,7 +130,7 @@ public class AnnotationsController {
 				Fits maskFits = CreateMask.mapToFits(fullSelection, imageViewBox.getFitsImage(), 
 						(int) annotationLayer.getWidth(), 
 						(int) annotationLayer.getHeight());
-				
+
 				BufferedFile bf = new BufferedFile(ui.showSaveDialog("FITS"), "rw");
 				maskFits.write(bf);
 				bf.close();
