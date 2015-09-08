@@ -20,6 +20,7 @@ public class FitsImageViewBox extends ScrollPane{
 	private AnnotationLayer annotationLayer;
 	private FitsImage fitsImage;
 	private ImageController controller;
+	private int zoomLevel = 100;
 	
 	public FitsImageViewBox(ImageController controller){
 		super();
@@ -90,6 +91,14 @@ public class FitsImageViewBox extends ScrollPane{
 	
 	public FitsImage getFitsImage(){
 		return fitsImage;
+	}
+	
+	public int getZoomLevel(){
+		return zoomLevel;
+	}
+	
+	public void setZoomLevel(int zoom){
+		this.zoomLevel = zoom;
 	}
 
 	public void refreshImage() {

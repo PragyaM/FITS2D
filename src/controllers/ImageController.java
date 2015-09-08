@@ -10,39 +10,38 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.input.ZoomEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.transform.Scale;
-import models.FitsImage;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import views.FitsImageViewBox;
 import views.MainWindow;
 
 public class ImageController {
-	
+
 	private MainWindow ui;
 	protected FitsImageViewBox imageViewBox;
-	
+	private double MINIMUM_ZOOM = 50.0;
+
 	public ImageController(MainWindow mainWindow){
 		this.ui = mainWindow;
-		
+
 		imageViewBox = new FitsImageViewBox(this);
-        
+
 		ui.addImageViewBox(imageViewBox);
-		imageViewBox.setOnZoom(this.zoomImage());
+		imageViewBox.setOnZoom(this.touchZoomImage());
 	}
-	
+
 	public void addImageFromFile(File file){
 		try {
 			Fits fitsFile = new Fits(file);
 			addImage(fitsFile);
-			
+
 		} catch (FitsException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	public void addImage(Fits fitsFile){
 		try {
 			imageViewBox.addImage(fitsFile);
@@ -50,9 +49,9 @@ public class ImageController {
 		} catch (FitsException | IOException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	public EventHandler<javafx.event.ActionEvent> toggleImageScrollbars(CheckMenuItem toggle){
 		return (final ActionEvent e) -> {
 			if (toggle.isSelected()) {
@@ -61,7 +60,7 @@ public class ImageController {
 			else  imageViewBox.disableScrollBars();
 		};
 	}
-	
+
 	public EventHandler<ActionEvent> changeNanColour() {
 		return (final ActionEvent e) -> {
 			Color nanColour = ((ColorPicker) e.getSource()).getValue();
@@ -74,7 +73,7 @@ public class ImageController {
 			}
 		};
 	}
-	
+
 	public void refreshImage(){
 		try {
 			imageViewBox.getFitsImage().writeImage();
@@ -90,23 +89,79 @@ public class ImageController {
 
 	public ArrayList<String> getHeaderInfo(){
 		ArrayList<String> headerInfo = new ArrayList<String>();
-		
 		headerInfo.add("CRVAL1: " + imageViewBox.getFitsImage().getCRVAL1());
 		headerInfo.add("CRVAL2: " + imageViewBox.getFitsImage().getCRVAL2());
-		
-		
 		return headerInfo;
 	}
-	
-	public EventHandler<? super ZoomEvent> zoomImage() {
+
+	public EventHandler<? super ZoomEvent> touchZoomImage() {
 		return (final ZoomEvent e) -> {
 			double zoomFactor = e.getZoomFactor();
-			double pivotX = e.getX();
-			double pivotY = e.getY();
-			Scale scale = new Scale(zoomFactor, zoomFactor, pivotX, pivotY); //FIXME setting a pivot point appears to have no effect
-			imageViewBox.getImageView().getTransforms().add(scale);
-			imageViewBox.getAnnotationLayer().getTransforms().add(scale);
-			imageViewBox.getAnnotationLayer().getGraphicsContext2D().scale(zoomFactor, zoomFactor);
+
+			if ((imageViewBox.getZoomLevel() * zoomFactor) < MINIMUM_ZOOM){ //zoom level cannot become less than minimum zoom
+				zoomFactor = MINIMUM_ZOOM / imageViewBox.getZoomLevel();
+				setZoomOutButtonDisabled(true);
+			}
+			if (imageViewBox.getZoomLevel() <= MINIMUM_ZOOM && zoomFactor < 1){
+				setZoomOutButtonDisabled(true);
+				e.consume();
+			} 
+			else {
+				setZoomOutButtonDisabled(false);
+				updateScale(zoomFactor);
+				imageViewBox.setZoomLevel((int)(imageViewBox.getImageView().getScaleY() * 100.0) );
+				setZoomLabel((int)(imageViewBox.getImageView().getScaleY() * 100.0) + "%");
+				e.consume();
+			}
+			//			imageViewBox.getAnnotationLayer().getGraphicsContext2D().scale(zoomFactor, zoomFactor);
 		};
+	}
+
+	public EventHandler<ActionEvent> zoomOut() {
+		return (final ActionEvent e) -> {
+			double zoomFactor = 0.9;
+
+			if ((imageViewBox.getZoomLevel() * zoomFactor) < MINIMUM_ZOOM){ //zoom level cannot become less than minimum zoom
+				zoomFactor = MINIMUM_ZOOM / imageViewBox.getZoomLevel();
+				setZoomOutButtonDisabled(true);
+			}
+			if (imageViewBox.getZoomLevel() <= MINIMUM_ZOOM){
+				e.consume();
+			} 
+			else {
+				updateScale(zoomFactor);
+				imageViewBox.setZoomLevel((int) (imageViewBox.getZoomLevel() * zoomFactor));
+				setZoomLabel(imageViewBox.getZoomLevel() + "%");
+				e.consume();
+			}
+		};
+	}
+
+	public EventHandler<ActionEvent> zoomIn() {
+		return (final ActionEvent e) -> {
+			double zoomFactor = 1.1;
+			updateScale(zoomFactor);
+			imageViewBox.setZoomLevel((int) (imageViewBox.getZoomLevel() * zoomFactor));
+			setZoomLabel(imageViewBox.getZoomLevel() + "%");
+			if (imageViewBox.getZoomLevel() > MINIMUM_ZOOM){
+				setZoomOutButtonDisabled(false);
+			}
+			e.consume();
+		};
+	}
+
+	public void updateScale(double zoomFactor){
+		imageViewBox.getImageView().setScaleX(imageViewBox.getImageView().getScaleX() * zoomFactor);
+		imageViewBox.getImageView().setScaleY(imageViewBox.getImageView().getScaleY() * zoomFactor);
+		imageViewBox.getAnnotationLayer().setScaleX(imageViewBox.getAnnotationLayer().getScaleX() * zoomFactor);
+		imageViewBox.getAnnotationLayer().setScaleY(imageViewBox.getAnnotationLayer().getScaleY() * zoomFactor);
+	}
+
+	public void setZoomLabel(String zoomText){
+		ui.getToolsAreaBox().getImageToolBox().setZoomLabel(zoomText);
+	}
+
+	public void setZoomOutButtonDisabled(boolean disable){
+		ui.getToolsAreaBox().getImageToolBox().setZoomOutButtonDisabled(disable);
 	}
 }

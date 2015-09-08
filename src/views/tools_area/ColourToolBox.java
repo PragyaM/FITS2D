@@ -12,13 +12,13 @@ public class ColourToolBox extends BaseToolBox{
 	private ImageController parent;
 
 	public ColourToolBox(ImageController controller, ToggleGroup group){
-		super("Colour Tools");
+		super("Colour");
 		this.parent = controller;
 		
 		nanColourPicker = new ColorPicker();
 		nanColourPicker.setPromptText("NaN value display colour");
 		
-		add(new Label("Undefined value colour: "), 0, 1);
+		add(new Label("Undefined values: "), 0, 1);
 		add(nanColourPicker, 1, 1);
 		
 		nanColourPicker.setOnAction(controller.changeNanColour());

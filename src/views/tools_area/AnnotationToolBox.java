@@ -11,7 +11,7 @@ public class AnnotationToolBox extends BaseToolBox{
 //    private ObservableList<String> items = FXCollections.observableArrayList();
 	
 	public AnnotationToolBox(AnnotationsController controller, ToggleGroup group){
-		super("Annotation Tools");
+		super("Annotation");
 		
 		ImageToggleButton drawToolButton = new ImageToggleButton("/resources/pencil112.png");
 

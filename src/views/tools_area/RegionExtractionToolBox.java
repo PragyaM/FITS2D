@@ -8,13 +8,13 @@ import controllers.GUIController;
 public class RegionExtractionToolBox extends BaseToolBox{
 	
 	public RegionExtractionToolBox(GUIController controller, ToggleGroup group){
-		super("Region Extraction Tools");
+		super("Region Extraction");
         
 		ImageToggleButton drawToolButton = new ImageToggleButton("/resources/pencil112.png");
 
         ImageToggleButton fillToolButton = new ImageToggleButton("/resources/paint3.png");
 		
-		Button extractRegionButton = new Button("Extract selection to FITS");
+		Button extractRegionButton = new Button("Extract selection\nto FITS");
 		
 		drawToolButton.setToggleGroup(group);
 		fillToolButton.setToggleGroup(group);

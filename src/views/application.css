@@ -61,6 +61,14 @@
 	-fx-border-width: 1px;
 }
 
+.button:disabled, .toggle-button:disabled, .color-picker:disabled, .check-box:disabled .box {
+	-fx-background-color: teal-dark ;
+	-fx-background-radius: 5;
+	-fx-border-color: neon-blue ; 
+	-fx-border-radius: 5;
+	-fx-border-width: 1px;
+}
+
 .button:pressed, .toggle-button:pressed, .color-picker:pressed:selected {
 	-fx-background-color: teal-dark ;
 	-fx-background-radius: 5;
@@ -90,6 +98,8 @@
 
 #tool-box {
 	-fx-background-color: teal ;
+	-fx-background-radius: 2;
+	-fx-padding: 10 10 10 10;
 }
 /*
 .toggle-group {
@@ -101,15 +111,16 @@
 .label, .check-box, .button, .toggle-button {
 	-fx-text-fill: space-gray;
 	-fx-font-family: 'Helvetica', Arial, sans-serif;
-	-fx-font-size: 16;
+	-fx-font-size: 14;
 	-fx-font-style: normal ;
+	-fx-text-alignment: center;
 }
 
 #heading {
 	-fx-text-fill: space-gray-light ;
 	-fx-font-family: 'Helvetica', Arial, sans-serif;
 	-fx-font-size: 15;
-	-fx-font-style: italic ;
+	-fx-font-style: normal ;
 }
 
 
