@@ -8,11 +8,11 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import services.ConvertPixels;
 import services.DrawLine;
 import services.FillRegion;
 import views.AnnotationLayer;
 import views.AnnotationLayer.Mode;
+import views.FitsImageViewBox;
 
 /**
  * Annotations are created by the user drawing on the canvas interface while in annotation mode.
@@ -33,13 +33,15 @@ public class Annotation implements EventHandler<MouseEvent>{
 	private PixelWriter pw;
 	private AnnotationLayer canvas;
 	private FitsImage image;
+	private FitsImageViewBox imageViewBox;
 
-	public Annotation(AnnotationLayer canvas, FitsImage image, Color color){
+	public Annotation(AnnotationLayer canvas, FitsImageViewBox imageViewBox, FitsImage image, Color color){
 		this.canvas = canvas;
 		this.image = image;
 		this.gc = canvas.getGraphicsContext2D();
 		this.color = color;
 		this.pw = gc.getPixelWriter();
+		this.imageViewBox = imageViewBox;
 	}
 
 	public void draw() {
@@ -105,7 +107,7 @@ public class Annotation implements EventHandler<MouseEvent>{
 				region = new AnnotationRegion();
 				Point p = new Point((int) event.getX(), (int) event.getY());
 				
-				ArrayList<Point> canvasPixels = (FillRegion.fill(canvas, p, color));
+				ArrayList<Point> canvasPixels = (FillRegion.fill(canvas, imageViewBox, p, color));
 				region.addAllCanvasPixels(canvasPixels);
 				
 				for (Point pixel : canvasPixels){

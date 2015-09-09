@@ -117,13 +117,13 @@ public class AnnotationLayer extends Canvas{
 	}
 
 	private void makeNewAnnotation(){
-		currentAnnotation = new Annotation(this, container.getFitsImage(), Color.RED);
+		currentAnnotation = new Annotation(this, container, container.getFitsImage(), Color.RED);
 		this.addEventHandler(MouseEvent.ANY, currentAnnotation);
 		annotations.add(currentAnnotation);
 	}
 	
 	private void makeNewSelection(){
-		currentSelection = new Annotation(this, container.getFitsImage(), Color.YELLOW);
+		currentSelection = new Annotation(this, container, container.getFitsImage(), Color.YELLOW);
 		this.addEventHandler(MouseEvent.ANY, currentSelection);
 		selections.add(currentSelection);
 	}
@@ -214,7 +214,7 @@ public class AnnotationLayer extends Canvas{
 				FitsChan newFits = ChanneliseFitsHeader.chanFromHeaderObj(container.getFitsImage().getHDU().getHeader());
 				ConvertWcsPixels wcsConverter = new ConvertWcsPixels(oldFits, newFits);
 				
-				Annotation annotation = new Annotation(this, container.getFitsImage(), Color.RED);
+				Annotation annotation = new Annotation(this, container, container.getFitsImage(), Color.RED);
 
 				//Delimit annotations with "*"
 				while ((line = reader.readLine()) != null){
@@ -224,7 +224,7 @@ public class AnnotationLayer extends Canvas{
 					}
 					else if (line.equalsIgnoreCase("*")){
 						annotations.add(annotation);
-						annotation = new Annotation(this, container.getFitsImage(), Color.RED);
+						annotation = new Annotation(this, container, container.getFitsImage(), Color.RED);
 					}
 				}
 			}
