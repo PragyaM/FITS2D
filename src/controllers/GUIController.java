@@ -28,7 +28,7 @@ public class GUIController{
 	public void start(Stage primaryStage) throws FitsException, IOException{
 		ui = new MainWindow(primaryStage, this);
 		imageController = new ImageController(ui);
-		annotationsController = new AnnotationsController(ui);
+		annotationsController = new AnnotationsController(ui, imageController);
 		ui.addTopMenuBar(this);
 		ui.addToolsAreaBox(this);
 		ui.display();
@@ -46,7 +46,7 @@ public class GUIController{
 		return (final ActionEvent e) -> {
 			//set up file chooser
 			File file = ui.openFile("Select a FITS image file", "FITS");
-			imageController.addImageFromFile(file);
+			imageController.addImageFromFile(file, annotationsController);
 
 			annotationsController.initialise(ui.getImageViewBox());
 		};

@@ -30,10 +30,10 @@ public class ImageController {
 		imageViewBox.setOnZoom(this.touchZoomImage());
 	}
 
-	public void addImageFromFile(File file){
+	public void addImageFromFile(File file, AnnotationsController annotationsController){
 		try {
 			Fits fitsFile = new Fits(file);
-			addImage(fitsFile);
+			addImage(fitsFile, annotationsController);
 
 		} catch (FitsException e) {
 			// TODO Auto-generated catch block
@@ -42,10 +42,11 @@ public class ImageController {
 
 	}
 
-	public void addImage(Fits fitsFile){
+	public void addImage(Fits fitsFile, AnnotationsController annotationsController){
 		try {
 			imageViewBox.addImage(fitsFile);
 			imageViewBox.setVisible(true);
+			imageViewBox.setupAnnotationLayer(annotationsController);
 		} catch (FitsException | IOException e) {
 			e.printStackTrace();
 		}
@@ -163,5 +164,14 @@ public class ImageController {
 
 	public void setZoomOutButtonDisabled(boolean disable){
 		ui.getToolsAreaBox().getImageToolBox().setZoomOutButtonDisabled(disable);
+	}
+	
+	public void resetZoom(){
+		imageViewBox.getImageView().setScaleX(1);
+		imageViewBox.getImageView().setScaleY(1);
+		imageViewBox.getAnnotationLayer().setScaleX(1);
+		imageViewBox.getAnnotationLayer().setScaleY(1);
+		imageViewBox.setZoomLevel(100);
+		setZoomLabel("100%");
 	}
 }

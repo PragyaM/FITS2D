@@ -16,9 +16,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import models.Annotation;
 import models.AnnotationRegion;
-import services.ConvertWcsPixels;
 import services.ChanneliseFitsHeader;
+import services.ConvertWcsPixels;
 import uk.ac.starlink.ast.FitsChan;
+import controllers.AnnotationsController;
 
 public class AnnotationLayer extends Canvas{
 	private ArrayList<Annotation> annotations;
@@ -29,15 +30,17 @@ public class AnnotationLayer extends Canvas{
 	public enum Mode {NONE, ANNOTATE_DRAW, ANNOTATE_FILL, MASK_DRAW, MASK_FILL};
 	public Mode mode;
 	private FitsImageViewBox container;
+	private AnnotationsController controller;
 
-	public AnnotationLayer(double width, double height, FitsImageViewBox viewBox){
+	public AnnotationLayer(double width, double height, AnnotationsController controller){
 		super(width, height);
 		annotations = new ArrayList<Annotation>();
 		selections = new ArrayList<Annotation>();
 		gc = this.getGraphicsContext2D();
 		gc.setLineWidth(2);
 		mode = Mode.NONE;
-		this.container = viewBox;
+		this.controller = controller;
+		this.container = controller.getImageViewBox();
 	}
 	
 	public void setDrawMode(Boolean enabled){
@@ -117,13 +120,13 @@ public class AnnotationLayer extends Canvas{
 	}
 
 	private void makeNewAnnotation(){
-		currentAnnotation = new Annotation(this, container, container.getFitsImage(), Color.RED);
+		currentAnnotation = new Annotation(this, controller, Color.RED);
 		this.addEventHandler(MouseEvent.ANY, currentAnnotation);
 		annotations.add(currentAnnotation);
 	}
 	
 	private void makeNewSelection(){
-		currentSelection = new Annotation(this, container, container.getFitsImage(), Color.YELLOW);
+		currentSelection = new Annotation(this, controller, Color.YELLOW);
 		this.addEventHandler(MouseEvent.ANY, currentSelection);
 		selections.add(currentSelection);
 	}
@@ -214,7 +217,7 @@ public class AnnotationLayer extends Canvas{
 				FitsChan newFits = ChanneliseFitsHeader.chanFromHeaderObj(container.getFitsImage().getHDU().getHeader());
 				ConvertWcsPixels wcsConverter = new ConvertWcsPixels(oldFits, newFits);
 				
-				Annotation annotation = new Annotation(this, container, container.getFitsImage(), Color.RED);
+				Annotation annotation = new Annotation(this, controller, Color.RED);
 
 				//Delimit annotations with "*"
 				while ((line = reader.readLine()) != null){
@@ -224,7 +227,7 @@ public class AnnotationLayer extends Canvas{
 					}
 					else if (line.equalsIgnoreCase("*")){
 						annotations.add(annotation);
-						annotation = new Annotation(this, container, container.getFitsImage(), Color.RED);
+						annotation = new Annotation(this, controller, Color.RED);
 					}
 				}
 			}

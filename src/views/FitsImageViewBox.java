@@ -12,6 +12,7 @@ import models.FitsImage;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import services.BuildFitsImage;
+import controllers.AnnotationsController;
 import controllers.ImageController;
 
 public class FitsImageViewBox extends ScrollPane{
@@ -60,15 +61,14 @@ public class FitsImageViewBox extends ScrollPane{
 		g = new Group(view);
 		this.setContent(g);
 //		setUpTabs();
-		setupAnnotationLayer();
 	}
 	
 	public ImageView getImageView(){
 		return view;
 	}
 	
-	public void setupAnnotationLayer(){
-		annotationLayer = new AnnotationLayer(view.minWidth(view.getImage().getHeight()), view.minHeight(view.getImage().getWidth()), this);
+	public void setupAnnotationLayer(AnnotationsController annotationsController){
+		annotationLayer = new AnnotationLayer(view.minWidth(view.getImage().getHeight()), view.minHeight(view.getImage().getWidth()), annotationsController);
 		System.out.println("Canvas width = " + annotationLayer.getWidth() + "  image width = " + getFitsImage().getWidth());
 		System.out.println("Canvas height = " + annotationLayer.getHeight() + "  image height = " + getFitsImage().getHeight());
 		annotationLayer.turnAnnotatingOff();

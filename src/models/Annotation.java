@@ -13,6 +13,7 @@ import services.FillRegion;
 import views.AnnotationLayer;
 import views.AnnotationLayer.Mode;
 import views.FitsImageViewBox;
+import controllers.AnnotationsController;
 
 /**
  * Annotations are created by the user drawing on the canvas interface while in annotation mode.
@@ -34,14 +35,16 @@ public class Annotation implements EventHandler<MouseEvent>{
 	private AnnotationLayer canvas;
 	private FitsImage image;
 	private FitsImageViewBox imageViewBox;
+	private AnnotationsController controller;
 
-	public Annotation(AnnotationLayer canvas, FitsImageViewBox imageViewBox, FitsImage image, Color color){
+	public Annotation(AnnotationLayer canvas, AnnotationsController controller, Color color){
 		this.canvas = canvas;
-		this.image = image;
 		this.gc = canvas.getGraphicsContext2D();
-		this.color = color;
 		this.pw = gc.getPixelWriter();
-		this.imageViewBox = imageViewBox;
+		this.color = color;
+		this.controller = controller;
+		this.imageViewBox = controller.getImageViewBox();
+		this.image = imageViewBox.getFitsImage();
 	}
 
 	public void draw() {
@@ -107,7 +110,7 @@ public class Annotation implements EventHandler<MouseEvent>{
 				region = new AnnotationRegion();
 				Point p = new Point((int) event.getX(), (int) event.getY());
 				
-				ArrayList<Point> canvasPixels = (FillRegion.fill(canvas, imageViewBox, p, color));
+				ArrayList<Point> canvasPixels = (FillRegion.fill(canvas, controller, p, color));
 				region.addAllCanvasPixels(canvasPixels);
 				
 				for (Point pixel : canvasPixels){

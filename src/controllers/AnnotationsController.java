@@ -21,11 +21,13 @@ public class AnnotationsController {
 
 	private AnnotationLayer annotationLayer;
 	private FitsImageViewBox imageViewBox;
+	private ImageController imageController;
 
 	private MainWindow ui;
 
-	public AnnotationsController(MainWindow mainWindow){
+	public AnnotationsController(MainWindow mainWindow, ImageController imageController){
 		this.ui = mainWindow;
+		this.imageController = imageController;
 	}
 
 	public void initialise(FitsImageViewBox imageViewBox){
@@ -38,9 +40,11 @@ public class AnnotationsController {
 			try {
 				if (toggle.isSelected()){ //enable drawing mode
 					annotationLayer.setDrawMode(true);
+					imageViewBox.setPannable(false);
 				}
 				else if (!toggle.isSelected()){ //disable drawing mode
 					annotationLayer.setDrawMode(false);
+					imageViewBox.setPannable(true);
 				}
 			} catch (NullPointerException e1){
 				/*There is no image yet*/
@@ -53,9 +57,11 @@ public class AnnotationsController {
 			try {
 				if (toggle.isSelected()){ //enable fill mode
 					annotationLayer.setFillMode(true);
+					imageViewBox.setPannable(false);
 				}
 				else if (!toggle.isSelected()){ //disable fill mode
 					annotationLayer.setFillMode(false);
+					imageViewBox.setPannable(true);
 				}
 			} catch (NullPointerException e1){
 				/*There is no image yet*/
@@ -68,9 +74,11 @@ public class AnnotationsController {
 			try {
 				if (toggle.isSelected()){ //enable drawing mode
 					annotationLayer.setMaskDrawMode(true);
+					imageViewBox.setPannable(false);
 				}
 				else if (!toggle.isSelected()){ //disable drawing mode
 					annotationLayer.setMaskDrawMode(false);
+					imageViewBox.setPannable(true);
 				}
 			} catch (NullPointerException e1){
 				/*There is no image yet*/
@@ -83,9 +91,11 @@ public class AnnotationsController {
 			try {
 				if (toggle.isSelected()){ //enable fill mode
 					annotationLayer.setMaskFillMode(true);
+					imageViewBox.setPannable(false);
 				}
 				else if (!toggle.isSelected()){ //disable fill mode
 					annotationLayer.setMaskFillMode(false);
+					imageViewBox.setPannable(true);
 				}
 			} catch (NullPointerException e1){
 				/*There is no image yet*/
@@ -140,6 +150,14 @@ public class AnnotationsController {
 				System.out.println("cancelled");
 			}
 		};
+	}
+	
+	public FitsImageViewBox getImageViewBox(){
+		return imageViewBox;
+	}
+	
+	public void resetZoom(){
+		imageController.resetZoom();
 	}
 
 }
