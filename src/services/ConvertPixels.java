@@ -22,8 +22,9 @@ import java.util.HashSet;
  */
 
 public class ConvertPixels {
-	
+
 	private double imageToCanvasRatio;
+	private double canvasToImageRatio;
 	private int canvasHeight;
 	private int imageHeight;
 
@@ -31,39 +32,66 @@ public class ConvertPixels {
 		this.canvasHeight = (int) canvasHeight;
 		this.imageHeight = imageHeight;
 		this.imageToCanvasRatio = imageHeight / canvasHeight;
+		this.canvasToImageRatio = canvasHeight / imageHeight;
+		System.out.println("Canvas height: " + canvasHeight + ", image height: " + imageHeight);
 	}
-	
+
 	public ArrayList<Point> imageToCanvas(ArrayList<Point> imagePixels){
 		HashSet<Point> canvasPixels = new HashSet<Point>();
-		for (Point pixel : imagePixels){
-			int x = (int) (Math.floor(pixel.x / imageToCanvasRatio));
-			int y = (int) (Math.ceil(pixel.y / imageToCanvasRatio));
-			canvasPixels.add(new Point(x, (canvasHeight - y)));
-		}
-		
-		ArrayList<Point> outputCanvasPixels = new ArrayList<Point>(canvasPixels);
-		
-		return outputCanvasPixels;
-	}
-	
-	public ArrayList<Point> canvasToImage(ArrayList<Point> canvasPixels){
-		HashSet<Point> imagePixels = new HashSet<Point>();
-		for (Point pixel : canvasPixels){
-			int x0 = (int) (Math.floor(pixel.x * imageToCanvasRatio));
-			if (x0 < 0) x0 = 0;
-			int y0 = (int) (Math.floor(pixel.y * imageToCanvasRatio));
-			int x1 = x0 + (int) imageToCanvasRatio;
-			int y1 = y0 + (int) imageToCanvasRatio;
-			
-			for (int x = x0; x < x1; x++){
-				for (int y = y0; y < y1; y++){
-					imagePixels.add(new Point(x, imageHeight - y));
+
+		if (canvasHeight < imageHeight){
+			for (Point pixel : imagePixels){
+				int x = (int) (Math.floor(pixel.x / imageToCanvasRatio));
+				int y = (int) (Math.ceil(pixel.y / imageToCanvasRatio));
+				canvasPixels.add(new Point(x, (canvasHeight - y)));
+			}
+		} else {
+			for (Point pixel : imagePixels){
+				int x0 = (int) (Math.floor(pixel.x / imageToCanvasRatio));
+				if (x0 < 0) x0 = 0;
+				int y0 = (int) (Math.ceil(pixel.y / imageToCanvasRatio));
+				int x1 = x0 + (int) canvasToImageRatio;
+				int y1 = y0 + (int) canvasToImageRatio;
+
+				for (int x = x0; x < x1; x++){
+					for (int y = y0; y < y1; y++){
+						canvasPixels.add(new Point(x, canvasHeight - y));
+					}
 				}
 			}
 		}
-		
+
+		ArrayList<Point> outputCanvasPixels = new ArrayList<Point>(canvasPixels);
+
+		return outputCanvasPixels;
+	}
+
+	public ArrayList<Point> canvasToImage(ArrayList<Point> canvasPixels){
+		HashSet<Point> imagePixels = new HashSet<Point>();
+		if (canvasHeight < imageHeight) {
+			for (Point pixel : canvasPixels){
+				int x0 = (int) (Math.floor(pixel.x * imageToCanvasRatio));
+				if (x0 < 0) x0 = 0;
+				int y0 = (int) (Math.floor(pixel.y * imageToCanvasRatio));
+				int x1 = x0 + (int) imageToCanvasRatio;
+				int y1 = y0 + (int) imageToCanvasRatio;
+
+				for (int x = x0; x < x1; x++){
+					for (int y = y0; y < y1; y++){
+						imagePixels.add(new Point(x, imageHeight - y));
+					}
+				}
+			}
+		} else {
+			for (Point pixel : canvasPixels){
+				int x = (int) (Math.floor(pixel.x / canvasToImageRatio));
+				int y = (int) (Math.ceil(pixel.y / canvasToImageRatio));
+				imagePixels.add(new Point(x, (imageHeight - y)));
+			}
+		}
+
 		ArrayList<Point> outputImagePixels = new ArrayList<Point>(imagePixels);
-		
+
 		return outputImagePixels;
 	}
 }

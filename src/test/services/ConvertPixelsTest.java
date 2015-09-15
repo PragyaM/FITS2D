@@ -17,7 +17,6 @@ public class ConvertPixelsTest extends TestCase{
 	protected ConvertPixels pixelConverter;
 	
 	protected void setUp(){
-		pixelConverter = new ConvertPixels(300, 600);
 		
 		canvasPixels = new ArrayList<Point>();
 		canvasPixels.add(new Point(0, 0));
@@ -50,7 +49,17 @@ public class ConvertPixelsTest extends TestCase{
 	}
 
 	@Test
-	public void testImageToCanvas(){
+	public void testSmallImageToLargeCanvas(){
+		pixelConverter = new ConvertPixels(600, 300);
+
+		ArrayList<Point> outputCanvasPixels = pixelConverter.imageToCanvas(imagePixels);
+		ArrayList<Point> inputImagePixels = pixelConverter.canvasToImage(outputCanvasPixels);
+		
+		assertTrue(inputImagePixels.containsAll(imagePixels));
+	}
+	
+	@Test
+	public void testLargeImageToSmallCanvas(){
 		pixelConverter = new ConvertPixels(300, 600);
 
 		ArrayList<Point> outputCanvasPixels = pixelConverter.imageToCanvas(imagePixels);
@@ -60,8 +69,18 @@ public class ConvertPixelsTest extends TestCase{
 	}
 
 	@Test
-	public void testCanvasToImage(){
+	public void testSmallCanvasToLargeImage(){
 		pixelConverter = new ConvertPixels(300, 600);
+
+		ArrayList<Point> outputImagePixels = pixelConverter.canvasToImage(canvasPixels);
+		ArrayList<Point> inputCanvasPixels = pixelConverter.imageToCanvas(outputImagePixels);
+		
+		assertTrue(inputCanvasPixels.containsAll(canvasPixels));
+	}
+	
+	@Test
+	public void testLargeCanvasToSmallImage(){
+		pixelConverter = new ConvertPixels(600, 300);
 
 		ArrayList<Point> outputImagePixels = pixelConverter.canvasToImage(canvasPixels);
 		ArrayList<Point> inputCanvasPixels = pixelConverter.imageToCanvas(outputImagePixels);
