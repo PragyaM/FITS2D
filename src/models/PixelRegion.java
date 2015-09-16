@@ -6,21 +6,21 @@ import java.util.ArrayList;
 import services.ConvertPixels;
 
 /**
- * A AnnotationRegion is a collection of Points that represent coloured pixels in an annotation
+ * A PixelRegion is a collection of Points that represent coloured pixels in an annotation
  * 
  * @author Pragya
  */
-public class AnnotationRegion {
+public class PixelRegion {
 	
 	private ArrayList<Point> canvasPixels;
 	private ArrayList<Point> imagePixels;
 	
-	public AnnotationRegion(ArrayList<Point> canvasPixels){
+	public PixelRegion(ArrayList<Point> canvasPixels){
 		this.canvasPixels = canvasPixels;
 		this.imagePixels = new ArrayList<Point>();
 	}
 	
-	public AnnotationRegion(){
+	public PixelRegion(){
 		this.canvasPixels = new ArrayList<Point>();
 		this.imagePixels = new ArrayList<Point>();
 	}

@@ -32,8 +32,8 @@ public class CreateMask {
 		Fits maskFits = new Fits();
 
 		boundingBox = getBoundingBox(fitsImage, imagePixels, cWidth, cHeight);
-		System.out.println("AnnotationRegion size: " + boundingBox.getWidth() + ", " + boundingBox.getHeight());
-		System.out.println("AnnotationRegion position: " + boundingBox.getX() + ", " + boundingBox.getY());
+		System.out.println("PixelRegion size: " + boundingBox.getWidth() + ", " + boundingBox.getHeight());
+		System.out.println("PixelRegion position: " + boundingBox.getX() + ", " + boundingBox.getY());
 
 		double[][] newData = new double[(int) boundingBox.getHeight()][(int) boundingBox.getWidth()];
 		newData = setAll(newData, Double.NaN);

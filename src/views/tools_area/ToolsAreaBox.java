@@ -9,6 +9,8 @@ public class ToolsAreaBox extends GridPane {
 	
 	private ColourToolBox colourTools;
 	private ImageToolBox imageTools;
+	private AnnotationToolBox annotationTools;
+	private RegionExtractionToolBox regionExtractionTools;
 	
 	public ToolsAreaBox(GUIController controller){
 		super();
@@ -20,6 +22,8 @@ public class ToolsAreaBox extends GridPane {
 		
 		colourTools = new ColourToolBox(controller.getImageController(), group);
 		imageTools = new ImageToolBox(controller.getImageController());
+		annotationTools = new AnnotationToolBox(controller.getAnnotationsController(), group);
+		regionExtractionTools = new RegionExtractionToolBox(controller.getAnnotationsController(), group);
 		
 		GridPane box = new GridPane();
 		box.add(imageTools, 0, 0);
@@ -28,8 +32,8 @@ public class ToolsAreaBox extends GridPane {
 		
 		add(box, 0, 1);
 		
-		add(new AnnotationToolBox(controller.getAnnotationsController(), group), 1, 1);
-		add(new RegionExtractionToolBox(controller, group), 2, 1);
+		add(annotationTools, 1, 1);
+		add(regionExtractionTools, 2, 1);
 		
 		this.setId("tool-box-area");
 	}
@@ -40,6 +44,14 @@ public class ToolsAreaBox extends GridPane {
 	
 	public ImageToolBox getImageToolBox(){
 		return imageTools;
+	}
+	
+	public AnnotationToolBox getAnnotationToolBox(){
+		return annotationTools;
+	}
+	
+	public RegionExtractionToolBox getRegionExtractionToolBox(){
+		return regionExtractionTools;
 	}
 	
 }

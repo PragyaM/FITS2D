@@ -1,137 +1,36 @@
 package models;
 
-import java.awt.Point;
-import java.util.ArrayList;
-
-import javafx.event.EventHandler;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.PixelWriter;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import services.DrawLine;
-import services.FillRegion;
-import views.AnnotationLayer;
-import views.AnnotationLayer.Mode;
-import views.FitsImageViewBox;
-import controllers.AnnotationsController;
+import views.FitsCanvas;
+import views.FitsCanvas.Mode;
+import controllers.DrawingsController;
 
-/**
- * Annotations are created by the user drawing on the canvas interface while in annotation mode.
- * These annotations, while drawn in canvas pixels, must store coordinate values representing FITS
- * image pixels when written to a file. This allows annotations to work across various images, 
- * rather than being locked down to a rendered state that is specific to one image.
- * @author Pragya
- *
- */
-public class Annotation implements EventHandler<MouseEvent>{
+public class Annotation extends Drawing{
 
-	private ArrayList<AnnotationRegion> regions = new ArrayList<AnnotationRegion>();
-	private GraphicsContext gc;
-	//	private String associatedFileName; //TODO: keep track of which image this annotation was created on
-	private Color color;
-	private AnnotationRegion region;
-	private Point currentPoint;
-	private PixelWriter pw;
-	private AnnotationLayer canvas;
-	private FitsImage image;
-	private FitsImageViewBox imageViewBox;
-	private AnnotationsController controller;
-
-	public Annotation(AnnotationLayer canvas, AnnotationsController controller, Color color){
-		this.canvas = canvas;
-		this.gc = canvas.getGraphicsContext2D();
-		this.pw = gc.getPixelWriter();
-		this.color = color;
-		this.controller = controller;
-		this.imageViewBox = controller.getImageViewBox();
-		this.image = imageViewBox.getFitsImage();
-	}
-
-	public void draw() {
-		for (AnnotationRegion region : regions){
-			for (Point pixel : region.getCanvasPixels()){
-				try {
-					pw.setColor(pixel.x, pixel.y, color);
-				} catch(IndexOutOfBoundsException e){
-					System.out.println("ignore pixels that are out of image bounds");
-				}
-			}
-		}
-	}
-
-	public void setRegions(ArrayList<AnnotationRegion> regions){
-		this.regions = regions;
+	public Annotation(FitsCanvas canvas, DrawingsController controller,
+			Color color) {
+		super(canvas, controller, color);
 	}
 	
-	public ArrayList<AnnotationRegion> getRegions(){
-		return regions;
-	}
-
-	public void addRegion(AnnotationRegion region){
-		this.regions.add(region);
-	}
-
 	@Override
 	public void handle(MouseEvent event) {
-
-		if (canvas.mode==Mode.ANNOTATE_DRAW || canvas.mode==Mode.MASK_DRAW){
-			if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)){
-				Point p = new Point((int) event.getX(), (int) event.getY());
-
-				ArrayList<Point> canvasPixels = (DrawLine.draw(currentPoint, p));
-				region.addAllCanvasPixels(canvasPixels);
-				
-				for (Point pixel : canvasPixels){
-					pw.setColor(pixel.x, pixel.y, color);
-				}
-				currentPoint = p;
-
-				event.consume();
-			}
-
-			else if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)){
-				region = new AnnotationRegion();
-				Point p = new Point((int) event.getX(), (int) event.getY());
-				currentPoint = p;
-
-				event.consume();
-			}
-
-			else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)){
-				region.cropToBounds(canvas.getWidth(), canvas.getHeight());
-				region.generateImagePixels(canvas.getHeight(), image.getHeight());
-				regions.add(region);
-
-				event.consume();
-			}
+		if (canvas.mode==Mode.ANNOTATION_DRAW){
+			super.drawAction(event);
 		}
-		else if (canvas.mode==Mode.ANNOTATE_FILL || canvas.mode==Mode.MASK_FILL){
-			if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED)){
-				region = new AnnotationRegion();
-				Point p = new Point((int) event.getX(), (int) event.getY());
-				
-				ArrayList<Point> canvasPixels = (FillRegion.fill(canvas, controller, p, color));
-				region.addAllCanvasPixels(canvasPixels);
-				
-				for (Point pixel : canvasPixels){
-					pw.setColor(pixel.x, pixel.y, color);
-				}
-
-				region.cropToBounds(canvas.getWidth(), canvas.getHeight());
-				region.generateImagePixels(canvas.getHeight(), image.getHeight());
-				regions.add(region);
-				event.consume();
-			}
-		}		
+		else if (canvas.mode==Mode.ANNOTATION_FILL){
+			super.floodFillAction(event);
+		}
 	}
-
+	
 	public String toString(){
-		StringBuilder annotationString = new StringBuilder(); //"Colour: " + color.toString();
-		for (AnnotationRegion region : regions){
+		StringBuilder annotationString = new StringBuilder("\na"); //"Colour: " + color.toString();
+		//annotationString.append("\nColour: ");
+		//annotationString.append(color.toString());
+		for (PixelRegion region : regions){
 			annotationString.append('\n');
 			annotationString.append(region.toString());
 		}
 		return annotationString.toString();
 	}
-
 }

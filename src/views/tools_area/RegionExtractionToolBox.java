@@ -3,11 +3,13 @@ package views.tools_area;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleGroup;
 import views.ImageToggleButton;
-import controllers.GUIController;
+import controllers.FitsCanvasController;
 
 public class RegionExtractionToolBox extends BaseToolBox{
 	
-	public RegionExtractionToolBox(GUIController controller, ToggleGroup group){
+	private Button undoButton;
+	
+	public RegionExtractionToolBox(FitsCanvasController controller, ToggleGroup group){
 		super("Region Extraction");
         
 		ImageToggleButton drawToolButton = new ImageToggleButton("/resources/pencil112.png");
@@ -16,15 +18,23 @@ public class RegionExtractionToolBox extends BaseToolBox{
 		
 		Button extractRegionButton = new Button("Extract selection\nto FITS");
 		
+		undoButton = new Button("Undo");
+		
 		drawToolButton.setToggleGroup(group);
 		fillToolButton.setToggleGroup(group);
 		
 		this.add(drawToolButton, 0, 1);
 		this.add(fillToolButton, 0, 2);
 		this.add(extractRegionButton, 1, 1);
+		this.add(undoButton, 1, 2);
 		
-		drawToolButton.setOnAction(controller.getAnnotationsController().toggleMaskDrawMode(drawToolButton));
-		fillToolButton.setOnAction(controller.getAnnotationsController().toggleMaskFillMode(fillToolButton));
-		extractRegionButton.setOnAction(controller.getAnnotationsController().createMaskFromSelection());
+		drawToolButton.setOnAction(controller.getSelectionsController().toggleDrawMode(drawToolButton));
+		fillToolButton.setOnAction(controller.getSelectionsController().toggleFillMode(fillToolButton));
+		extractRegionButton.setOnAction(controller.createMaskFromSelection());
+		undoButton.setOnAction(controller.undoSelectionStroke());
+	}
+	
+	public void setUndoButtonDisabled(boolean disable){
+		undoButton.setDisable(disable);
 	}
 }

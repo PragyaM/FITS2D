@@ -5,11 +5,11 @@ import java.util.ArrayList;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
-import controllers.AnnotationsController;
+import controllers.FitsCanvasController;
 
 public class FillRegion {
 	
-	public static ArrayList<Point> fill(Canvas c, AnnotationsController controller, Point orig, Color replacementColor){
+	public static ArrayList<Point> fill(Canvas c, FitsCanvasController controller, Point orig, Color replacementColor){
 		controller.resetZoom();
 		
 		FillRegionTask doFill = new FillRegionTask(c, orig, replacementColor);

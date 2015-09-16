@@ -30,7 +30,7 @@ public class ImageController {
 		imageViewBox.setOnZoom(this.touchZoomImage());
 	}
 
-	public void addImageFromFile(File file, AnnotationsController annotationsController){
+	public void addImageFromFile(File file, FitsCanvasController annotationsController){
 		try {
 			Fits fitsFile = new Fits(file);
 			addImage(fitsFile, annotationsController);
@@ -42,11 +42,11 @@ public class ImageController {
 
 	}
 
-	public void addImage(Fits fitsFile, AnnotationsController annotationsController){
+	public void addImage(Fits fitsFile, FitsCanvasController annotationsController){
 		try {
 			imageViewBox.addImage(fitsFile);
 			imageViewBox.setVisible(true);
-			imageViewBox.setupAnnotationLayer(annotationsController);
+			imageViewBox.setupFitsCanvas(annotationsController);
 		} catch (FitsException | IOException e) {
 			e.printStackTrace();
 		}
@@ -154,8 +154,8 @@ public class ImageController {
 	public void updateScale(double zoomFactor){
 		imageViewBox.getImageView().setScaleX(imageViewBox.getImageView().getScaleX() * zoomFactor);
 		imageViewBox.getImageView().setScaleY(imageViewBox.getImageView().getScaleY() * zoomFactor);
-		imageViewBox.getAnnotationLayer().setScaleX(imageViewBox.getAnnotationLayer().getScaleX() * zoomFactor);
-		imageViewBox.getAnnotationLayer().setScaleY(imageViewBox.getAnnotationLayer().getScaleY() * zoomFactor);
+		imageViewBox.getFitsCanvas().setScaleX(imageViewBox.getFitsCanvas().getScaleX() * zoomFactor);
+		imageViewBox.getFitsCanvas().setScaleY(imageViewBox.getFitsCanvas().getScaleY() * zoomFactor);
 	}
 
 	public void setZoomLabel(String zoomText){
@@ -169,9 +169,13 @@ public class ImageController {
 	public void resetZoom(){
 		imageViewBox.getImageView().setScaleX(1);
 		imageViewBox.getImageView().setScaleY(1);
-		imageViewBox.getAnnotationLayer().setScaleX(1);
-		imageViewBox.getAnnotationLayer().setScaleY(1);
+		imageViewBox.getFitsCanvas().setScaleX(1);
+		imageViewBox.getFitsCanvas().setScaleY(1);
 		imageViewBox.setZoomLevel(100);
 		setZoomLabel("100%");
+	}
+	
+	public FitsImageViewBox getImageViewBox(){
+		return imageViewBox;
 	}
 }

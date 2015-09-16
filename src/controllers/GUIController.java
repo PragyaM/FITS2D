@@ -13,7 +13,7 @@ import views.MainWindow;
 
 public class GUIController{
 	private MainWindow ui;
-	private AnnotationsController annotationsController;
+	private FitsCanvasController annotationsController;
 	private ImageController imageController;
 
 	public GUIController() {
@@ -28,13 +28,13 @@ public class GUIController{
 	public void start(Stage primaryStage) throws FitsException, IOException{
 		ui = new MainWindow(primaryStage, this);
 		imageController = new ImageController(ui);
-		annotationsController = new AnnotationsController(ui, imageController);
+		annotationsController = new FitsCanvasController(ui, imageController);
 		ui.addTopMenuBar(this);
 		ui.addToolsAreaBox(this);
 		ui.display();
 	}
 
-	public AnnotationsController getAnnotationsController(){
+	public FitsCanvasController getAnnotationsController(){
 		return annotationsController;
 	}
 

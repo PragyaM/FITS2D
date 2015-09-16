@@ -15,32 +15,42 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import models.Annotation;
-import models.AnnotationRegion;
+import models.Drawing;
+import models.FitsImage;
+import models.PixelRegion;
+import models.Selection;
 import services.ChanneliseFitsHeader;
 import services.ConvertWcsPixels;
 import uk.ac.starlink.ast.FitsChan;
-import controllers.AnnotationsController;
+import controllers.DrawingsController;
+import controllers.FitsCanvasController;
 
-public class AnnotationLayer extends Canvas{
+public class FitsCanvas extends Canvas{
 	private ArrayList<Annotation> annotations;
-	private ArrayList<Annotation> selections;
-	private GraphicsContext gc;
+	private ArrayList<Selection> selections;
 	private Annotation currentAnnotation;
-	private Annotation currentSelection;
-	public enum Mode {NONE, ANNOTATE_DRAW, ANNOTATE_FILL, MASK_DRAW, MASK_FILL};
+	private Selection currentSelection;
+	public enum Mode {NONE, ANNOTATION_DRAW, ANNOTATION_FILL, SELECTION_DRAW, SELECTION_FILL};
 	public Mode mode;
+	private GraphicsContext gc;
 	private FitsImageViewBox container;
-	private AnnotationsController controller;
+	private DrawingsController annotationsController;
+	private DrawingsController selectionController;
 
-	public AnnotationLayer(double width, double height, AnnotationsController controller){
+	public FitsCanvas(double width, double height, FitsCanvasController controller){
 		super(width, height);
 		annotations = new ArrayList<Annotation>();
-		selections = new ArrayList<Annotation>();
+		selections = new ArrayList<Selection>();
 		gc = this.getGraphicsContext2D();
 		gc.setLineWidth(2);
-		mode = Mode.NONE;
-		this.controller = controller;
+		setMode(Mode.NONE);
+		this.annotationsController = controller.getAnnotationsController();
+		this.selectionController = controller.getSelectionsController();
 		this.container = controller.getImageViewBox();
+	}
+	
+	public void setMode(Mode mode){
+		this.mode = mode;
 	}
 	
 	public void setDrawMode(Boolean enabled){
@@ -50,11 +60,11 @@ public class AnnotationLayer extends Canvas{
 			if (currentAnnotation == null){
 				makeNewAnnotation();
 			} else this.addEventHandler(MouseEvent.ANY, currentAnnotation);
-			mode = Mode.ANNOTATE_DRAW;
+			setMode(Mode.ANNOTATION_DRAW);
 			container.setPannable(false);
 		} else {
 			turnAnnotatingOff();
-			mode = Mode.NONE;
+			setMode(Mode.NONE);
 			container.setPannable(true);
 		}
 	}
@@ -66,11 +76,11 @@ public class AnnotationLayer extends Canvas{
 			if (currentAnnotation == null){
 				makeNewAnnotation();
 			} else this.addEventHandler(MouseEvent.ANY, currentAnnotation);
-			mode = Mode.ANNOTATE_FILL;
+			setMode(Mode.ANNOTATION_FILL);
 			container.setPannable(false);
 		} else {
 			turnAnnotatingOff();
-			mode = Mode.NONE;
+			setMode(Mode.NONE);
 			container.setPannable(true);
 		}
 	}
@@ -82,11 +92,11 @@ public class AnnotationLayer extends Canvas{
 			if (currentSelection == null){
 				makeNewSelection();
 			} else this.addEventHandler(MouseEvent.ANY, currentSelection);
-			mode = Mode.MASK_DRAW;
+			setMode(Mode.SELECTION_DRAW);
 			container.setPannable(false);
 		} else {
 			turnSelectingOff();
-			mode = Mode.NONE;
+			setMode(Mode.NONE);
 			container.setPannable(true);
 		}
 	}
@@ -98,11 +108,11 @@ public class AnnotationLayer extends Canvas{
 			if (currentSelection == null){
 				makeNewSelection();
 			} else this.addEventHandler(MouseEvent.ANY, currentSelection);
-			mode = Mode.MASK_FILL;
+			setMode(Mode.SELECTION_FILL);
 			container.setPannable(false);
 		} else {
 			turnSelectingOff();
-			mode = Mode.NONE;
+			setMode(Mode.NONE);
 			container.setPannable(true);
 		}
 	}
@@ -114,19 +124,19 @@ public class AnnotationLayer extends Canvas{
 	}
 	
 	public void turnSelectingOff(){
-		for (Annotation a : selections){
+		for (Selection a : selections){
 			this.removeEventHandler(MouseEvent.ANY, a);
 		}
 	}
 
 	private void makeNewAnnotation(){
-		currentAnnotation = new Annotation(this, controller, Color.RED);
+		currentAnnotation = new Annotation(this, annotationsController, Color.RED);
 		this.addEventHandler(MouseEvent.ANY, currentAnnotation);
 		annotations.add(currentAnnotation);
 	}
 	
 	private void makeNewSelection(){
-		currentSelection = new Annotation(this, controller, Color.YELLOW);
+		currentSelection = new Selection(this, selectionController, Color.YELLOW);
 		this.addEventHandler(MouseEvent.ANY, currentSelection);
 		selections.add(currentSelection);
 	}
@@ -138,7 +148,7 @@ public class AnnotationLayer extends Canvas{
 	}
 	
 	public void drawAllSelections(){
-		for (Annotation a : selections) {
+		for (Selection a : selections) {
 			a.draw();
 		}
 	}
@@ -147,11 +157,13 @@ public class AnnotationLayer extends Canvas{
 	public ArrayList<Point> getSelectedArea(){
 		//TODO create mask using "selection" annotations
 		ArrayList<Point> fullSelection = new ArrayList<Point>();
-		for (Annotation a : selections){
-			for (AnnotationRegion r : a.getRegions()){
+		for (Selection a : selections){
+			for (PixelRegion r : a.getRegions()){
+				System.out.println("Region has " + r.getImagePixels().size() + " image pixels");
 				fullSelection.addAll(r.getImagePixels());
 			}
 		}
+		System.out.println("Number of selected points is " + fullSelection.size());
 		return fullSelection;
 	}
 		
@@ -169,12 +181,12 @@ public class AnnotationLayer extends Canvas{
 	public void writeAnnotationsToFile(File aFile){
 		BufferedWriter writer = null;
 		String fileDescriptorString = "FitsImageViewerAnnotations\n";
-		String headerString = this.container.getFitsImage().getHeaderString();
+		FitsImage fitsImage = this.container.getFitsImage();
+		String headerString = fitsImage.getHeaderString();
 		StringBuilder annotationsString = new StringBuilder();
 
 		for (Annotation a : annotations){
 			annotationsString.append(a.toString());
-			annotationsString.append("\n*\n");
 		}
 
 		try {
@@ -217,19 +229,20 @@ public class AnnotationLayer extends Canvas{
 				FitsChan newFits = ChanneliseFitsHeader.chanFromHeaderObj(container.getFitsImage().getHDU().getHeader());
 				ConvertWcsPixels wcsConverter = new ConvertWcsPixels(oldFits, newFits);
 				
-				Annotation annotation = new Annotation(this, controller, Color.RED);
+				Annotation annotation = new Annotation(this, annotationsController, Color.RED);
 
-				//Delimit annotations with "*"
+				/* Delimit annotations with "a" */
 				while ((line = reader.readLine()) != null){
-					//Within annotations, delimit regions by "r"
+					/* Within annotations, delimit regions with "r" */
 					if (line.startsWith("r")){
 						annotation.addRegion(regionFromString(line, wcsConverter));
 					}
-					else if (line.equalsIgnoreCase("*")){
+					else if (line.equalsIgnoreCase("a")){
 						annotations.add(annotation);
-						annotation = new Annotation(this, controller, Color.RED);
+						annotation = new Annotation(this, annotationsController, Color.RED);
 					}
 				}
+				annotations.add(annotation);
 			}
 			else {
 				System.out.println("Not a valid annotation file");
@@ -247,11 +260,11 @@ public class AnnotationLayer extends Canvas{
 		drawAllAnnotations();
 	}
 
-	public AnnotationRegion regionFromString(String rString, ConvertWcsPixels wcsConverter){
+	public PixelRegion regionFromString(String rString, ConvertWcsPixels wcsConverter){
 		rString = rString.substring(1, rString.length()-1);
 		rString = rString.trim();
 		String[] coords = rString.split(" ");
-		AnnotationRegion region = new AnnotationRegion();
+		PixelRegion region = new PixelRegion();
 
 		ArrayList<Point> oldImagePixels = new ArrayList<Point>();
 		
@@ -272,10 +285,22 @@ public class AnnotationLayer extends Canvas{
 		
 		return region;
 	}
+
+	public void undoAnnotationStroke() {
+		annotations.get(annotations.size() -1 ).undo();
+		gc.clearRect(0, 0, this.getWidth(), this.getHeight());
+		drawAllSelections();
+		drawAllAnnotations();
+	}
+
+	public void undoSelectionStroke() {
+		selections.get(selections.size() -1 ).undo();
+		gc.clearRect(0, 0, this.getWidth(), this.getHeight());
+		drawAllSelections();
+		drawAllAnnotations();
+	}
 	
 	//methods to add later:
-//	public void undo(){}
-//	public void redo(){}
 //	public void selectionFromAnnotations(ArrayList<Annotation> selectedAnnotations){}
 
 }

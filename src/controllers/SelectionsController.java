@@ -4,9 +4,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ToggleButton;
 
-public class AnnotationsController extends DrawingsController{
+public class SelectionsController extends DrawingsController{
 
-	public AnnotationsController(FitsCanvasController fitsCanvasController) {
+	public SelectionsController(FitsCanvasController fitsCanvasController) {
 		super(fitsCanvasController);
 		
 	}
@@ -15,11 +15,11 @@ public class AnnotationsController extends DrawingsController{
 		return (final ActionEvent e) -> {
 			try {
 				if (toggle.isSelected()){ //enable currentDrawing mode
-					fitsCanvasController.getCanvas().setDrawMode(true);
+					fitsCanvasController.getCanvas().setMaskDrawMode(true);
 					fitsCanvasController.getImageViewBox().setPannable(false);
 				}
 				else if (!toggle.isSelected()){ //disable currentDrawing mode
-					fitsCanvasController.getCanvas().setDrawMode(false);
+					fitsCanvasController.getCanvas().setMaskDrawMode(false);
 					fitsCanvasController.getImageViewBox().setPannable(true);
 				}
 			} catch (NullPointerException e1){
@@ -32,11 +32,11 @@ public class AnnotationsController extends DrawingsController{
 		return (final ActionEvent e) -> {
 			try {
 				if (toggle.isSelected()){ //enable fill mode
-					fitsCanvasController.getCanvas().setFillMode(true);
+					fitsCanvasController.getCanvas().setMaskFillMode(true);
 					fitsCanvasController.getImageViewBox().setPannable(false);
 				}
 				else if (!toggle.isSelected()){ //disable fill mode
-					fitsCanvasController.getCanvas().setFillMode(false);
+					fitsCanvasController.getCanvas().setMaskFillMode(false);
 					fitsCanvasController.getImageViewBox().setPannable(true);
 				}
 			} catch (NullPointerException e1){
@@ -44,5 +44,7 @@ public class AnnotationsController extends DrawingsController{
 			}
 		};
 	}
+	
+	
 
 }

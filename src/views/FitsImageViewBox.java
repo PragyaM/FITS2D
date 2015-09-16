@@ -12,13 +12,13 @@ import models.FitsImage;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import services.BuildFitsImage;
-import controllers.AnnotationsController;
+import controllers.FitsCanvasController;
 import controllers.ImageController;
 
 public class FitsImageViewBox extends ScrollPane{
 	private Group g;
 	private ImageView view;
-	private AnnotationLayer annotationLayer;
+	private FitsCanvas fitsCanvas;
 	private FitsImage fitsImage;
 	private ImageController controller;
 	private int zoomLevel = 100;
@@ -67,16 +67,16 @@ public class FitsImageViewBox extends ScrollPane{
 		return view;
 	}
 	
-	public void setupAnnotationLayer(AnnotationsController annotationsController){
-		annotationLayer = new AnnotationLayer(view.minWidth(view.getImage().getHeight()), view.minHeight(view.getImage().getWidth()), annotationsController);
-		System.out.println("Canvas width = " + annotationLayer.getWidth() + "  image width = " + getFitsImage().getWidth());
-		System.out.println("Canvas height = " + annotationLayer.getHeight() + "  image height = " + getFitsImage().getHeight());
-		annotationLayer.turnAnnotatingOff();
-		g.getChildren().add(annotationLayer);
+	public void setupFitsCanvas(FitsCanvasController fitsCanvasController){
+		fitsCanvas = new FitsCanvas(view.minWidth(view.getImage().getHeight()), view.minHeight(view.getImage().getWidth()), fitsCanvasController);
+		System.out.println("Canvas width = " + fitsCanvas.getWidth() + "  image width = " + getFitsImage().getWidth());
+		System.out.println("Canvas height = " + fitsCanvas.getHeight() + "  image height = " + getFitsImage().getHeight());
+		fitsCanvas.turnAnnotatingOff();
+		g.getChildren().add(fitsCanvas);
 	}
 	
-	public AnnotationLayer getAnnotationLayer(){
-		return annotationLayer;
+	public FitsCanvas getFitsCanvas(){
+		return fitsCanvas;
 	}
 	
 	public void disableScrollBars(){
