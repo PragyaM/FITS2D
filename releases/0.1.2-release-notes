@@ -1,0 +1,24 @@
+Build 0.1.2 Release notes
+
+Added features:
+ - Image selections can be saved and can be hidden/revealed within the program
+ - Image selections and annotations are WCS aware
+ - Annotations and selection drawings can be undone
+ - UI is easier on the eyes
+ - robust conversion of pixels from their canvas representation to FITS image representation and vice-vesra.
+
+Fixes:
+ - Extracted parts of FITS images are cropped to bound the selected area
+ - Renamed "masking" tools to "region extraction" tools
+ - pixels out of image bounds are deleted when annotations and image selections are created
+ - Mouse users can now zoom and pan over the image
+ - no weird flood fill bug when image has been zoomed - instead image gets zoomed to 100% when performing the fill
+ - remove unwanted header cards from annotation and region selection files
+
+Known issues:
+ - grid pattern caused by pixel conversion (see issue #17)
+ - data is not being dynamically scaled, so images often have very high contrast
+ - some missing features (see issue tracker)
+
+ Issue tracker:
+ https://bitbucket.org/PragyaM/fitsimageviewer/issues?status=new&status=open
