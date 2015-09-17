@@ -108,29 +108,15 @@ public class FitsCanvas extends Canvas{
 		this.addEventHandler(MouseEvent.ANY, currentSelection);
 		selections.add(currentSelection);
 	}
-
-//	public void drawAllAnnotations(){
-//		for (Annotation annotation : annotations) {
-//			annotation.draw();
-//		}
-//	}
-//	
-//	public void drawAllSelections(){
-//		for (Selection a : selections) {
-//			a.draw();
-//		}
-//	}
 	
 	public ArrayList<Point> getSelectedArea(){
 		//TODO create mask using "selection" annotations
 		ArrayList<Point> fullSelection = new ArrayList<Point>();
 		for (Selection a : selections){
 			for (PixelRegion r : a.getRegions()){
-				System.out.println("Region has " + r.getImagePixels().size() + " image pixels");
 				fullSelection.addAll(r.getImagePixels());
 			}
 		}
-		System.out.println("Number of selected points is " + fullSelection.size());
 		return fullSelection;
 	}
 
@@ -180,7 +166,6 @@ public class FitsCanvas extends Canvas{
 				//read associated FITS header
 				while (line != null){
 					headerString = headerString + line + "\n";
-					System.out.println(line);
 					line = reader.readLine();
 					if (line.startsWith("END")) break;
 				}
@@ -297,7 +282,6 @@ public class FitsCanvas extends Canvas{
 				//read associated FITS header
 				while (line != null){
 					headerString = headerString + line + "\n";
-					System.out.println(line);
 					line = reader.readLine();
 					if (line.startsWith("END")) break;
 				}

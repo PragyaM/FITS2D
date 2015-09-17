@@ -25,15 +25,10 @@ public class ExtractFitsRegion {
 		cWidth = cw;
 		cHeight = ch;
 
-		System.out.println("Canvas width = " + cWidth + "  image width = " + fitsImage.getWidth());
-		System.out.println("Canvas height = " + cHeight + "  image height = " + fitsImage.getHeight());
-
 		/* Get selected data region from FITS data */
 		Fits maskFits = new Fits();
 
 		boundingBox = getBoundingBox(fitsImage, imagePixels, cWidth, cHeight);
-		System.out.println("PixelRegion size: " + boundingBox.getWidth() + ", " + boundingBox.getHeight());
-		System.out.println("PixelRegion position: " + boundingBox.getX() + ", " + boundingBox.getY());
 
 		double[][] newData = new double[(int) boundingBox.getHeight()][(int) boundingBox.getWidth()];
 		newData = setAll(newData, Double.NaN);

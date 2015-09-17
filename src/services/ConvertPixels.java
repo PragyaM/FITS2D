@@ -41,7 +41,7 @@ public class ConvertPixels {
 
 		if (canvasHeight < imageHeight){
 			for (Point pixel : imagePixels){
-				int x = (int) (Math.floor(pixel.x / imageToCanvasRatio));
+				int x = (int) (Math.ceil(pixel.x / imageToCanvasRatio));
 				int y = (int) (Math.ceil(pixel.y / imageToCanvasRatio));
 				canvasPixels.add(new Point(x, (canvasHeight - y)));
 			}
@@ -49,12 +49,12 @@ public class ConvertPixels {
 			for (Point pixel : imagePixels){
 				int x0 = (int) (Math.floor(pixel.x / imageToCanvasRatio));
 				if (x0 < 0) x0 = 0;
-				int y0 = (int) (Math.ceil(pixel.y / imageToCanvasRatio));
+				int y0 = (int) (Math.floor(pixel.y / imageToCanvasRatio));
 				int x1 = x0 + (int) canvasToImageRatio;
 				int y1 = y0 + (int) canvasToImageRatio;
 
-				for (int x = x0; x < x1; x++){
-					for (int y = y0; y < y1; y++){
+				for (int x = x0; x <= x1; x++){
+					for (int y = y0; y <= y1; y++){
 						canvasPixels.add(new Point(x, canvasHeight - y));
 					}
 				}
@@ -63,6 +63,7 @@ public class ConvertPixels {
 
 		ArrayList<Point> outputCanvasPixels = new ArrayList<Point>(canvasPixels);
 
+		
 		return outputCanvasPixels;
 	}
 
@@ -76,8 +77,8 @@ public class ConvertPixels {
 				int x1 = x0 + (int) imageToCanvasRatio;
 				int y1 = y0 + (int) imageToCanvasRatio;
 
-				for (int x = x0; x < x1; x++){
-					for (int y = y0; y < y1; y++){
+				for (int x = x0; x <= x1; x++){
+					for (int y = y0; y <= y1; y++){
 						imagePixels.add(new Point(x, imageHeight - y));
 					}
 				}
