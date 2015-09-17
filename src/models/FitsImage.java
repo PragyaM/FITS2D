@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -16,6 +17,7 @@ import javax.imageio.ImageIO;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.Header;
+import nom.tam.fits.HeaderCard;
 import nom.tam.fits.ImageHDU;
 import nom.tam.image.StandardImageTiler;
 import nom.tam.util.ArrayFuncs;
@@ -73,11 +75,11 @@ public class FitsImage{
 			return processingFriendlyData[p.y][p.x];
 		} else return processingFriendlyData[0][0];
 	}
-	
+
 	public int getHeight(){
 		return height;
 	}
-	
+
 	public int getWidth(){
 		return width;
 	}
@@ -93,7 +95,47 @@ public class FitsImage{
 	public double[][] getData(){
 		return processingFriendlyData;
 	}
-	
+
+	public String getAnnotationFriendlyHeaderString(){
+		Header header = hdu.getHeader();
+		Header filteredHeader = new Header();
+
+		//now adjust WCS values:
+		ArrayList<HeaderCard> cards = new ArrayList<HeaderCard>();
+		cards.add(header.findCard("CTYPE1"));
+		cards.add(header.findCard("CTYPE2"));	
+		cards.add(header.findCard("RADESYS"));
+		cards.add(header.findCard("RADECSYS"));
+		cards.add(header.findCard("CRVAL1"));
+		cards.add(header.findCard("CRVAL2"));
+		cards.add(header.findCard("CDELT1"));
+		cards.add(header.findCard("CDELT2"));
+		cards.add(header.findCard("EQUINOX"));
+		cards.add(header.findCard("BUNIT"));
+		cards.add(header.findCard("EPOCH"));
+		cards.add(header.findCard("CD1_1"));
+		cards.add(header.findCard("CD1_2"));
+		cards.add(header.findCard("CD2_1"));
+		cards.add(header.findCard("CD2_2"));
+		cards.add(header.findCard("CRPIX1"));
+		cards.add(header.findCard("CRPIX2"));
+		cards.add(header.findCard("END"));
+
+		cards.forEach((card) -> {
+			if (card != null){
+				try {
+					filteredHeader.addLine(card);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream ps = new PrintStream(baos);
+		filteredHeader.dumpHeader(ps);
+		return baos.toString();
+	}
+
 	public String getHeaderString(){
 		Header hdr = hdu.getHeader();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -228,17 +270,17 @@ public class FitsImage{
 	}
 
 	public void printFitsInfo(){
-		
+
 	}
 
 	public Color getNanColour() {
 		return nanColour;
 	}
-	
+
 	public double getCRVAL1(){
 		return hdu.getHeader().getDoubleValue("CRVAL1");
 	}
-	
+
 	public double getCRVAL2(){
 		return hdu.getHeader().getDoubleValue("CRVAL2");
 	}

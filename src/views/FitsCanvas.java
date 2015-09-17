@@ -148,7 +148,7 @@ public class FitsCanvas extends Canvas{
 		BufferedWriter writer = null;
 		String fileDescriptorString = "FitsImageViewerAnnotations\n";
 		FitsImage fitsImage = this.container.getFitsImage();
-		String headerString = fitsImage.getHeaderString();
+		String headerString = fitsImage.getAnnotationFriendlyHeaderString();
 		StringBuilder annotationsString = new StringBuilder();
 
 		for (Annotation a : annotations){
