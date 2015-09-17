@@ -181,10 +181,13 @@ public class FitsImage{
 			double val = (double) (imageData[i]);
 			int x = i % width;
 			int y = (int) Math.ceil(i / width);
-			if (isNaN(val) || val <= 0) {
+			if (isNaN(val)) {
 				raster.setPixel(x, y, new double[]{nanColour.getRed()*250, nanColour.getGreen()*250, nanColour.getBlue()*250, nanColour.getOpacity()*250});
-			} 
-			else if (val > cutOff){
+			}
+			else if (val <= 0) {
+				raster.setPixel(x, y, new double[]{0, 0, 0,250});
+			}
+			else if (val > cutOff) {
 				raster.setPixel(x, y, new double[]{250, 250, 250,250});
 			}
 			else {
