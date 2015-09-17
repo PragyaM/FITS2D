@@ -13,7 +13,7 @@ import views.MainWindow;
 
 public class GUIController{
 	private MainWindow ui;
-	private FitsCanvasController annotationsController;
+	private FitsCanvasController fitsCanvasController;
 	private ImageController imageController;
 
 	public GUIController() {
@@ -28,14 +28,22 @@ public class GUIController{
 	public void start(Stage primaryStage) throws FitsException, IOException{
 		ui = new MainWindow(primaryStage, this);
 		imageController = new ImageController(ui);
-		annotationsController = new FitsCanvasController(ui, imageController);
+		fitsCanvasController = new FitsCanvasController(ui, imageController);
 		ui.addTopMenuBar(this);
 		ui.addToolsAreaBox(this);
 		ui.display();
 	}
 
-	public FitsCanvasController getAnnotationsController(){
-		return annotationsController;
+	public FitsCanvasController getFitsCanvasController(){
+		return fitsCanvasController;
+	}
+	
+	public AnnotationsController getAnnotationsController(){
+		return fitsCanvasController.getAnnotationsController();
+	}
+	
+	public SelectionsController getSelectionsController(){
+		return fitsCanvasController.getSelectionsController();
 	}
 
 	public ImageController getImageController(){
@@ -46,9 +54,9 @@ public class GUIController{
 		return (final ActionEvent e) -> {
 			//set up file chooser
 			File file = ui.openFile("Select a FITS image file", "FITS");
-			imageController.addImageFromFile(file, annotationsController);
+			imageController.addImageFromFile(file, fitsCanvasController);
 
-			annotationsController.initialise(ui.getImageViewBox());
+			fitsCanvasController.initialise(ui.getImageViewBox());
 		};
 	}
 

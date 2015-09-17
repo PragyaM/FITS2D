@@ -1,6 +1,7 @@
 package views.tools_area;
 
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ToggleGroup;
 import views.ImageToggleButton;
 import controllers.FitsCanvasController;
@@ -22,6 +23,11 @@ public class RegionExtractionToolBox extends BaseToolBox{
 		
 		drawToolButton.setToggleGroup(group);
 		fillToolButton.setToggleGroup(group);
+		
+		CheckBox hideSelectionButton = new CheckBox("Hide all");
+        add(hideSelectionButton, 1, 3);
+        hideSelectionButton.setOnAction(controller.getSelectionsController()
+        		.toggleVisible(hideSelectionButton));
 		
 		this.add(drawToolButton, 0, 1);
 		this.add(fillToolButton, 0, 2);

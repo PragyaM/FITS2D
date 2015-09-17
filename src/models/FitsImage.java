@@ -96,7 +96,7 @@ public class FitsImage{
 		return processingFriendlyData;
 	}
 
-	public String getAnnotationFriendlyHeaderString(){
+	public String getWcsHeaderCardsString(){
 		Header header = hdu.getHeader();
 		Header filteredHeader = new Header();
 

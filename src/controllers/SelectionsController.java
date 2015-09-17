@@ -1,11 +1,13 @@
 package controllers;
 
 import java.awt.Point;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.CheckBox;
 import javafx.scene.input.MouseEvent;
 import models.Selection;
 import nom.tam.fits.Fits;
@@ -101,6 +103,52 @@ public class SelectionsController extends DrawingsController{
 			
 			if (selections.size() < 1) {
 				disableUndoButton();
+			}
+		};
+	}
+	
+	@Override
+	public EventHandler<ActionEvent> save() {
+		return (final ActionEvent e) -> {
+			File file = (File) ui.showSaveDialog("TXT");
+			fitsCanvasController.getCanvas().writeSelectionsToFile(file);
+		};
+	}
+	
+	@Override
+	public EventHandler<ActionEvent> open() {
+		return (final ActionEvent e) -> {
+			File file = ui.openFile("Select an annotation file", "TXT");
+			fitsCanvasController.getCanvas().addSelectionsFromFile(file);
+		};
+	}
+	
+	@Override
+	public void hideAll() {
+		fitsCanvasController.getCanvas().clear();
+		fitsCanvasController.getAnnotationsController().drawAll();
+	}
+
+	@Override
+	public void drawAll() {
+		fitsCanvasController.getCanvas().getSelections().forEach((selection) -> {
+			selection.draw();
+		});
+	}
+	
+	@Override
+	public EventHandler<ActionEvent> toggleVisible(
+			CheckBox hideSelectionsButton) {
+		return (final ActionEvent e) -> {
+			try{
+				if (hideSelectionsButton.isSelected()){
+					hideAll();
+				}
+				else {
+					drawAll();
+				}
+			} catch (NullPointerException e1){
+				/*fits canvas does not exist yet, so do nothing*/
 			}
 		};
 	}

@@ -1,18 +1,5 @@
 package controllers;
 
-import java.awt.Point;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ToggleButton;
-import nom.tam.fits.Fits;
-import nom.tam.fits.FitsException;
-import nom.tam.util.BufferedFile;
-import services.ExtractFitsRegion;
 import views.FitsCanvas;
 import views.FitsImageViewBox;
 import views.MainWindow;
@@ -39,36 +26,6 @@ public class FitsCanvasController {
 		this.imageViewBox = imageViewBox;
 		this.fitsCanvas = imageViewBox.getFitsCanvas();
 	}
-
-	public EventHandler<ActionEvent> saveAnnotations() {
-		return (final ActionEvent e) -> {
-			File file = (File) ui.showSaveDialog("TXT");
-			fitsCanvas.writeAnnotationsToFile(file);
-		};
-	}
-
-	public EventHandler<ActionEvent> openAnnotations() {
-		return (final ActionEvent e) -> {
-			File file = ui.openFile("Select an annotation file", "TXT");
-			fitsCanvas.addAnnotationsFromFile(file);
-		};
-	}
-
-	public EventHandler<ActionEvent> toggleAnnotationsVisible(
-			CheckBox hideAnnotationsButton) {
-		return (final ActionEvent e) -> {
-			try{
-				if (hideAnnotationsButton.isSelected()){
-					fitsCanvas.hideAnnotations();
-				}
-				else {
-					fitsCanvas.drawAllAnnotations();
-				}
-			} catch (NullPointerException e1){
-				/*annotation layer does not exist yet, so do nothing*/
-			}
-		};
-	}
 	
 	public FitsImageViewBox getImageViewBox(){
 		return imageViewBox;
@@ -80,9 +37,8 @@ public class FitsCanvasController {
 
 	public void drawAll() {
 		fitsCanvas.getGraphicsContext2D().clearRect(0, 0, fitsCanvas.getWidth(), fitsCanvas.getHeight());
-		fitsCanvas.drawAllSelections();
-		fitsCanvas.drawAllAnnotations();
-		
+		selectionsController.drawAll();
+		annotationsController.drawAll();
 	}
 
 	public MainWindow getMainUi() {

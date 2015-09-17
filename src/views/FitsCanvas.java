@@ -109,17 +109,17 @@ public class FitsCanvas extends Canvas{
 		selections.add(currentSelection);
 	}
 
-	public void drawAllAnnotations(){
-		for (Annotation annotation : annotations) {
-			annotation.draw();
-		}
-	}
-	
-	public void drawAllSelections(){
-		for (Selection a : selections) {
-			a.draw();
-		}
-	}
+//	public void drawAllAnnotations(){
+//		for (Annotation annotation : annotations) {
+//			annotation.draw();
+//		}
+//	}
+//	
+//	public void drawAllSelections(){
+//		for (Selection a : selections) {
+//			a.draw();
+//		}
+//	}
 	
 	public ArrayList<Point> getSelectedArea(){
 		//TODO create mask using "selection" annotations
@@ -133,11 +133,6 @@ public class FitsCanvas extends Canvas{
 		System.out.println("Number of selected points is " + fullSelection.size());
 		return fullSelection;
 	}
-		
-	public void hideAnnotations(){
-		gc.clearRect(0, 0, this.getWidth(), this.getHeight());
-		drawAllSelections();
-	}
 
 	/**
 	 * writes image pixels of the annotations on the image to a text file which
@@ -146,9 +141,9 @@ public class FitsCanvas extends Canvas{
 	 */
 	public void writeAnnotationsToFile(File aFile){
 		BufferedWriter writer = null;
-		String fileDescriptorString = "FitsImageViewerAnnotations\n";
+		String fileDescriptorString = "FITS2D\n";
 		FitsImage fitsImage = this.container.getFitsImage();
-		String headerString = fitsImage.getAnnotationFriendlyHeaderString();
+		String headerString = fitsImage.getWcsHeaderCardsString();
 		StringBuilder annotationsString = new StringBuilder();
 
 		for (Annotation a : annotations){
@@ -178,7 +173,7 @@ public class FitsCanvas extends Canvas{
 			reader = new BufferedReader(new FileReader(aFile));
 
 			//Check for "FitsImageViewerAnnotations" at beginning of file to validate format
-			if (reader.readLine().equalsIgnoreCase("FitsImageViewerAnnotations")){ //continue
+			if (reader.readLine().equalsIgnoreCase("FITS2D")){ //continue
 				
 				String line = reader.readLine();
 				
@@ -223,7 +218,7 @@ public class FitsCanvas extends Canvas{
 		}
 
 		//Annotations can now be rendered
-		drawAllAnnotations();
+		annotationsController.drawAll();
 	}
 
 	public PixelRegion regionFromString(String rString, ConvertWcsPixels wcsConverter){
@@ -257,7 +252,89 @@ public class FitsCanvas extends Canvas{
 	}
 	
 	public void drawAll(){
-		drawAllSelections();
-		drawAllAnnotations();
+		annotationsController.drawAll();
+		selectionsController.drawAll();
+	}
+
+	public void writeSelectionsToFile(File file) {
+		BufferedWriter writer = null;
+		String fileDescriptorString = "FITS2D\n";
+		FitsImage fitsImage = this.container.getFitsImage();
+		String headerString = fitsImage.getWcsHeaderCardsString();
+		StringBuilder selectionString = new StringBuilder();
+
+		for (Selection s : selections){
+			selectionString.append(s.toString());
+		}
+
+		try {
+			writer = new BufferedWriter(new FileWriter(file));
+			writer.write(fileDescriptorString);
+			writer.write(headerString);
+			writer.write(selectionString.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				writer.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void addSelectionsFromFile(File file) {
+		BufferedReader reader = null;
+		String headerString = "";
+		try {
+			reader = new BufferedReader(new FileReader(file));
+
+			//Check for "FITS2D" at beginning of file to validate format
+			if (reader.readLine().equalsIgnoreCase("FITS2D")){ //continue
+				
+				String line = reader.readLine();
+				
+				//read associated FITS header
+				while (line != null){
+					headerString = headerString + line + "\n";
+					System.out.println(line);
+					line = reader.readLine();
+					if (line.startsWith("END")) break;
+				}
+				
+				/* Convert image pixels for new image using wcs conversion */
+				FitsChan oldFits = ChanneliseFitsHeader.chanFromHeaderString(headerString);
+				FitsChan newFits = ChanneliseFitsHeader.chanFromHeaderObj(container.getFitsImage().getHDU().getHeader());
+				ConvertWcsPixels wcsConverter = new ConvertWcsPixels(oldFits, newFits);
+				
+				Selection selection = new Selection(this, selectionsController, Color.YELLOW);
+
+				/* Delimit selections with "s" */
+				while ((line = reader.readLine()) != null){
+					/* Within selections, delimit regions with "r" */
+					if (line.startsWith("r")){
+						selection.addRegion(regionFromString(line, wcsConverter));
+					}
+					else if (line.equalsIgnoreCase("s")){
+						selections.add(selection);
+						selection = new Selection(this, selectionsController, Color.YELLOW);
+					}
+				}
+				selections.add(selection);
+			}
+			else {
+				System.out.println("Not a valid selection file");
+				//TODO add user alert
+			}
+
+			reader.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		//Selections can now be rendered
+		selectionsController.drawAll();
 	}
 }

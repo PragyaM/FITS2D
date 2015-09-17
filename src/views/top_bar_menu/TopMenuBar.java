@@ -16,7 +16,9 @@ public class TopMenuBar extends MenuBar{
 		this.app = app;
 		
 		addFileMenu();
-		addWindowMenu();
+		addImageMenu();
+		addAnnotationMenu();
+		addExtractionMenu();
 	}
 	
 	private void addFileMenu(){
@@ -26,23 +28,45 @@ public class TopMenuBar extends MenuBar{
 		fileMenu.getItems().add(openFits);
 		openFits.setOnAction(app.openFits());
 		
-		MenuItem saveAnnotations = new MenuItem("Save Annotations");
-		fileMenu.getItems().add(saveAnnotations);
-		saveAnnotations.setOnAction(app.getAnnotationsController().saveAnnotations());
-		
-		MenuItem openAnnotations = new MenuItem("Open Annotations");
-		fileMenu.getItems().add(openAnnotations);
-		openAnnotations.setOnAction(app.getAnnotationsController().openAnnotations());
-		
 		this.getMenus().add(fileMenu);
 	}
 	
-	private void addWindowMenu(){
-		Menu windowMenu = new Menu("Window");
-		CheckMenuItem toggleImageScroll = new CheckMenuItem("Show image scrollbars");
-		windowMenu.getItems().add(toggleImageScroll);
+	private void addAnnotationMenu(){
+		Menu annotationMenu = new Menu("Annotation");
+		
+		MenuItem saveAnnotations = new MenuItem("Save Annotation");
+		annotationMenu.getItems().add(saveAnnotations);
+		saveAnnotations.setOnAction(app.getAnnotationsController().save());
+		
+		MenuItem openAnnotations = new MenuItem("Open Annotation");
+		annotationMenu.getItems().add(openAnnotations);
+		openAnnotations.setOnAction(app.getAnnotationsController().open());
+		
+		this.getMenus().add(annotationMenu);
+	}
+	
+	private void addExtractionMenu(){
+		Menu extractionMenu = new Menu("Extraction");
+		
+		MenuItem saveSelection = new MenuItem("Save Selection");
+		extractionMenu.getItems().add(saveSelection);
+		saveSelection.setOnAction(app.getSelectionsController().save());
+		
+		MenuItem openSelection = new MenuItem("Open Selection");
+		extractionMenu.getItems().add(openSelection);
+		openSelection.setOnAction(app.getSelectionsController().open());
+		
+		this.getMenus().add(extractionMenu);
+	}
+	
+	private void addImageMenu(){
+		Menu imageMenu = new Menu("Image");
+		
+		CheckMenuItem toggleImageScroll = new CheckMenuItem("Show scrollbars");
+		imageMenu.getItems().add(toggleImageScroll);
 		toggleImageScroll.setOnAction(app.getImageController().toggleImageScrollbars(toggleImageScroll));
-		this.getMenus().add(windowMenu);
+		
+		this.getMenus().add(imageMenu);
 	}
 	
 }

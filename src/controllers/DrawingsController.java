@@ -2,6 +2,7 @@ package controllers;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ToggleButton;
 import models.Drawing;
 import views.FitsCanvas;
@@ -34,13 +35,6 @@ public abstract class DrawingsController {
 	public FitsCanvasController getFitsCanvasController(){
 		return fitsCanvasController;
 	}
-	
-//	public EventHandler<ActionEvent> undoStroke() {
-//		return (final ActionEvent e) -> {
-//			currentDrawing.undo();
-//			fitsCanvasController.drawAll();
-//		};
-//	}
 
 	public void disableAnnotationUndoButton() {
 		ui.getToolsAreaBox().getAnnotationToolBox().setUndoButtonDisabled(true);
@@ -49,6 +43,8 @@ public abstract class DrawingsController {
 	public void disableSelectionUndoButton() {
 		ui.getToolsAreaBox().getRegionExtractionToolBox().setUndoButtonDisabled(true);
 	}
+	
+	abstract void hideAll();
 	
 	public EventHandler<ActionEvent> toggleDrawMode(ToggleButton toggle){
 		return (final ActionEvent e) -> {
@@ -89,5 +85,14 @@ public abstract class DrawingsController {
 	abstract void disableUndoButton();
 	
 	abstract void enableUndoButton();
+	
+	abstract EventHandler<ActionEvent> save();
+	
+	abstract EventHandler<ActionEvent> open();
+	
+	abstract void drawAll();
+
+	abstract EventHandler<ActionEvent> toggleVisible(
+			CheckBox hideAnnotationsButton);
 	
 }

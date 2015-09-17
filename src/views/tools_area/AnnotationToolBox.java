@@ -35,7 +35,8 @@ public class AnnotationToolBox extends BaseToolBox{
         
         CheckBox hideAnnotationsButton = new CheckBox("Hide all");
         add(hideAnnotationsButton, 1, 1);
-        hideAnnotationsButton.setOnAction(controller.toggleAnnotationsVisible(hideAnnotationsButton));
+        hideAnnotationsButton.setOnAction(controller.getAnnotationsController()
+        		.toggleVisible(hideAnnotationsButton));
         
 //        addAnnotationItem("Test");
 //        annotationsList.autosize();
