@@ -31,7 +31,7 @@ public class AnnotationToolBox extends BaseToolBox{
         
         drawToolButton.setOnAction(controller.getAnnotationsController().toggleDrawMode(drawToolButton));
         fillToolButton.setOnAction(controller.getAnnotationsController().toggleFillMode(fillToolButton));
-        undoButton.setOnAction(controller.undoAnnotationStroke());
+        undoButton.setOnAction(controller.getAnnotationsController().undo());
         
         CheckBox hideAnnotationsButton = new CheckBox("Hide all");
         add(hideAnnotationsButton, 1, 1);

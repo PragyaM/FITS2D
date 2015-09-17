@@ -15,9 +15,9 @@ import views.FitsImageViewBox;
 import controllers.DrawingsController;
 
 /**
- * Annotations are created by the user currentDrawing on the canvas interface while in annotation mode.
- * These annotations, while drawn in canvas pixels, must store coordinate values representing FITS
- * image pixels when written to a file. This allows annotations to work across various images, 
+ * Drawings are created by the user drawing on the canvas interface while in annotation or selection mode.
+ * These drawings, while drawn in canvas pixels, must store coordinate values representing FITS
+ * image pixels when written to a file. This allows drawings to work across various images, 
  * rather than being locked down to a rendered state that is specific to one image.
  * @author Pragya
  *

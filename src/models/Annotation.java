@@ -4,11 +4,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import views.FitsCanvas;
 import views.FitsCanvas.Mode;
-import controllers.DrawingsController;
+import controllers.AnnotationsController;
 
 public class Annotation extends Drawing{
 
-	public Annotation(FitsCanvas canvas, DrawingsController controller,
+	public Annotation(FitsCanvas canvas, AnnotationsController controller,
 			Color color) {
 		super(canvas, controller, color);
 	}
@@ -17,9 +17,11 @@ public class Annotation extends Drawing{
 	public void handle(MouseEvent event) {
 		if (canvas.mode==Mode.ANNOTATION_DRAW){
 			super.drawAction(event);
+			((AnnotationsController) controller).enableUndoButton();
 		}
 		else if (canvas.mode==Mode.ANNOTATION_FILL){
 			super.floodFillAction(event);
+			((AnnotationsController) controller).enableUndoButton();
 		}
 	}
 	

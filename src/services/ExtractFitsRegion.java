@@ -14,7 +14,7 @@ import nom.tam.fits.HeaderCard;
 import nom.tam.fits.ImageHDU;
 import nom.tam.util.ArrayFuncs;
 
-public class CreateMask {
+public class ExtractFitsRegion {
 
 	private static Rectangle boundingBox;
 	private static double cWidth;

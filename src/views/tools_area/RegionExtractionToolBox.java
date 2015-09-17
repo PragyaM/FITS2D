@@ -30,8 +30,8 @@ public class RegionExtractionToolBox extends BaseToolBox{
 		
 		drawToolButton.setOnAction(controller.getSelectionsController().toggleDrawMode(drawToolButton));
 		fillToolButton.setOnAction(controller.getSelectionsController().toggleFillMode(fillToolButton));
-		extractRegionButton.setOnAction(controller.createMaskFromSelection());
-		undoButton.setOnAction(controller.undoSelectionStroke());
+		extractRegionButton.setOnAction(controller.getSelectionsController().extractFitsFromSelection());
+		undoButton.setOnAction(controller.getSelectionsController().undo());
 	}
 	
 	public void setUndoButtonDisabled(boolean disable){

@@ -15,15 +15,15 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import models.Annotation;
-import models.Drawing;
 import models.FitsImage;
 import models.PixelRegion;
 import models.Selection;
 import services.ChanneliseFitsHeader;
 import services.ConvertWcsPixels;
 import uk.ac.starlink.ast.FitsChan;
-import controllers.DrawingsController;
+import controllers.AnnotationsController;
 import controllers.FitsCanvasController;
+import controllers.SelectionsController;
 
 public class FitsCanvas extends Canvas{
 	private ArrayList<Annotation> annotations;
@@ -34,8 +34,8 @@ public class FitsCanvas extends Canvas{
 	public Mode mode;
 	private GraphicsContext gc;
 	private FitsImageViewBox container;
-	private DrawingsController annotationsController;
-	private DrawingsController selectionController;
+	private AnnotationsController annotationsController;
+	private SelectionsController selectionsController;
 
 	public FitsCanvas(double width, double height, FitsCanvasController controller){
 		super(width, height);
@@ -45,7 +45,7 @@ public class FitsCanvas extends Canvas{
 		gc.setLineWidth(2);
 		setMode(Mode.NONE);
 		this.annotationsController = controller.getAnnotationsController();
-		this.selectionController = controller.getSelectionsController();
+		this.selectionsController = controller.getSelectionsController();
 		this.container = controller.getImageViewBox();
 	}
 	
@@ -53,68 +53,36 @@ public class FitsCanvas extends Canvas{
 		this.mode = mode;
 	}
 	
-	public void setDrawMode(Boolean enabled){
-		if (enabled){
-			//TODO: turn cursor into pencil
-			turnSelectingOff();
-			if (currentAnnotation == null){
-				makeNewAnnotation();
-			} else this.addEventHandler(MouseEvent.ANY, currentAnnotation);
-			setMode(Mode.ANNOTATION_DRAW);
-			container.setPannable(false);
-		} else {
-			turnAnnotatingOff();
-			setMode(Mode.NONE);
-			container.setPannable(true);
-		}
+	public Annotation getCurrentAnnotation() {
+		return currentAnnotation;
+	}
+
+	public void setCurrentAnnotation(Annotation currentAnnotation) {
+		this.currentAnnotation = currentAnnotation;
 	}
 	
-	public void setFillMode(Boolean enabled){
-		if (enabled){
-			//TODO: turn cursor into bucket
-			turnSelectingOff();
-			if (currentAnnotation == null){
-				makeNewAnnotation();
-			} else this.addEventHandler(MouseEvent.ANY, currentAnnotation);
-			setMode(Mode.ANNOTATION_FILL);
-			container.setPannable(false);
-		} else {
-			turnAnnotatingOff();
-			setMode(Mode.NONE);
-			container.setPannable(true);
-		}
+	public Selection getCurrentSelection() {
+		return currentSelection;
+	}
+
+	public void setCurrentSelection(Selection currentSelection) {
+		this.currentSelection = currentSelection;
 	}
 	
-	public void setMaskDrawMode(Boolean enabled){
-		if (enabled){
-			//TODO: turn cursor into pencil
-			turnAnnotatingOff();
-			if (currentSelection == null){
-				makeNewSelection();
-			} else this.addEventHandler(MouseEvent.ANY, currentSelection);
-			setMode(Mode.SELECTION_DRAW);
-			container.setPannable(false);
-		} else {
-			turnSelectingOff();
-			setMode(Mode.NONE);
-			container.setPannable(true);
-		}
+	public ArrayList<Annotation> getAnnotations() {
+		return annotations;
 	}
-	
-	public void setMaskFillMode(Boolean enabled){
-		if (enabled){
-			//TODO: turn cursor into bucket
-			turnAnnotatingOff();
-			if (currentSelection == null){
-				makeNewSelection();
-			} else this.addEventHandler(MouseEvent.ANY, currentSelection);
-			setMode(Mode.SELECTION_FILL);
-			container.setPannable(false);
-		} else {
-			turnSelectingOff();
-			setMode(Mode.NONE);
-			container.setPannable(true);
-		}
+
+	public void setAnnotations(ArrayList<Annotation> annotations) {
+		this.annotations = annotations;
+	}
+
+	public ArrayList<Selection> getSelections() {
+		return selections;
+	}
+
+	public void setSelections(ArrayList<Selection> selections) {
+		this.selections = selections;
 	}
 
 	public void turnAnnotatingOff(){
@@ -124,19 +92,19 @@ public class FitsCanvas extends Canvas{
 	}
 	
 	public void turnSelectingOff(){
-		for (Selection a : selections){
-			this.removeEventHandler(MouseEvent.ANY, a);
+		for (Selection s : selections){
+			this.removeEventHandler(MouseEvent.ANY, s);
 		}
 	}
 
-	private void makeNewAnnotation(){
+	public void makeNewAnnotation(){
 		currentAnnotation = new Annotation(this, annotationsController, Color.RED);
 		this.addEventHandler(MouseEvent.ANY, currentAnnotation);
 		annotations.add(currentAnnotation);
 	}
 	
-	private void makeNewSelection(){
-		currentSelection = new Selection(this, selectionController, Color.YELLOW);
+	public void makeNewSelection(){
+		currentSelection = new Selection(this, selectionsController, Color.YELLOW);
 		this.addEventHandler(MouseEvent.ANY, currentSelection);
 		selections.add(currentSelection);
 	}
@@ -152,8 +120,7 @@ public class FitsCanvas extends Canvas{
 			a.draw();
 		}
 	}
-
-		
+	
 	public ArrayList<Point> getSelectedArea(){
 		//TODO create mask using "selection" annotations
 		ArrayList<Point> fullSelection = new ArrayList<Point>();
@@ -167,7 +134,6 @@ public class FitsCanvas extends Canvas{
 		return fullSelection;
 	}
 		
-
 	public void hideAnnotations(){
 		gc.clearRect(0, 0, this.getWidth(), this.getHeight());
 		drawAllSelections();
@@ -285,22 +251,13 @@ public class FitsCanvas extends Canvas{
 		
 		return region;
 	}
-
-	public void undoAnnotationStroke() {
-		annotations.get(annotations.size() -1 ).undo();
+	
+	public void clear(){
 		gc.clearRect(0, 0, this.getWidth(), this.getHeight());
-		drawAllSelections();
-		drawAllAnnotations();
-	}
-
-	public void undoSelectionStroke() {
-		selections.get(selections.size() -1 ).undo();
-		gc.clearRect(0, 0, this.getWidth(), this.getHeight());
-		drawAllSelections();
-		drawAllAnnotations();
 	}
 	
-	//methods to add later:
-//	public void selectionFromAnnotations(ArrayList<Annotation> selectedAnnotations){}
-
+	public void drawAll(){
+		drawAllSelections();
+		drawAllAnnotations();
+	}
 }

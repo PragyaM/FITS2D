@@ -12,7 +12,7 @@ import javafx.scene.control.ToggleButton;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import nom.tam.util.BufferedFile;
-import services.CreateMask;
+import services.ExtractFitsRegion;
 import views.FitsCanvas;
 import views.FitsImageViewBox;
 import views.MainWindow;
@@ -69,27 +69,6 @@ public class FitsCanvasController {
 			}
 		};
 	}
-
-	public EventHandler<ActionEvent> createMaskFromSelection() {
-		return (final ActionEvent e) -> {
-			ArrayList<Point> fullSelection = fitsCanvas.getSelectedArea();
-			try {
-				Fits maskFits = CreateMask.mapToFits(fullSelection, imageViewBox.getFitsImage(), 
-						(int) fitsCanvas.getWidth(), 
-						(int) fitsCanvas.getHeight());
-
-				BufferedFile bf = new BufferedFile(ui.showSaveDialog("FITS"), "rw");
-				maskFits.write(bf);
-				bf.close();
-			} catch (FitsException e1) {
-				System.out.println(e1.getMessage());
-			} catch (IOException e1) {
-				System.out.println("cancelled");
-			} catch (NegativeArraySizeException e1){
-				ui.displayMessage("Failed to convert selection to image pixels");
-			}
-		};
-	}
 	
 	public FitsImageViewBox getImageViewBox(){
 		return imageViewBox;
@@ -97,26 +76,6 @@ public class FitsCanvasController {
 	
 	public void resetZoom(){
 		imageController.resetZoom();
-	}
-
-	public EventHandler<ActionEvent> undoAnnotationStroke() {
-		return (final ActionEvent e) -> {
-			fitsCanvas.undoAnnotationStroke();
-		};
-	}
-	
-	public EventHandler<ActionEvent> undoSelectionStroke() {
-		return (final ActionEvent e) -> {
-			fitsCanvas.undoSelectionStroke();
-		};
-	}
-
-	public void disableAnnotationUndoButton() {
-		ui.getToolsAreaBox().getAnnotationToolBox().setUndoButtonDisabled(true);
-	}
-	
-	public void disableSelectionUndoButton() {
-		ui.getToolsAreaBox().getRegionExtractionToolBox().setUndoButtonDisabled(true);
 	}
 
 	public void drawAll() {

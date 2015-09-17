@@ -4,11 +4,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import views.FitsCanvas;
 import views.FitsCanvas.Mode;
-import controllers.DrawingsController;
+import controllers.SelectionsController;
 
 public class Selection extends Drawing{
 
-	public Selection(FitsCanvas canvas, DrawingsController controller, Color color){
+	public Selection(FitsCanvas canvas, SelectionsController controller,
+			Color color){
 		super(canvas, controller, color);
 	}
 	
@@ -16,9 +17,11 @@ public class Selection extends Drawing{
 	public void handle(MouseEvent event) {
 		if (canvas.mode==Mode.SELECTION_DRAW){
 			super.drawAction(event);
+			((SelectionsController) controller).enableUndoButton();
 		}
 		else if (canvas.mode==Mode.SELECTION_FILL){
 			super.floodFillAction(event);
+			((SelectionsController) controller).enableUndoButton();
 		}		
 	}
 	
