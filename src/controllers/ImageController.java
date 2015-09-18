@@ -76,11 +76,7 @@ public class ImageController {
 	}
 
 	public void refreshImage(){
-		try {
-			imageViewBox.getFitsImage().writeImage();
-		} catch (IOException e) {
-			e.printStackTrace(); //TODO: handle
-		}
+		imageViewBox.getFitsImage().writeImage();
 		imageViewBox.refreshImage();
 	}
 

@@ -1,19 +1,14 @@
 package models;
 
 import java.awt.Point;
-import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
+import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-
-import javax.imageio.ImageIO;
-
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.Header;
@@ -21,6 +16,7 @@ import nom.tam.fits.HeaderCard;
 import nom.tam.fits.ImageHDU;
 import nom.tam.image.StandardImageTiler;
 import nom.tam.util.ArrayFuncs;
+import services.RenderImageTask;
 import controllers.ImageController;
 
 public class FitsImage{
@@ -150,55 +146,30 @@ public class FitsImage{
 
 	//SETUP METHODS:
 
-	public void writeImage() throws IOException{
-		//write image data
-		BufferedImage im = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-
-		WritableRaster raster = im.getRaster();
-		setImageColours(imageFriendlyData, raster);
-
-		//convert image to a format that can be displayed
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ImageIO.write(im, "png", out);
-		out.flush();
-		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-
-		image = new Image(in);
+	public void writeImage(){
+		RenderImageTask renderImage = new RenderImageTask(nanColour, 
+				imageFriendlyData, hdu, height, width, null);
+		ProgressBar bar = new ProgressBar();
+		bar.progressProperty().bind(renderImage.progressProperty());
+		Thread t = new Thread(renderImage);
+		t.setDaemon(true);
+		t.start();
+		try {
+			t.join(0);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		image = renderImage.getImage();
 	}
 
+	public void setImage(Image img){
+		image = img;
+	}
+	
 	public void setNanColour(Color replacement) throws IOException{
 		nanColour = replacement;
-	}
-
-	private void setImageColours(double[] imageData, WritableRaster raster){
-		double max = hdu.getMaximumValue();
-		double cutOff = max * 0.025;
-
-		int colBandRange = 250;
-		double segmentSize = (double) (cutOff/colBandRange);
-
-		for (int i = 0; i < imageData.length; i++){
-			double val = (double) (imageData[i]);
-			int x = i % width;
-			int y = (int) Math.ceil(i / width);
-			if (isNaN(val)) {
-				raster.setPixel(x, y, new double[]{nanColour.getRed()*250, nanColour.getGreen()*250, nanColour.getBlue()*250, nanColour.getOpacity()*250});
-			}
-			else if (val <= 0) {
-				raster.setPixel(x, y, new double[]{0, 0, 0,250});
-			}
-			else if (val > cutOff) {
-				raster.setPixel(x, y, new double[]{250, 250, 250,250});
-			}
-			else {
-				double colVal = val/segmentSize;
-				raster.setPixel(x, y, new double[]{colVal, colVal, colVal, 250});
-			}
-		}
-	}
-
-	private boolean isNaN(double d){
-		return d != d;
 	}
 
 	/**
