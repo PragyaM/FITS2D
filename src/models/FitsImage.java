@@ -28,10 +28,14 @@ public class FitsImage{
 
 	private double[] imageFriendlyData;
 	private Color nanColour;
-
+	private float[] data;
 	private double[][] processingFriendlyData;
 	private Image image;
 	private ImageController controller;
+	
+	protected double maxValue;
+	protected double minValue;
+	private Histogram histogram;
 
 	//TODO handle uncaught exceptions
 	public FitsImage(Fits fitsFile, ImageController controller) throws FitsException, IOException{
@@ -43,7 +47,38 @@ public class FitsImage{
 		this.tiler =  hdu.getTiler();
 		setNanColour(controller.getNanColour());
 		prepareData();
+		try{
+			minValue = hdu.getMinimumValue();
+			maxValue = hdu.getMaximumValue();
+			System.out.println("Image had min/max");
+			System.out.println(hdu.getMinimumValue());
+			System.out.println(hdu.getMaximumValue());
+			if (minValue == maxValue){
+				calculateMinMaxValues();
+			}
+		} catch (Exception e){
+			calculateMinMaxValues();
+		}
+		createHistogram();
 		writeImage();
+	}
+	
+	private void createHistogram(){
+		histogram = new Histogram(imageFriendlyData, minValue, maxValue);
+	}
+	
+	private void calculateMinMaxValues(){
+		minValue = Double.MAX_VALUE;
+		maxValue = Double.MIN_VALUE;
+		System.out.println("calculating min/max");
+		for (int i = 0; i < imageFriendlyData.length; i++){
+			if (imageFriendlyData[i] < minValue){
+				minValue = imageFriendlyData[i];
+			}
+			if (imageFriendlyData[i] > maxValue){
+				maxValue = imageFriendlyData[i];
+			}
+		}
 	}
 
 	private void prepareData(){
@@ -52,6 +87,7 @@ public class FitsImage{
 		try {
 			Object dataArray = tiler.getTile(new int[]{0, 0}, hdu.getAxes());
 			img = (double[]) ArrayFuncs.convertArray(dataArray, double.class);
+			data = (float[]) ArrayFuncs.convertArray(img, float.class);
 			processingFriendlyData =  (double[][]) ArrayFuncs.convertArray(hdu.getKernel(), double.class);
 			imageFriendlyData = new double[width * height];
 			for (int h = height - 1; h >= 0; h--){
@@ -64,6 +100,10 @@ public class FitsImage{
 		}
 
 		System.out.println(processingFriendlyData.length + ", " + processingFriendlyData[0].length);
+	}
+	
+	public float[] getRawData(){
+		return data;
 	}
 
 	public double getValueAt(Point p){
@@ -148,7 +188,7 @@ public class FitsImage{
 
 	public void writeImage(){
 		RenderImageTask renderImage = new RenderImageTask(nanColour, 
-				imageFriendlyData, hdu, height, width, null);
+				imageFriendlyData, hdu, height, width, histogram);
 		ProgressBar bar = new ProgressBar();
 		bar.progressProperty().bind(renderImage.progressProperty());
 		Thread t = new Thread(renderImage);
@@ -157,10 +197,9 @@ public class FitsImage{
 		try {
 			t.join(0);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		image = renderImage.getImage();
 	}
 
@@ -258,4 +297,13 @@ public class FitsImage{
 	public double getCRVAL2(){
 		return hdu.getHeader().getDoubleValue("CRVAL2");
 	}
+
+	public Histogram getHistogram() {
+		return histogram;
+	}
+
+	public void setHistogram(Histogram histogram) {
+		this.histogram = histogram;
+	}
+	
 }

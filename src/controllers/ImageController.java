@@ -10,6 +10,7 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.input.ZoomEvent;
 import javafx.scene.paint.Color;
+import models.FitsImage;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import views.FitsImageViewBox;
@@ -30,23 +31,22 @@ public class ImageController {
 		imageViewBox.setOnZoom(this.touchZoomImage());
 	}
 
-	public void addImageFromFile(File file, FitsCanvasController annotationsController){
+	public void addImageFromFile(File file, FitsCanvasController fitsCanvasController){
 		try {
 			Fits fitsFile = new Fits(file);
-			addImage(fitsFile, annotationsController);
+			addImage(fitsFile, fitsCanvasController);
 
 		} catch (FitsException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 	}
 
-	public void addImage(Fits fitsFile, FitsCanvasController annotationsController){
+	public void addImage(Fits fitsFile, FitsCanvasController fitsCanvasController){
 		try {
 			imageViewBox.addImage(fitsFile);
 			imageViewBox.setVisible(true);
-			imageViewBox.setupFitsCanvas(annotationsController);
+			imageViewBox.setupFitsCanvas(fitsCanvasController);
 		} catch (FitsException | IOException e) {
 			e.printStackTrace();
 		}
@@ -66,7 +66,7 @@ public class ImageController {
 		return (final ActionEvent e) -> {
 			Color nanColour = ((ColorPicker) e.getSource()).getValue();
 			try {
-				imageViewBox.getFitsImage().setNanColour(nanColour);
+				getFitsImage().setNanColour(nanColour);
 				refreshImage();
 			} catch (IOException e1) {
 				// TODO handle
@@ -173,5 +173,9 @@ public class ImageController {
 	
 	public FitsImageViewBox getImageViewBox(){
 		return imageViewBox;
+	}
+	
+	public FitsImage getFitsImage(){
+		return imageViewBox.getFitsImage();
 	}
 }
