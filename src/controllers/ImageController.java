@@ -6,8 +6,12 @@ import java.util.ArrayList;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.TextField;
+import javafx.scene.input.InputMethodEvent;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.ZoomEvent;
 import javafx.scene.paint.Color;
 import models.FitsImage;
@@ -47,6 +51,8 @@ public class ImageController {
 			imageViewBox.addImage(fitsFile);
 			imageViewBox.setVisible(true);
 			imageViewBox.setupFitsCanvas(fitsCanvasController);
+			ui.getToolsAreaBox().getHistogramToolBox().setUpHistogram(imageViewBox.getFitsImage().getHistogram());
+			
 		} catch (FitsException | IOException e) {
 			e.printStackTrace();
 		}
@@ -177,5 +183,44 @@ public class ImageController {
 	
 	public FitsImage getFitsImage(){
 		return imageViewBox.getFitsImage();
+	}
+
+	public EventHandler<ActionEvent> toggleHistogramVisible(Button hideButton) {
+		return (final ActionEvent e) -> {
+			boolean hidden = false;
+			if (hideButton.getText().equals("Show Histogram")) hidden = true;
+			
+			if (hidden) {
+				ui.getToolsAreaBox().getHistogramToolBox().show();
+			} else {
+				ui.getToolsAreaBox().getHistogramToolBox().hide();
+			}
+		};
+	}
+
+	public EventHandler<ActionEvent> updateVisibleRangeMinimum(TextField visibleRangeMinInput) {
+		return (final ActionEvent e) -> {
+			double newMin = Double.parseDouble(visibleRangeMinInput.getText());
+			if (newMin <= getFitsImage().getHistogram().getMaxValue()
+					&& newMin >= getFitsImage().getHistogram().getMinValue()){
+				getFitsImage().getHistogram().setVisibleRangeMin(newMin);
+				refreshImage();
+				ui.getToolsAreaBox().getHistogramToolBox().updateHistogram(getFitsImage().getHistogram());
+			}
+			else ui.displayMessage("Visible range must be within data range");
+		};
+	}
+	
+	public EventHandler<ActionEvent> updateVisibleRangeMaximum(TextField visibleRangeMaxInput) {
+		return (final ActionEvent e) -> {
+			double newMax = Double.parseDouble(visibleRangeMaxInput.getText());
+			if (newMax <= getFitsImage().getHistogram().getMaxValue()
+					&& newMax >= getFitsImage().getHistogram().getMinValue()){
+				getFitsImage().getHistogram().setVisibleRangeMax(newMax);
+				refreshImage();
+				ui.getToolsAreaBox().getHistogramToolBox().updateHistogram(getFitsImage().getHistogram());
+			}
+			else ui.displayMessage("Visible range must be within data range");
+		};
 	}
 }

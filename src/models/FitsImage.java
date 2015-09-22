@@ -38,7 +38,8 @@ public class FitsImage{
 	private Histogram histogram;
 
 	//TODO handle uncaught exceptions
-	public FitsImage(Fits fitsFile, ImageController controller) throws FitsException, IOException{
+	public FitsImage(Fits fitsFile, ImageController controller) 
+			throws FitsException, IOException{
 		this.controller = controller;
 		this.fitsFile = fitsFile;
 		this.hdu = (ImageHDU) fitsFile.getHDU(0);;
@@ -64,7 +65,8 @@ public class FitsImage{
 	}
 	
 	private void createHistogram(){
-		histogram = new Histogram(imageFriendlyData, minValue, maxValue);
+		histogram = new Histogram(imageFriendlyData, minValue, 
+				maxValue, width, height);
 	}
 	
 	private void calculateMinMaxValues(){
@@ -88,7 +90,8 @@ public class FitsImage{
 			Object dataArray = tiler.getTile(new int[]{0, 0}, hdu.getAxes());
 			img = (double[]) ArrayFuncs.convertArray(dataArray, double.class);
 			data = (float[]) ArrayFuncs.convertArray(img, float.class);
-			processingFriendlyData =  (double[][]) ArrayFuncs.convertArray(hdu.getKernel(), double.class);
+			processingFriendlyData =  (double[][]) ArrayFuncs.convertArray(
+					hdu.getKernel(), double.class);
 			imageFriendlyData = new double[width * height];
 			for (int h = height - 1; h >= 0; h--){
 				for (int w = 0; w < width; w++){
@@ -99,7 +102,8 @@ public class FitsImage{
 			e.printStackTrace();
 		}
 
-		System.out.println(processingFriendlyData.length + ", " + processingFriendlyData[0].length);
+		System.out.println(processingFriendlyData.length + ", " + 
+				processingFriendlyData[0].length);
 	}
 	
 	public float[] getRawData(){
@@ -211,76 +215,77 @@ public class FitsImage{
 		nanColour = replacement;
 	}
 
-	/**
-	 * @param wavelength - expected to be within the 380 to 780 range (where visible colors can be resolved).
-	 * @return a Color containing calculated RGB values
-	 */
-	public Color getColorFromWavelength(double wavelength){
-		double red = 0;
-		double green = 0;
-		double blue = 0;
-		double SSS;
-
-		if (wavelength < 380){
-			red = 1.0;
-			green = 1.0;
-			blue = 1.0;
-		}
-		if (wavelength >= 380 && wavelength < 440){
-			red = -(wavelength - 440) / (440 - 350);
-			green = 0.1; //0.0;
-			blue = 0.9; //1.0;
-		}
-		else if (wavelength >= 440 && wavelength < 490){
-			red = 0.1; //0.0;
-			green = (wavelength - 440) / (490 - 440);
-			blue = 0.8; //1.0;
-		}
-		else if (wavelength >= 490 && wavelength < 510){
-			red = 0.1; //0.0;
-			green = 0.9; //1.0;
-			blue = -(wavelength - 510) / (510 - 490);
-		}
-		else if (wavelength >= 510 && wavelength < 580){
-			red = (wavelength - 510) / (580 - 510);
-			green = 0.8; //1.0;
-			blue = 0.2;
-		}
-		else if (wavelength >= 580 && wavelength < 645){
-			red = 1.0; //1.0;
-			green = -(wavelength - 645) / (645 - 580);
-			blue = 0.3; //0.0;
-		}
-		else if (wavelength >= 645 && wavelength <= 780){
-			red = 1.0; //1.0;
-			green = 0.6;  //0.0;
-			blue = 0.4; //0.0;
-		}
-		else{
-			red = 0.0;
-			green = 0.0;
-			blue = 0.0;
-		}
-
-		// intensity correction
-		if (wavelength >= 380 && wavelength < 420){
-			SSS = 0.3 + 0.7*(wavelength - 350) / (420 - 350);
-		}
-		else if (wavelength >= 420 && wavelength <= 700){
-			SSS = 1.0;
-		} 
-		else if (wavelength > 700 && wavelength <= 780){
-			SSS = 0.3 + 0.7*(780 - wavelength) / (780 - 700);
-		} 
-		else{
-			SSS = 0.0;
-		}
-		SSS *= 255;
-
-		Color c = Color.rgb((int)(SSS*red), (int)(SSS*green), (int)(SSS*blue));
-
-		return c;
-	}
+//	/**
+//	 * @param wavelength - expected to be within the 380 to 780 range 
+//	 * (where visible colors can be resolved).
+//	 * @return a Color containing calculated RGB values
+//	 */
+//	public Color getColorFromWavelength(double wavelength){
+//		double red = 0;
+//		double green = 0;
+//		double blue = 0;
+//		double SSS;
+//
+//		if (wavelength < 380){
+//			red = 1.0;
+//			green = 1.0;
+//			blue = 1.0;
+//		}
+//		if (wavelength >= 380 && wavelength < 440){
+//			red = -(wavelength - 440) / (440 - 350);
+//			green = 0.1; //0.0;
+//			blue = 0.9; //1.0;
+//		}
+//		else if (wavelength >= 440 && wavelength < 490){
+//			red = 0.1; //0.0;
+//			green = (wavelength - 440) / (490 - 440);
+//			blue = 0.8; //1.0;
+//		}
+//		else if (wavelength >= 490 && wavelength < 510){
+//			red = 0.1; //0.0;
+//			green = 0.9; //1.0;
+//			blue = -(wavelength - 510) / (510 - 490);
+//		}
+//		else if (wavelength >= 510 && wavelength < 580){
+//			red = (wavelength - 510) / (580 - 510);
+//			green = 0.8; //1.0;
+//			blue = 0.2;
+//		}
+//		else if (wavelength >= 580 && wavelength < 645){
+//			red = 1.0; //1.0;
+//			green = -(wavelength - 645) / (645 - 580);
+//			blue = 0.3; //0.0;
+//		}
+//		else if (wavelength >= 645 && wavelength <= 780){
+//			red = 1.0; //1.0;
+//			green = 0.6;  //0.0;
+//			blue = 0.4; //0.0;
+//		}
+//		else{
+//			red = 0.0;
+//			green = 0.0;
+//			blue = 0.0;
+//		}
+//
+//		// intensity correction
+//		if (wavelength >= 380 && wavelength < 420){
+//			SSS = 0.3 + 0.7*(wavelength - 350) / (420 - 350);
+//		}
+//		else if (wavelength >= 420 && wavelength <= 700){
+//			SSS = 1.0;
+//		} 
+//		else if (wavelength > 700 && wavelength <= 780){
+//			SSS = 0.3 + 0.7*(780 - wavelength) / (780 - 700);
+//		} 
+//		else{
+//			SSS = 0.0;
+//		}
+//		SSS *= 255;
+//
+//		Color c = Color.rgb((int)(SSS*red), (int)(SSS*green), (int)(SSS*blue));
+//
+//		return c;
+//	}
 
 	public void printFitsInfo(){
 

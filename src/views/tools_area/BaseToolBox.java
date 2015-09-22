@@ -6,6 +6,7 @@ import javafx.scene.layout.GridPane;
 
 public abstract class BaseToolBox extends GridPane{
 	private String heading;
+	protected Label headingLabel;
 	
 	public BaseToolBox(String heading){
 		this.heading = heading;
@@ -13,7 +14,7 @@ public abstract class BaseToolBox extends GridPane{
 		setVgap(5);
 		setHgap(5);
 		
-		Label headingLabel = new Label(heading);
+		headingLabel = new Label(heading);
 		add(headingLabel, 0, 0);
 		headingLabel.setPadding(new Insets(0, 0, 5, 0));
 		headingLabel.setId("heading");

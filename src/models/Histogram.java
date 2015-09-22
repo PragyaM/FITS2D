@@ -4,20 +4,26 @@ public class Histogram {
 
 	private int countMin = Integer.MAX_VALUE;
 	private int countMax = Integer.MIN_VALUE;
+	private int equalisedMin = Integer.MAX_VALUE;
+	private int equalisedMax = Integer.MIN_VALUE;
 	private double minValue;
 	private double maxValue;
 	private int[] histogram;
+	private int[] equalisedHistogram;
 	private double visibleRangeMin;
-
+	private int numTotalPixels;
 	private double visibleRangeMax;
 
-	public Histogram(double[] data, double min, double max){
+	public Histogram(double[] data, double min, double max, int width, int height){
 		this.minValue = min;
 		this.maxValue = max;
-
+		System.out.println("Data min: " + min + ", data max: " + max);
+		numTotalPixels = width * height;
 		histogram = constructGraph(data);
 		calculateMinMaxCounts();
 		setUpDefaultVisibleRange();
+		createEqualisedHistogram();
+		System.out.println("Visible min: " + visibleRangeMin + " visible max: " + visibleRangeMax);
 	}
 
 	private void calculateMinMaxCounts() {
@@ -50,22 +56,72 @@ public class Histogram {
 	}
 
 	private void setUpDefaultVisibleRange(){
-		//find top of range:
+		//find bottom of range:
 		for (int i = 0; i < histogram.length; i++){
 			if (histogram[i] == countMax){
-				visibleRangeMax = i;
+				visibleRangeMin = i + minValue;
 				break;
 			}
 		}
 		
-		visibleRangeMin = minValue;
-		//find bottom of range
-		for (int i = 0; i < histogram.length; i++){
-			if (histogram[i] > 1){
-				visibleRangeMin = i;
+		visibleRangeMax = minValue;
+		//find top of range
+		for (int i = histogram.length-1; i >= 0; i--){
+			if (histogram[i] > countMax/32){
+				visibleRangeMax = i + minValue;
 				break;
 			}
 		}
+	}
+
+	public void createEqualisedHistogram(){
+		equalisedHistogram = new int[histogram.length];
+
+		for (int i = 0; i < histogram.length; i++){
+			int val = histogram[i];
+			double cdfVal = 0;
+			for (int j = 0; j < i; j++){
+				cdfVal = cdfVal + (histogram[j]/numTotalPixels);
+			}
+			int equalisedVal = (int) Math.round((cdfVal - 1)/(numTotalPixels - 1)*250);
+			equalisedHistogram[i] = equalisedVal;
+
+			if (equalisedVal > equalisedMax) equalisedMax = equalisedVal;
+			if (equalisedVal < equalisedMin) equalisedMin = equalisedVal;
+
+		}
+	}
+
+	public int getEqualisedMin() {
+		return equalisedMin;
+	}
+
+	public void setEqualisedMin(int equalisedMin) {
+		this.equalisedMin = equalisedMin;
+	}
+
+	public int getEqualisedMax() {
+		return equalisedMax;
+	}
+
+	public void setEqualisedMax(int equalisedMax) {
+		this.equalisedMax = equalisedMax;
+	}
+
+	public int[] getEqualisedHistogram() {
+		return equalisedHistogram;
+	}
+
+	public void setEqualisedHistogram(int[] equalisedHistogram) {
+		this.equalisedHistogram = equalisedHistogram;
+	}
+
+	public int getNumTotalPixels() {
+		return numTotalPixels;
+	}
+
+	public void setNumTotalPixels(int numTotalPixels) {
+		this.numTotalPixels = numTotalPixels;
 	}
 
 	public int getCountMin() {
@@ -107,7 +163,7 @@ public class Histogram {
 	public void setHistogram(int[] histogram) {
 		this.histogram = histogram;
 	}
-	
+
 	public double getVisibleRangeMin() {
 		return visibleRangeMin;
 	}

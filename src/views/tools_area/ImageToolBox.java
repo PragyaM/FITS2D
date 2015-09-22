@@ -1,11 +1,9 @@
 package views.tools_area;
 
 
-import javafx.scene.chart.AreaChart;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import models.Histogram;
+import javafx.scene.layout.GridPane;
 import controllers.ImageController;
 
 public class ImageToolBox extends BaseToolBox{
@@ -14,13 +12,13 @@ public class ImageToolBox extends BaseToolBox{
 	private Button zoomInButton;
 	private Label zoomLabel;
 	private ImageController controller;
-	private AreaChart<?, ?> histogram;
 
 	public ImageToolBox(ImageController controller) {
 		super("Image");
 		
 		this.controller = controller;
 		
+		GridPane zoomGroup = new GridPane();
 		Label zoomPrompt = new Label("Zoom: ");
 		zoomOutButton = new Button("-");
 		zoomInButton = new Button("+");
@@ -30,15 +28,12 @@ public class ImageToolBox extends BaseToolBox{
 		zoomInButton.setOnAction(controller.zoomIn());
 		zoomInButton.setOnAction(controller.zoomIn());
 		
-		add(zoomPrompt, 0, 1);
-		add(zoomOutButton, 1, 1);
-		add(zoomLabel, 2, 1);
-		add(zoomInButton, 3, 1);
-	}
-	
-	public void setUpHistogram(Histogram histogram){
-		NumberAxis xAxis = new NumberAxis();
-		NumberAxis yAxis = new NumberAxis();
+		zoomGroup.add(zoomPrompt, 0, 0);
+		zoomGroup.add(zoomOutButton, 1, 0);
+		zoomGroup.add(zoomLabel, 2, 0);
+		zoomGroup.add(zoomInButton, 3, 0);
+		
+		add(zoomGroup, 0, 1);
 	}
 
 	public void setZoomOutButtonDisabled(boolean disable){
