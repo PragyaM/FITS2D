@@ -25,16 +25,18 @@ public class Histogram {
 	private int numTotalPixels;
 	private TreeMap<Double, Integer> histogramMap;
 	private TreeMap<Double, Integer> visibleRangeMap;
+	private ValueAxis<Number> xAxis;
+	private ValueAxis<Number> yAxis;
 
 	private AreaChart<Number, Number> histogramChart;
 
 	public Histogram(double[] data, int width, int height){
 		numTotalPixels = width * height;
 		construct(data);
-		calculateMinMaxCounts();
+		calculateMinMaxValues();
 		System.out.println("Data min: " + minValue + ", data max: " + maxValue);
 		setUpDefaultVisibleRange();
-		createChart();
+		createChart(true);
 		System.out.println("Visible min: " + visibleRangeMin + " visible max: " + visibleRangeMax);
 	}
 
@@ -51,7 +53,7 @@ public class Histogram {
 		System.out.println("histogram size: " + histogramMap.size());
 	}
 
-	private void calculateMinMaxCounts() {
+	private void calculateMinMaxValues() {
 
 		histogramMap.forEach((k, v) -> {
 
@@ -91,27 +93,25 @@ public class Histogram {
 		double topKey = bottomKey;
 		for (Entry<Double, Integer> entry : filtered.entrySet()){
 			count = count + entry.getValue();
-			if (count > filtered.get(bottomKey) + numTotalPixels/2){
+			if (count > (numTotalPixels/8 + filtered.get(bottomKey))){
 				topKey = entry.getKey();
 				break;
-			} else {
-				topKey = entry.getKey();
 			}
+		}
+		
+		if (topKey == bottomKey) {
+			topKey = topKey + 1;
 		}
 
 		/* Set visible range entries */
-		visibleRangeMap.putAll(filtered.subMap(bottomKey, topKey));
+		visibleRangeMap.putAll(filtered.subMap(bottomKey, topKey + 1));
 
 		visibleRangeMin = visibleRangeMap.firstKey();
 		visibleRangeMax = visibleRangeMap.lastKey();
 	}
 
-	public void createChart(){
-		ValueAxis<Number> xAxis = new NumberAxis(Math.round(getMinValue()-2), 
-				Math.round(maxValue+2), 
-				Math.round((maxValue - minValue)/10));
-		ValueAxis<Number> yAxis = new LogarithmicAxis();
-		xAxis.setMinorTickVisible(false);
+	public void createChart(boolean logYAxis){
+		createAxes(logYAxis);
 		histogramChart = new AreaChart<Number, Number>(xAxis, yAxis);
 		histogramChart.setHorizontalGridLinesVisible(false);
 		histogramChart.setVerticalGridLinesVisible(false);
@@ -134,6 +134,20 @@ public class Histogram {
 
 		histogramChart.getData().clear();
 		histogramChart.getData().setAll(totalRange, visibleRange);
+	}
+	
+	public void createAxes(boolean logYAxis){
+		xAxis = new NumberAxis(Math.round(getMinValue()-2), 
+				Math.round(maxValue+2), 
+				Math.round((maxValue - minValue)/10));
+		if (logYAxis){
+			yAxis = new LogarithmicAxis();
+		} else {
+			yAxis = new NumberAxis(countMin, countMax, 
+					Math.round((countMax - countMin)/10));
+		}
+		xAxis.setMinorTickVisible(false);
+		
 	}
 
 	//	public void createEqualisedHistogram(){
