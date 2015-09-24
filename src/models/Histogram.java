@@ -210,6 +210,8 @@ public class Histogram {
 
 	public void setVisibleRangeMin(double min){
 		visibleRangeMin = min;
+		visibleRangeMap = new TreeMap<Double, Integer>();
+		visibleRangeMap.putAll(histogramMap.subMap(visibleRangeMin, visibleRangeMax + 1));
 	}
 
 	public double getVisibleRangeMax() {
@@ -218,6 +220,8 @@ public class Histogram {
 
 	public void setVisibleRangeMax(double max) {
 		visibleRangeMax = max;
+		visibleRangeMap = new TreeMap<Double, Integer>();
+		visibleRangeMap.putAll(histogramMap.subMap(visibleRangeMin, visibleRangeMax + 1));
 	}
 
 	public AreaChart<Number, Number> getHistogramChart() {
