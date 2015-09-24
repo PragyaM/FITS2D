@@ -4,7 +4,6 @@ import javafx.geometry.Insets;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ValueAxis;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -28,30 +27,10 @@ public class HistogramToolBox extends BaseToolBox{
 		this.controller = controller;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void setUpHistogram(Histogram histogram){
 		this.getChildren().clear();
-		ValueAxis<Number> xAxis = new NumberAxis(Math.round(histogram.getMinValue()-2), 
-				Math.round(histogram.getMaxValue()+2), 
-				Math.round((histogram.getMaxValue() - histogram.getMinValue())/10));
-		ValueAxis<Number> yAxis = new LogarithmicAxis();
-		xAxis.setMinorTickVisible(false);
-		histogramChart = new AreaChart<Number, Number>(xAxis, yAxis);
-		histogramChart.setHorizontalGridLinesVisible(false);
-		histogramChart.setVerticalGridLinesVisible(false);
-		
-		XYChart.Series<Number, Number> totalRange = new XYChart.Series<Number, Number>();
-		totalRange.setName("Full range");
-		for (int i = 0; i < histogram.getHistogram().length; i++){
-			totalRange.getData().add(new XYChart.Data<Number, Number>((i + histogram.getMinValue()), histogram.getHistogram()[i]));
-		}
-		
-		XYChart.Series<Number, Number> visibleRange = new XYChart.Series<Number, Number>();
-		visibleRange.setName("Visible range");
-		for (int i = (int) histogram.getVisibleRangeMin(); i <= histogram.getVisibleRangeMax(); i++){
-			visibleRange.getData().add(new XYChart.Data<Number, Number>((i), histogram.getHistogram()[i - (int) histogram.getMinValue()]));
-		}
-		histogramChart.getData().addAll(totalRange, visibleRange);
+
+		histogramChart = histogram.getHistogramChart();
 		
 		hideButton = new Button("Hide Histogram");
 		hideButton.setOnAction(controller.toggleHistogramVisible(hideButton));
@@ -92,22 +71,8 @@ public class HistogramToolBox extends BaseToolBox{
 		add(box, 0, 0);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void updateHistogram(Histogram histogram){
-		XYChart.Series<Number, Number> imageData = new XYChart.Series<Number, Number>();
-		imageData.setName("Full range");
-		for (int i = 0; i < histogram.getHistogram().length; i++){
-			imageData.getData().add(new XYChart.Data<Number, Number>((i + histogram.getMinValue()), histogram.getHistogram()[i]));
-		}
-		
-		XYChart.Series<Number, Number> visibleRange = new XYChart.Series<Number, Number>();
-		visibleRange.setName("Visible range");
-		for (int i = (int) histogram.getVisibleRangeMin(); i <= histogram.getVisibleRangeMax(); i++){
-			visibleRange.getData().add(new XYChart.Data<Number, Number>((i), histogram.getHistogram()[i - (int) histogram.getMinValue()]));
-		}
-		
-		histogramChart.getData().clear();
-		histogramChart.getData().setAll(imageData, visibleRange);
+		histogramChart = histogram.getHistogramChart();
 	}
 	
 	public void toggleLogYAxis(){

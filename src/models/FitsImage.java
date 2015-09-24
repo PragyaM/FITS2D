@@ -48,39 +48,14 @@ public class FitsImage{
 		this.tiler =  hdu.getTiler();
 		setNanColour(controller.getNanColour());
 		prepareData();
-		try{
-			minValue = hdu.getMinimumValue();
-			maxValue = hdu.getMaximumValue();
-			System.out.println("Image had min/max");
-			System.out.println(hdu.getMinimumValue());
-			System.out.println(hdu.getMaximumValue());
-			if (minValue == maxValue){
-				calculateMinMaxValues();
-			}
-		} catch (Exception e){
-			calculateMinMaxValues();
-		}
 		createHistogram();
+		minValue = histogram.getMinValue();
+		maxValue = histogram.getMaxValue();
 		writeImage();
 	}
 	
 	private void createHistogram(){
-		histogram = new Histogram(imageFriendlyData, minValue, 
-				maxValue, width, height);
-	}
-	
-	private void calculateMinMaxValues(){
-		minValue = Double.MAX_VALUE;
-		maxValue = Double.MIN_VALUE;
-		System.out.println("calculating min/max");
-		for (int i = 0; i < imageFriendlyData.length; i++){
-			if (imageFriendlyData[i] < minValue){
-				minValue = imageFriendlyData[i];
-			}
-			if (imageFriendlyData[i] > maxValue){
-				maxValue = imageFriendlyData[i];
-			}
-		}
+		histogram = new Histogram(imageFriendlyData, width, height);
 	}
 
 	private void prepareData(){

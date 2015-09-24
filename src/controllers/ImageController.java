@@ -205,6 +205,7 @@ public class ImageController {
 					&& newMin >= getFitsImage().getHistogram().getMinValue()){
 				getFitsImage().getHistogram().setVisibleRangeMin(newMin);
 				refreshImage();
+				getFitsImage().getHistogram().updateChart();
 				ui.getToolsAreaBox().getHistogramToolBox().updateHistogram(getFitsImage().getHistogram());
 			}
 			else ui.displayMessage("Visible range must be within data range");
@@ -218,6 +219,7 @@ public class ImageController {
 					&& newMax >= getFitsImage().getHistogram().getMinValue()){
 				getFitsImage().getHistogram().setVisibleRangeMax(newMax);
 				refreshImage();
+				getFitsImage().getHistogram().updateChart();
 				ui.getToolsAreaBox().getHistogramToolBox().updateHistogram(getFitsImage().getHistogram());
 			}
 			else ui.displayMessage("Visible range must be within data range");
