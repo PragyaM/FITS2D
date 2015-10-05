@@ -186,7 +186,7 @@ public class ImageController {
 	public EventHandler<ActionEvent> toggleHistogramVisible(Button hideButton) {
 		return (final ActionEvent e) -> {
 			boolean hidden = false;
-			if (hideButton.getText().equals("Show Histogram")) hidden = true;
+			if (hideButton.getText().equals("Show Distribution Graph")) hidden = true;
 			
 			if (hidden) {
 				ui.getToolsAreaBox().getHistogramToolBox().show();

@@ -30,7 +30,7 @@ public class HistogramToolBox extends BaseToolBox{
 
 		histogramChart = histogram.getHistogramChart();
 		
-		hideButton = new Button("Hide Histogram");
+		hideButton = new Button("Hide Distribution Graph");
 		hideButton.setOnAction(controller.toggleHistogramVisible(hideButton));
 		
 		histogramChart.setPrefSize(200, 80);
@@ -85,13 +85,13 @@ public class HistogramToolBox extends BaseToolBox{
 	
 	public void hide(){
 		getChildren().remove(histogramChart);
-		hideButton.setText("Show Histogram");
+		hideButton.setText("Show Distribution Graph");
 	}
 	
 	public void show(){
 		getChildren().add(histogramChart);
 		histogramChart.setVisible(true);
-		hideButton.setText("Hide Histogram");
+		hideButton.setText("Hide Distribution Graph");
 	}
 
 }
