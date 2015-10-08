@@ -6,13 +6,15 @@ import javafx.scene.Group;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+
+import javax.media.j3d.Background;
+
 import models.FitsImage;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import services.BuildFitsImage;
-import controllers.FitsCanvasController;
 import controllers.ImageController;
 
 public class FitsImageViewBox extends ScrollPane{
@@ -22,6 +24,7 @@ public class FitsImageViewBox extends ScrollPane{
 	private FitsImage fitsImage;
 	private ImageController controller;
 	private int zoomLevel = 100;
+	private ImageLoadingProgressBar pBar;
 
 	public FitsImageViewBox(ImageController controller){
 		super();
@@ -31,8 +34,16 @@ public class FitsImageViewBox extends ScrollPane{
 		setFitToHeight(true);
 		autosize();
 		disableScrollBars();
-		this.setId("image-view-box");
-		this.getStyleClass().add("image-view-box");
+		
+		this.setStyle("-fx-background: space-gray ; "
+				+ "-fx-border-color: space-gray ; "
+				+ "-fx-border-width: 2px; "
+				+ "-fx-text-alignment: center;");
+	}
+	
+	public void showImageLoadingProgressBar(){
+		pBar = new ImageLoadingProgressBar(this.getViewportBounds().getWidth());
+		g.getChildren().add(pBar);
 	}
 
 	public void setUpTabs(){
@@ -66,6 +77,7 @@ public class FitsImageViewBox extends ScrollPane{
 	}
 	
 	public void setImage(){
+		removeImageLoadingProgressBar();
 		view.setImage(fitsImage.getImage());
 		view.autosize();
 		view.setFitWidth(this.getWidth());
@@ -113,6 +125,10 @@ public class FitsImageViewBox extends ScrollPane{
 	}
 
 	public void refreshImage() {
-		view.setImage(fitsImage.getImage());
+		setImage();
+	}
+
+	public void removeImageLoadingProgressBar() {
+		g.getChildren().remove(pBar);
 	}
 }

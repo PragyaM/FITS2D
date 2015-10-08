@@ -94,12 +94,6 @@
 	-fx-border-width: 1px;
 }
 
-.image-view-box {
-	-fx-background-color: space-gray ;
-	-fx-border-color: space-gray ;
-	-fx-border-width: 2px;
-}
-
 #view-pane {
 	-fx-background-color: space-gray ;
 }
@@ -134,6 +128,8 @@
 	-fx-font-size: 15;
 	-fx-font-style: normal ;
 }
+
+
 
 
 

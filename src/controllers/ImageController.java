@@ -19,6 +19,7 @@ import models.FitsImage;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import views.FitsImageViewBox;
+import views.ImageLoadingProgressBar;
 import views.MainWindow;
 
 public class ImageController {
@@ -53,6 +54,7 @@ public class ImageController {
 	public void addImage(Fits fitsFile, FitsCanvasController fitsCanvasController){
 		this.fitsCanvasController = fitsCanvasController;
 		try {
+			imageViewBox.showImageLoadingProgressBar();
 			imageViewBox.addImage(fitsFile);
 		} catch (FitsException | IOException e) {
 			e.printStackTrace();
@@ -80,19 +82,15 @@ public class ImageController {
 		return (final ActionEvent e) -> {
 			Color nanColour = ((ColorPicker) e.getSource()).getValue();
 			try {
+				imageViewBox.showImageLoadingProgressBar();
 				getFitsImage().setNanColour(nanColour);
-				refreshImage();
+				imageViewBox.getFitsImage().writeImage();
 			} catch (IOException e1) {
 				// TODO handle
 				e1.printStackTrace();
 			}
 			e.consume();
 		};
-	}
-
-	public void refreshImage(){
-		imageViewBox.getFitsImage().writeImage();
-		imageViewBox.refreshImage();
 	}
 
 	public Color getNanColour() {
@@ -230,7 +228,8 @@ public class ImageController {
 					&& newMax >= getFitsImage().getHistogram().getMinValue()){
 				getFitsImage().getHistogram().setVisibleRangeMin(newMin);
 				getFitsImage().getHistogram().setVisibleRangeMax(newMax);
-				refreshImage();
+				imageViewBox.showImageLoadingProgressBar();
+				imageViewBox.getFitsImage().writeImage();
 				getFitsImage().getHistogram().updateChart();
 				ui.getToolsAreaBox().getHistogramToolBox().updateHistogram(getFitsImage().getHistogram());
 			}
