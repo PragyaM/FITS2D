@@ -1,13 +1,16 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import javafx.collections.ObservableList;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ValueAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.chart.XYChart.Data;
 
 public class Histogram {
 
@@ -27,6 +30,8 @@ public class Histogram {
 	private TreeMap<Double, Integer> visibleRangeMap;
 	private ValueAxis<Number> xAxis;
 	private ValueAxis<Number> yAxis;
+	XYChart.Series<Number, Number> totalRange = new XYChart.Series<Number, Number>();
+	XYChart.Series<Number, Number> visibleRange = new XYChart.Series<Number, Number>();
 
 	private AreaChart<Number, Number> histogramChart;
 
@@ -34,10 +39,8 @@ public class Histogram {
 		numTotalPixels = width * height;
 		construct(data);
 		calculateMinMaxValues();
-		System.out.println("Data min: " + minValue + ", data max: " + maxValue);
 		setUpDefaultVisibleRange();
 		createChart(true);
-		System.out.println("Visible min: " + visibleRangeMin + " visible max: " + visibleRangeMax);
 	}
 
 	private void construct(double[] data){
@@ -49,8 +52,6 @@ public class Histogram {
 			histogramMap.putIfAbsent(key, null);
 			histogramMap.compute(key, (k, v) -> v == null ? 1 : v+1);
 		}
-
-		System.out.println("histogram size: " + histogramMap.size());
 	}
 
 	private void calculateMinMaxValues() {
@@ -98,7 +99,7 @@ public class Histogram {
 				break;
 			}
 		}
-		
+
 		if (topKey == bottomKey) {
 			topKey = topKey + 1;
 		}
@@ -115,19 +116,19 @@ public class Histogram {
 		histogramChart = new AreaChart<Number, Number>(xAxis, yAxis);
 		histogramChart.setHorizontalGridLinesVisible(false);
 		histogramChart.setVerticalGridLinesVisible(false);
+		totalRange.setName("Full range");
+		visibleRange.setName("Visible range");
 
 		updateChart();
 	}
 
 	public void updateChart(){
-		XYChart.Series<Number, Number> totalRange = new XYChart.Series<Number, Number>();
-		totalRange.setName("Full range");
-				histogramMap.forEach((k, v) -> {
-					totalRange.getData().add(new XYChart.Data<Number, Number>(k, v));
-				});
+		totalRange = new XYChart.Series<Number, Number>();
+		histogramMap.forEach((k, v) -> {
+			totalRange.getData().add(new XYChart.Data<Number, Number>(k, v));
+		});
 
-		XYChart.Series<Number, Number> visibleRange = new XYChart.Series<Number, Number>();
-		visibleRange.setName("Visible range");
+		visibleRange = new XYChart.Series<Number, Number>();
 		visibleRangeMap.forEach((k, v) -> {
 			visibleRange.getData().add(new XYChart.Data<Number, Number>(k, v));
 		});
@@ -135,7 +136,7 @@ public class Histogram {
 		histogramChart.getData().clear();
 		histogramChart.getData().setAll(totalRange, visibleRange);
 	}
-	
+
 	public void createAxes(boolean logYAxis){
 		xAxis = new NumberAxis(Math.round(getMinValue()-2), 
 				Math.round(maxValue+2), 
@@ -147,26 +148,8 @@ public class Histogram {
 					Math.round((countMax - countMin)/10));
 		}
 		xAxis.setMinorTickVisible(false);
-		
-	}
 
-	//	public void createEqualisedHistogram(){
-	//		equalisedHistogram = new int[histogram.length];
-	//
-	//		for (int i = 0; i < histogram.length; i++){
-	//			int val = histogram[i];
-	//			double cdfVal = 0;
-	//			for (int j = 0; j < i; j++){
-	//				cdfVal = cdfVal + (histogram[j]/numTotalPixels);
-	//			}
-	//			int equalisedVal = (int) Math.round((cdfVal - 1)/(numTotalPixels - 1)*250);
-	//			equalisedHistogram[i] = equalisedVal;
-	//
-	//			if (equalisedVal > equalisedMax) equalisedMax = equalisedVal;
-	//			if (equalisedVal < equalisedMin) equalisedMin = equalisedVal;
-	//
-	//		}
-	//	}
+	}
 
 	public int getEqualisedMin() {
 		return equalisedMin;

@@ -48,6 +48,11 @@ public class RenderImageTask extends Task<Image>{
 		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 
 		image = new Image(in);
+		out.close();
+		in.close();
+
+		this.updateProgress(1, 1);
+		
 		return image;
 	}
 

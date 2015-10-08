@@ -9,6 +9,7 @@ import javafx.scene.layout.GridPane;
 import models.Histogram;
 import controllers.ImageController;
 
+
 public class HistogramToolBox extends BaseToolBox{
 
 	private ImageController controller;

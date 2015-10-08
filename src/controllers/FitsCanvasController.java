@@ -17,14 +17,15 @@ public class FitsCanvasController {
 	public FitsCanvasController(MainWindow mainWindow, ImageController imageController){
 		this.ui = mainWindow;
 		this.imageController = imageController;
-		initialise(imageController.getImageViewBox());
 		this.annotationsController = new AnnotationsController(this);
 		this.selectionsController = new SelectionsController(this);
+		this.fitsCanvas = new FitsCanvas(0, 0, this);
 	}
 
-	public void initialise(FitsImageViewBox imageViewBox){
+	public void adjustForImage(FitsImageViewBox imageViewBox){
+		this.fitsCanvas.eraseAll();
 		this.imageViewBox = imageViewBox;
-		this.fitsCanvas = imageViewBox.getFitsCanvas();
+		imageViewBox.resizeCanvas();
 	}
 	
 	public FitsImageViewBox getImageViewBox(){
@@ -39,6 +40,10 @@ public class FitsCanvasController {
 		fitsCanvas.getGraphicsContext2D().clearRect(0, 0, fitsCanvas.getWidth(), fitsCanvas.getHeight());
 		selectionsController.drawAll();
 		annotationsController.drawAll();
+	}
+	
+	public void setPannable(boolean pannable){
+		imageViewBox.setPannable(pannable);
 	}
 
 	public MainWindow getMainUi() {

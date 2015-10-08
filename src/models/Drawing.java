@@ -95,25 +95,20 @@ public abstract class Drawing implements EventHandler<MouseEvent>{
 				pw.setColor(pixel.x, pixel.y, color);
 			}
 			currentPoint = p;
-
-			event.consume();
 		}
 
 		else if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)){
 			region = new PixelRegion();
 			Point p = new Point((int) event.getX(), (int) event.getY());
 			currentPoint = p;
-
-			event.consume();
 		}
 
 		else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)){
 			region.cropToBounds(canvas.getWidth(), canvas.getHeight());
 			region.generateImagePixels(canvas.getHeight(), image.getHeight());
 			regions.add(region);
-
-			event.consume();
 		}
+		event.consume();
 	}
 	
 	public void floodFillAction(MouseEvent event){
@@ -131,8 +126,8 @@ public abstract class Drawing implements EventHandler<MouseEvent>{
 			region.cropToBounds(canvas.getWidth(), canvas.getHeight());
 			region.generateImagePixels(canvas.getHeight(), image.getHeight());
 			regions.add(region);
-			event.consume();
 		}
+		event.consume();
 	}
 	
 	public String toString(){

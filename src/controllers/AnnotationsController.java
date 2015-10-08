@@ -71,12 +71,17 @@ public class AnnotationsController extends DrawingsController{
 		return (final ActionEvent e) -> {
 			ArrayList<Annotation> annotations = fitsCanvasController.getCanvas().getAnnotations();
 			annotations.get(annotations.size() - 1 ).undo();
+			if (annotations.size() > 1 &&
+					annotations.get(annotations.size() - 1 ).getRegions().size() == 0){
+				annotations.remove(annotations.size() - 1);
+			}
 			fitsCanvasController.getCanvas().clear();
 			fitsCanvasController.getCanvas().drawAll();
 			
-			if (annotations.size() < 1){
+			if (fitsCanvasController.getCanvas().getAnnotations().size() < 1){
 				disableUndoButton();
 			}
+			e.consume();
 		};
 	}
 	
@@ -85,6 +90,7 @@ public class AnnotationsController extends DrawingsController{
 		return (final ActionEvent e) -> {
 			File file = (File) ui.showSaveDialog("TXT");
 			fitsCanvasController.getCanvas().writeAnnotationsToFile(file);
+			e.consume();
 		};
 	}
 	
@@ -93,13 +99,17 @@ public class AnnotationsController extends DrawingsController{
 		return (final ActionEvent e) -> {
 			File file = ui.openFile("Select an annotation file", "TXT");
 			fitsCanvasController.getCanvas().addAnnotationsFromFile(file);
+			e.consume();
 		};
 	}
 
 	@Override
 	public void hideAll() {
 		fitsCanvasController.getCanvas().clear();
-		fitsCanvasController.getSelectionsController().drawAll();
+		if (! fitsCanvasController.getSelectionsController().hasHiddenAll()){
+			fitsCanvasController.getSelectionsController().drawAll();
+		}
+		allHidden = true;
 	}
 	
 	@Override
@@ -107,6 +117,7 @@ public class AnnotationsController extends DrawingsController{
 		fitsCanvasController.getCanvas().getAnnotations().forEach((annotation) -> {
 			annotation.draw();
 		});
+		allHidden = false;
 	}
 	
 	@Override
@@ -123,7 +134,9 @@ public class AnnotationsController extends DrawingsController{
 			} catch (NullPointerException e1){
 				/*fits canvas does not exist yet, so do nothing*/
 			}
+			e.consume();
 		};
 	}
+	
 
 }

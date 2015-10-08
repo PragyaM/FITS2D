@@ -3,6 +3,9 @@ package controllers;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -23,11 +26,14 @@ public class ImageController {
 	private MainWindow ui;
 	protected FitsImageViewBox imageViewBox;
 	private double MINIMUM_ZOOM = 50.0;
+	private FitsCanvasController fitsCanvasController;
 
 	public ImageController(MainWindow mainWindow){
 		this.ui = mainWindow;
 
 		imageViewBox = new FitsImageViewBox(this);
+		imageViewBox.prepareView();
+		imageViewBox.setVisible(true);
 
 		ui.addImageViewBox(imageViewBox);
 		imageViewBox.setOnZoom(this.touchZoomImage());
@@ -45,16 +51,19 @@ public class ImageController {
 	}
 
 	public void addImage(Fits fitsFile, FitsCanvasController fitsCanvasController){
+		this.fitsCanvasController = fitsCanvasController;
 		try {
 			imageViewBox.addImage(fitsFile);
-			imageViewBox.setVisible(true);
-			imageViewBox.setupFitsCanvas(fitsCanvasController);
-			ui.getToolsAreaBox().getHistogramToolBox().setUpHistogram(imageViewBox.getFitsImage().getHistogram());
-			
 		} catch (FitsException | IOException e) {
 			e.printStackTrace();
 		}
 
+	}
+	
+	public void adjustViewForImage(){
+		imageViewBox.setImage();
+		fitsCanvasController.adjustForImage(imageViewBox);
+		ui.getToolsAreaBox().getHistogramToolBox().setUpHistogram(imageViewBox.getFitsImage().getHistogram());
 	}
 
 	public EventHandler<javafx.event.ActionEvent> toggleImageScrollbars(CheckMenuItem toggle){
@@ -63,6 +72,7 @@ public class ImageController {
 				imageViewBox.enableScrollBars();
 			}
 			else  imageViewBox.disableScrollBars();
+			e.consume();
 		};
 	}
 
@@ -76,6 +86,7 @@ public class ImageController {
 				// TODO handle
 				e1.printStackTrace();
 			}
+			e.consume();
 		};
 	}
 
@@ -193,6 +204,7 @@ public class ImageController {
 			} else {
 				ui.getToolsAreaBox().getHistogramToolBox().hide();
 			}
+			e.consume();
 		};
 	}
 	
@@ -223,6 +235,7 @@ public class ImageController {
 				ui.getToolsAreaBox().getHistogramToolBox().updateHistogram(getFitsImage().getHistogram());
 			}
 			else ui.displayMessage("Visible range must be within data range");
+			e.consume();
 		};
 	}
 
@@ -231,6 +244,20 @@ public class ImageController {
 		return (final ActionEvent e) -> {
 			getFitsImage().getHistogram().createChart(enableLogScale);
 			ui.getToolsAreaBox().getHistogramToolBox().updateHistogram(getFitsImage().getHistogram());
+			e.consume();
 		};
 	}
+	
+	public ExecutorService createExecutor(final String name) {       
+	    ThreadFactory factory = new ThreadFactory() {
+	      @Override public Thread newThread(Runnable r) {
+	        Thread t = new Thread(r);
+	        t.setName(name);
+	        t.setDaemon(true);
+	        return t;
+	      }
+	    };
+	    
+	    return Executors.newSingleThreadExecutor(factory);
+	  }  
 }

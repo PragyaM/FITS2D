@@ -30,12 +30,13 @@ public class FitsCanvas extends Canvas{
 	private ArrayList<Selection> selections;
 	private Annotation currentAnnotation;
 	private Selection currentSelection;
-	public enum Mode {NONE, ANNOTATION_DRAW, ANNOTATION_FILL, SELECTION_DRAW, SELECTION_FILL};
+	public enum Mode {NONE, ANNOTATION_DRAW, ANNOTATION_FILL, 
+		SELECTION_DRAW, SELECTION_FILL};
 	public Mode mode;
 	private GraphicsContext gc;
-	private FitsImageViewBox container;
 	private AnnotationsController annotationsController;
 	private SelectionsController selectionsController;
+	private FitsCanvasController controller;
 
 	public FitsCanvas(double width, double height, FitsCanvasController controller){
 		super(width, height);
@@ -46,7 +47,7 @@ public class FitsCanvas extends Canvas{
 		setMode(Mode.NONE);
 		this.annotationsController = controller.getAnnotationsController();
 		this.selectionsController = controller.getSelectionsController();
-		this.container = controller.getImageViewBox();
+		this.controller = controller;
 	}
 	
 	public void setMode(Mode mode){
@@ -128,7 +129,7 @@ public class FitsCanvas extends Canvas{
 	public void writeAnnotationsToFile(File aFile){
 		BufferedWriter writer = null;
 		String fileDescriptorString = "FITS2D\n";
-		FitsImage fitsImage = this.container.getFitsImage();
+		FitsImage fitsImage = controller.getImageViewBox().getFitsImage();
 		String headerString = fitsImage.getWcsHeaderCardsString();
 		StringBuilder annotationsString = new StringBuilder();
 
@@ -172,7 +173,8 @@ public class FitsCanvas extends Canvas{
 				
 				/* Convert image pixels for new image using wcs conversion */
 				FitsChan oldFits = ChanneliseFitsHeader.chanFromHeaderString(headerString);
-				FitsChan newFits = ChanneliseFitsHeader.chanFromHeaderObj(container.getFitsImage().getHDU().getHeader());
+				FitsChan newFits = ChanneliseFitsHeader.chanFromHeaderObj(
+						controller.getImageViewBox().getFitsImage().getHDU().getHeader());
 				ConvertWcsPixels wcsConverter = new ConvertWcsPixels(oldFits, newFits);
 				
 				Annotation annotation = new Annotation(this, annotationsController, Color.RED);
@@ -204,6 +206,7 @@ public class FitsCanvas extends Canvas{
 
 		//Annotations can now be rendered
 		annotationsController.drawAll();
+		makeNewAnnotation();
 	}
 
 	public PixelRegion regionFromString(String rString, ConvertWcsPixels wcsConverter){
@@ -227,13 +230,20 @@ public class FitsCanvas extends Canvas{
 		
 		/* convert all old image pixels for new image  */
 		region.addAllImagePixels(wcsConverter.convertPixels(oldImagePixels));
-		region.generateCanvasPixels(this.getHeight(), container.getFitsImage().getHeight());
+		region.generateCanvasPixels(this.getHeight(), 
+				controller.getImageViewBox().getFitsImage().getHeight());
 		
 		return region;
 	}
 	
 	public void clear(){
 		gc.clearRect(0, 0, this.getWidth(), this.getHeight());
+	}
+	
+	public void eraseAll(){
+		annotations.clear();
+		selections.clear();
+		clear();
 	}
 	
 	public void drawAll(){
@@ -244,7 +254,7 @@ public class FitsCanvas extends Canvas{
 	public void writeSelectionsToFile(File file) {
 		BufferedWriter writer = null;
 		String fileDescriptorString = "FITS2D\n";
-		FitsImage fitsImage = this.container.getFitsImage();
+		FitsImage fitsImage = controller.getImageViewBox().getFitsImage();
 		String headerString = fitsImage.getWcsHeaderCardsString();
 		StringBuilder selectionString = new StringBuilder();
 
@@ -288,7 +298,8 @@ public class FitsCanvas extends Canvas{
 				
 				/* Convert image pixels for new image using wcs conversion */
 				FitsChan oldFits = ChanneliseFitsHeader.chanFromHeaderString(headerString);
-				FitsChan newFits = ChanneliseFitsHeader.chanFromHeaderObj(container.getFitsImage().getHDU().getHeader());
+				FitsChan newFits = ChanneliseFitsHeader.chanFromHeaderObj(
+						controller.getImageViewBox().getFitsImage().getHDU().getHeader());
 				ConvertWcsPixels wcsConverter = new ConvertWcsPixels(oldFits, newFits);
 				
 				Selection selection = new Selection(this, selectionsController, Color.YELLOW);
@@ -320,5 +331,6 @@ public class FitsCanvas extends Canvas{
 
 		//Selections can now be rendered
 		selectionsController.drawAll();
+		makeNewSelection();
 	}
 }

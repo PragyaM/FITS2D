@@ -34,11 +34,11 @@ public class SelectionsController extends DrawingsController{
 						fitsCanvasController.getCanvas().getCurrentSelection());
 			}		
 			fitsCanvasController.getCanvas().setMode(Mode.SELECTION_DRAW);
-			imageViewBox.setPannable(false);
+			fitsCanvasController.setPannable(false);
 		} else {
 			fitsCanvasController.getCanvas().turnSelectingOff();
 			fitsCanvasController.getCanvas().setMode(Mode.NONE);
-			imageViewBox.setPannable(true);
+			fitsCanvasController.setPannable(true);
 		}
 	}
 	
@@ -54,19 +54,21 @@ public class SelectionsController extends DrawingsController{
 						fitsCanvasController.getCanvas().getCurrentSelection());
 			}		
 			fitsCanvasController.getCanvas().setMode(Mode.SELECTION_FILL);
-			imageViewBox.setPannable(false);
+			fitsCanvasController.setPannable(false);
 		} else {
 			fitsCanvasController.getCanvas().turnSelectingOff();
 			fitsCanvasController.getCanvas().setMode(Mode.NONE);
-			imageViewBox.setPannable(true);
+			fitsCanvasController.setPannable(true);
 		}
 	}
 	
 	public EventHandler<ActionEvent> extractFitsFromSelection() {
 		return (final ActionEvent e) -> {
-			ArrayList<Point> fullSelection = fitsCanvasController.getCanvas().getSelectedArea();
+			ArrayList<Point> fullSelection = fitsCanvasController.getCanvas()
+					.getSelectedArea();
 			try {
-				Fits extraction = ExtractFitsRegion.mapToFits(fullSelection, imageViewBox.getFitsImage(), 
+				Fits extraction = ExtractFitsRegion.mapToFits(fullSelection,
+						fitsCanvasController.getImageViewBox().getFitsImage(), 
 						(int) fitsCanvasController.getCanvas().getWidth(), 
 						(int) fitsCanvasController.getCanvas().getHeight());
 
@@ -80,6 +82,7 @@ public class SelectionsController extends DrawingsController{
 			} catch (NegativeArraySizeException e1){
 				ui.displayMessage("Failed to convert selection to image pixels");
 			}
+			e.consume();
 		};
 	}
 	
@@ -96,14 +99,20 @@ public class SelectionsController extends DrawingsController{
 	@Override
 	public EventHandler<ActionEvent> undo() {
 		return (final ActionEvent e) -> {
-			ArrayList<Selection> selections = fitsCanvasController.getCanvas().getSelections();
+			ArrayList<Selection> selections = fitsCanvasController.getCanvas()
+					.getSelections();
 			selections.get(selections.size() - 1 ).undo();
+			if (selections.size() > 1 &&
+					selections.get(selections.size() - 1 ).getRegions().size() == 0){
+				selections.remove(selections.size() - 1);
+			}
 			fitsCanvasController.getCanvas().clear();
 			fitsCanvasController.getCanvas().drawAll();
 			
 			if (selections.size() < 1) {
 				disableUndoButton();
 			}
+			e.consume();
 		};
 	}
 	
@@ -120,13 +129,17 @@ public class SelectionsController extends DrawingsController{
 		return (final ActionEvent e) -> {
 			File file = ui.openFile("Select an annotation file", "TXT");
 			fitsCanvasController.getCanvas().addSelectionsFromFile(file);
+			e.consume();
 		};
 	}
 	
 	@Override
 	public void hideAll() {
 		fitsCanvasController.getCanvas().clear();
-		fitsCanvasController.getAnnotationsController().drawAll();
+		if (! fitsCanvasController.getAnnotationsController().hasHiddenAll()){
+			fitsCanvasController.getAnnotationsController().drawAll();
+		}
+		allHidden = true;
 	}
 
 	@Override
@@ -134,6 +147,7 @@ public class SelectionsController extends DrawingsController{
 		fitsCanvasController.getCanvas().getSelections().forEach((selection) -> {
 			selection.draw();
 		});
+		allHidden = false;
 	}
 	
 	@Override
@@ -150,6 +164,7 @@ public class SelectionsController extends DrawingsController{
 			} catch (NullPointerException e1){
 				/*fits canvas does not exist yet, so do nothing*/
 			}
+			e.consume();
 		};
 	}
 }

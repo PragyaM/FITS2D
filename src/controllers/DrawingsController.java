@@ -16,6 +16,7 @@ public abstract class DrawingsController {
 	protected MainWindow ui;
 	protected FitsCanvas canvas;
 	protected FitsImageViewBox imageViewBox;
+	protected boolean allHidden;
 	
 	public DrawingsController(FitsCanvasController fitsCanvasController){
 		this.fitsCanvasController = fitsCanvasController;
@@ -58,6 +59,7 @@ public abstract class DrawingsController {
 			} catch (NullPointerException e1){
 				/*There is no image yet*/
 			}
+			e.consume();
 		};
 	}
 	
@@ -73,6 +75,7 @@ public abstract class DrawingsController {
 			} catch (NullPointerException e1){
 				/*There is no image yet*/
 			}
+			e.consume();
 		};
 	}
 	
@@ -94,5 +97,9 @@ public abstract class DrawingsController {
 
 	abstract EventHandler<ActionEvent> toggleVisible(
 			CheckBox hideAnnotationsButton);
+
+	public boolean hasHiddenAll(){
+		return allHidden;
+	}
 	
 }

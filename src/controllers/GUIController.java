@@ -29,6 +29,7 @@ public class GUIController{
 		ui = new MainWindow(primaryStage, this);
 		imageController = new ImageController(ui);
 		fitsCanvasController = new FitsCanvasController(ui, imageController);
+		imageController.getImageViewBox().addCanvas(fitsCanvasController.getCanvas());
 		ui.addTopMenuBar(this);
 		ui.addToolsAreaBox(this);
 		ui.display();
@@ -56,7 +57,7 @@ public class GUIController{
 			File file = ui.openFile("Select a FITS image file", "FITS");
 			imageController.addImageFromFile(file, fitsCanvasController);
 
-			fitsCanvasController.initialise(ui.getImageViewBox());
+			e.consume();
 		};
 	}
 
