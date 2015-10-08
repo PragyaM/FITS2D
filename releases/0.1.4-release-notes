@@ -1,0 +1,10 @@
+Build 0.1.4 Release notes
+
+Added features:
+ - Progress bar when image is loading/refreshing
+
+Fixes:
+ - image loading thread is no longer blocking UI thread
+
+ Issue tracker:
+https://github.com/PragyaM/FITS2D/issues
