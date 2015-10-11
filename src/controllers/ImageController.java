@@ -19,7 +19,6 @@ import models.FitsImage;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import views.FitsImageViewBox;
-import views.ImageLoadingProgressBar;
 import views.MainWindow;
 
 public class ImageController {

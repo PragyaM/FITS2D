@@ -7,10 +7,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-
-import javax.media.j3d.Background;
-
 import models.FitsImage;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;

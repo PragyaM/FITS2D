@@ -3,8 +3,6 @@ package services;
 import java.awt.Point;
 import java.util.ArrayList;
 
-import models.Annotation;
-import models.FitsImage;
 import uk.ac.starlink.ast.FitsChan;
 import uk.ac.starlink.ast.FrameSet;
 

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ASCII"?>
-<anttasks:AntTask xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:anttasks="http://org.eclipse.fx.ide.jdt/1.0" buildDirectory="${project}/build">
-  <deploy>
-    <application name="JavaFXExperimentation"/>
-    <info title="FITS Image Viewer"/>
+<anttasks:AntTask xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:anttasks="http://org.eclipse.fx.ide.jdt/1.0" buildDirectory="${project}/build" cssToBin="true">
+  <deploy offlineAllowed="false" packagingFormat="all">
+    <application name="FIST2D" mainclass="controllers.Main" toolkit="fx"/>
+    <info title="FITS2D"/>
   </deploy>
-  <signjar/>
+  <signjar alias="PragyaMohan" keypass="FITS2D"/>
 </anttasks:AntTask>

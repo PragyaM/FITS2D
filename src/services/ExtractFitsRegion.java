@@ -6,12 +6,10 @@ import java.util.ArrayList;
 
 import javafx.scene.shape.Rectangle;
 import models.FitsImage;
-import nom.tam.fits.Data;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
-import nom.tam.fits.ImageHDU;
 import nom.tam.util.ArrayFuncs;
 
 public class ExtractFitsRegion {

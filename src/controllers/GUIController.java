@@ -7,7 +7,6 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
-import models.FitsImage;
 import nom.tam.fits.FitsException;
 import views.MainWindow;
 

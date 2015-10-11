@@ -3,22 +3,18 @@ package views;
 import java.awt.Toolkit;
 import java.io.File;
 
-import javafx.event.EventHandler;
 import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
-import javafx.scene.transform.Scale;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import views.tools_area.ToolsAreaBox;
 import views.top_bar_menu.TopMenuBar;
 import controllers.GUIController;
-import controllers.ImageController;
 
 public class MainWindow{
 	private FitsImageViewBox imageViewBox;

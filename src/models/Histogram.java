@@ -1,16 +1,13 @@
 package models;
 
-import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import javafx.collections.ObservableList;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ValueAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.chart.XYChart.Data;
 
 public class Histogram {
 
@@ -122,6 +119,7 @@ public class Histogram {
 		updateChart();
 	}
 
+	@SuppressWarnings("unchecked")
 	public void updateChart(){
 		totalRange = new XYChart.Series<Number, Number>();
 		histogramMap.forEach((k, v) -> {

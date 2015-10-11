@@ -1,7 +1,6 @@
 package views.tools_area;
 
 import javafx.geometry.Insets;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.GridPane;
 import controllers.GUIController;
