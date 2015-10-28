@@ -91,8 +91,8 @@ public class Histogram {
 		double topKey = bottomKey;
 		for (Entry<Double, Integer> entry : filtered.entrySet()){
 			count = count + entry.getValue();
-			if (count > (numTotalPixels/8 + filtered.get(bottomKey))){
-				topKey = entry.getKey();
+			topKey = entry.getKey();
+			if (entry.getValue() < (filtered.get(bottomKey)/100000)){
 				break;
 			}
 		}

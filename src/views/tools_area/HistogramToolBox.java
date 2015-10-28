@@ -1,5 +1,8 @@
 package views.tools_area;
 
+import java.awt.Event;
+
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.control.Button;
@@ -46,11 +49,12 @@ public class HistogramToolBox extends BaseToolBox{
 		visibleRangeMinInput = new TextField();
 		visibleRangeMinInput.setPromptText("Visible range minimum");
 		visibleRangeMinInput.setText("" + histogram.getVisibleRangeMin());
-		visibleRangeMinInput.setOnAction(controller.updateVisibleRange(visibleRangeMinInput, visibleRangeMaxInput));
 		
 		visibleRangeMaxInput = new TextField();
 		visibleRangeMaxInput.setPromptText("Visible range maximum");
 		visibleRangeMaxInput.setText("" + histogram.getVisibleRangeMax());
+		
+		visibleRangeMinInput.setOnAction(controller.updateVisibleRange(visibleRangeMinInput, visibleRangeMaxInput));
 		visibleRangeMaxInput.setOnAction(controller.updateVisibleRange(visibleRangeMinInput, visibleRangeMaxInput));
 		
 //		logScaleToggle = new ToggleButton("Log Scale Histogram");
