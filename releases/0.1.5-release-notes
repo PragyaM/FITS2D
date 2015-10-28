@@ -1,0 +1,9 @@
+Build 0.1.5 Release notes
+
+Fixes:
+ - glitchy undo (still a bit broken)
+ - bad text updating in range filtering text boxes when new image is opened
+ - fix progress bar positioning
+
+ Issue tracker:
+https://github.com/PragyaM/FITS2D/issues
