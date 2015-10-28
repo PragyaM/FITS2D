@@ -15,18 +15,15 @@ public class AnnotationsController extends DrawingsController{
 	public AnnotationsController(FitsCanvasController fitsCanvasController) {
 		super(fitsCanvasController);
 	}
-	
+
 	@Override
 	public void setDrawMode(boolean enabled){
 		if (enabled){
 			//TODO: turn cursor into pencil
 			fitsCanvasController.getCanvas().turnSelectingOff();
-			if (fitsCanvasController.getCanvas().getCurrentAnnotation() == null){
-				fitsCanvasController.getCanvas().makeNewAnnotation();
-			} else {
-				fitsCanvasController.getCanvas().addEventHandler(MouseEvent.ANY, 
-						fitsCanvasController.getCanvas().getCurrentAnnotation());
-			}
+			fitsCanvasController.getCanvas().makeNewAnnotation();
+			fitsCanvasController.getCanvas().addEventHandler(MouseEvent.ANY, 
+					fitsCanvasController.getCanvas().getCurrentAnnotation());
 			fitsCanvasController.getCanvas().setMode(Mode.ANNOTATION_DRAW);
 			fitsCanvasController.getImageViewBox().setPannable(false);
 		} else {
@@ -35,18 +32,15 @@ public class AnnotationsController extends DrawingsController{
 			fitsCanvasController.getImageViewBox().setPannable(true);
 		}
 	}
-	
+
 	@Override
 	public void setFillMode(boolean enabled){
 		if (enabled){
 			//TODO: turn cursor into bucket
 			fitsCanvasController.getCanvas().turnSelectingOff();
-			if (fitsCanvasController.getCanvas().getCurrentAnnotation() == null){
-				fitsCanvasController.getCanvas().makeNewAnnotation();
-			} else {
-				fitsCanvasController.getCanvas().addEventHandler(MouseEvent.ANY, 
-						fitsCanvasController.getCanvas().getCurrentAnnotation());
-			}
+			fitsCanvasController.getCanvas().makeNewAnnotation();
+			fitsCanvasController.getCanvas().addEventHandler(MouseEvent.ANY, 
+					fitsCanvasController.getCanvas().getCurrentAnnotation());
 			fitsCanvasController.getCanvas().setMode(Mode.ANNOTATION_FILL);
 			fitsCanvasController.getImageViewBox().setPannable(false);
 		} else {
@@ -60,7 +54,7 @@ public class AnnotationsController extends DrawingsController{
 	public void disableUndoButton() {
 		ui.getToolsAreaBox().getAnnotationToolBox().setUndoButtonDisabled(true);
 	}
-	
+
 	@Override
 	public void enableUndoButton() {
 		ui.getToolsAreaBox().getAnnotationToolBox().setUndoButtonDisabled(false);
@@ -70,21 +64,21 @@ public class AnnotationsController extends DrawingsController{
 	public EventHandler<ActionEvent> undo() {
 		return (final ActionEvent e) -> {
 			ArrayList<Annotation> annotations = fitsCanvasController.getCanvas().getAnnotations();
-			annotations.get(annotations.size() - 1 ).undo();
+			if (!annotations.isEmpty()) annotations.get(annotations.size() - 1 ).undo();
 			if (annotations.size() > 1 &&
 					annotations.get(annotations.size() - 1 ).getRegions().size() == 0){
 				annotations.remove(annotations.size() - 1);
 			}
 			fitsCanvasController.getCanvas().clear();
 			fitsCanvasController.getCanvas().drawAll();
-			
+
 			if (fitsCanvasController.getCanvas().getAnnotations().size() < 1){
 				disableUndoButton();
 			}
 			e.consume();
 		};
 	}
-	
+
 	@Override
 	public EventHandler<ActionEvent> save() {
 		return (final ActionEvent e) -> {
@@ -93,7 +87,7 @@ public class AnnotationsController extends DrawingsController{
 			e.consume();
 		};
 	}
-	
+
 	@Override
 	public EventHandler<ActionEvent> open() {
 		return (final ActionEvent e) -> {
@@ -106,12 +100,12 @@ public class AnnotationsController extends DrawingsController{
 	@Override
 	public void hideAll() {
 		fitsCanvasController.getCanvas().clear();
-		if (! fitsCanvasController.getSelectionsController().hasHiddenAll()){
+		if (!fitsCanvasController.getSelectionsController().hasHiddenAll()){
 			fitsCanvasController.getSelectionsController().drawAll();
 		}
 		allHidden = true;
 	}
-	
+
 	@Override
 	public void drawAll() {
 		fitsCanvasController.getCanvas().getAnnotations().forEach((annotation) -> {
@@ -119,7 +113,7 @@ public class AnnotationsController extends DrawingsController{
 		});
 		allHidden = false;
 	}
-	
+
 	@Override
 	public EventHandler<ActionEvent> toggleVisible(
 			CheckBox hideAnnotationsButton) {
@@ -137,6 +131,6 @@ public class AnnotationsController extends DrawingsController{
 			e.consume();
 		};
 	}
-	
+
 
 }

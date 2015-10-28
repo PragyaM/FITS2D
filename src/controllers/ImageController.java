@@ -60,7 +60,7 @@ public class ImageController {
 		}
 
 	}
-	
+
 	public void adjustViewForImage(){
 		imageViewBox.setImage();
 		fitsCanvasController.adjustForImage(imageViewBox);
@@ -173,7 +173,7 @@ public class ImageController {
 	public void setZoomOutButtonDisabled(boolean disable){
 		ui.getToolsAreaBox().getImageToolBox().setZoomOutButtonDisabled(disable);
 	}
-	
+
 	public void resetZoom(){
 		imageViewBox.getImageView().setScaleX(1);
 		imageViewBox.getImageView().setScaleY(1);
@@ -182,11 +182,11 @@ public class ImageController {
 		imageViewBox.setZoomLevel(100);
 		setZoomLabel("100%");
 	}
-	
+
 	public FitsImageViewBox getImageViewBox(){
 		return imageViewBox;
 	}
-	
+
 	public FitsImage getFitsImage(){
 		return imageViewBox.getFitsImage();
 	}
@@ -195,7 +195,7 @@ public class ImageController {
 		return (final ActionEvent e) -> {
 			boolean hidden = false;
 			if (hideButton.getText().equals("Show Distribution Graph")) hidden = true;
-			
+
 			if (hidden) {
 				ui.getToolsAreaBox().getHistogramToolBox().show();
 			} else {
@@ -204,7 +204,7 @@ public class ImageController {
 			e.consume();
 		};
 	}
-	
+
 	public EventHandler<ActionEvent> updateVisibleRange(TextField visibleRangeMinInput,
 			TextField visibleRangeMaxInput) {
 		return (final ActionEvent e) -> {
@@ -215,7 +215,7 @@ public class ImageController {
 			} catch(NullPointerException e1){
 				/* do nothing - previous min value will be used */
 			}
-			
+
 			try {
 				newMax = Double.parseDouble(visibleRangeMaxInput.getText());
 			} catch(NullPointerException e2){
@@ -224,7 +224,8 @@ public class ImageController {
 			if (newMin <= getFitsImage().getHistogram().getMaxValue()
 					&& newMin >= getFitsImage().getHistogram().getMinValue()
 					&& newMax <= getFitsImage().getHistogram().getMaxValue()
-					&& newMax >= getFitsImage().getHistogram().getMinValue()){
+					&& newMax >= getFitsImage().getHistogram().getMinValue()
+					&& newMin <= newMax){
 				getFitsImage().getHistogram().setVisibleRangeMin(newMin);
 				getFitsImage().getHistogram().setVisibleRangeMax(newMax);
 				imageViewBox.showImageLoadingProgressBar();
@@ -237,6 +238,18 @@ public class ImageController {
 		};
 	}
 
+	public void reloadVisibleAnnotationsAndSelections(){
+		System.out.println("reaching here");
+		if (!fitsCanvasController.getAnnotationsController().hasHiddenAll()){
+			System.out.println("and here");
+			fitsCanvasController.getAnnotationsController().drawAll();
+		}
+		if (!fitsCanvasController.getSelectionsController().hasHiddenAll()){
+			System.out.println("and here");
+			fitsCanvasController.getSelectionsController().drawAll();
+		}
+	}
+
 	public EventHandler<ActionEvent> toggleHistogramLogScale(
 			boolean enableLogScale) {
 		return (final ActionEvent e) -> {
@@ -245,17 +258,17 @@ public class ImageController {
 			e.consume();
 		};
 	}
-	
+
 	public ExecutorService createExecutor(final String name) {       
-	    ThreadFactory factory = new ThreadFactory() {
-	      @Override public Thread newThread(Runnable r) {
-	        Thread t = new Thread(r);
-	        t.setName(name);
-	        t.setDaemon(true);
-	        return t;
-	      }
-	    };
-	    
-	    return Executors.newSingleThreadExecutor(factory);
-	  }  
+		ThreadFactory factory = new ThreadFactory() {
+			@Override public Thread newThread(Runnable r) {
+				Thread t = new Thread(r);
+				t.setName(name);
+				t.setDaemon(true);
+				return t;
+			}
+		};
+
+		return Executors.newSingleThreadExecutor(factory);
+	}  
 }

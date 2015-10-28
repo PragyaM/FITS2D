@@ -21,18 +21,15 @@ public class SelectionsController extends DrawingsController{
 	public SelectionsController(FitsCanvasController fitsCanvasController) {
 		super(fitsCanvasController);
 	}
-	
+
 	@Override
 	public void setDrawMode(boolean enabled){
 		if (enabled){
 			//TODO: turn cursor into pencil
 			fitsCanvasController.getCanvas().turnAnnotatingOff();
-			if (fitsCanvasController.getCanvas().getCurrentSelection() == null){
-				fitsCanvasController.getCanvas().makeNewSelection();
-			} else {
-				fitsCanvasController.getCanvas().addEventHandler(MouseEvent.ANY, 
-						fitsCanvasController.getCanvas().getCurrentSelection());
-			}		
+			fitsCanvasController.getCanvas().makeNewSelection();
+			fitsCanvasController.getCanvas().addEventHandler(MouseEvent.ANY, 
+					fitsCanvasController.getCanvas().getCurrentSelection());
 			fitsCanvasController.getCanvas().setMode(Mode.SELECTION_DRAW);
 			fitsCanvasController.setPannable(false);
 		} else {
@@ -41,18 +38,15 @@ public class SelectionsController extends DrawingsController{
 			fitsCanvasController.setPannable(true);
 		}
 	}
-	
+
 	@Override
 	public void setFillMode(boolean enabled){
 		if (enabled){
 			//TODO: turn cursor into bucket
 			fitsCanvasController.getCanvas().turnAnnotatingOff();
-			if (fitsCanvasController.getCanvas().getCurrentSelection() == null){
-				fitsCanvasController.getCanvas().makeNewSelection();
-			} else {
-				fitsCanvasController.getCanvas().addEventHandler(MouseEvent.ANY, 
-						fitsCanvasController.getCanvas().getCurrentSelection());
-			}		
+			fitsCanvasController.getCanvas().makeNewSelection();
+			fitsCanvasController.getCanvas().addEventHandler(MouseEvent.ANY, 
+					fitsCanvasController.getCanvas().getCurrentSelection());
 			fitsCanvasController.getCanvas().setMode(Mode.SELECTION_FILL);
 			fitsCanvasController.setPannable(false);
 		} else {
@@ -61,7 +55,7 @@ public class SelectionsController extends DrawingsController{
 			fitsCanvasController.setPannable(true);
 		}
 	}
-	
+
 	public EventHandler<ActionEvent> extractFitsFromSelection() {
 		return (final ActionEvent e) -> {
 			ArrayList<Point> fullSelection = fitsCanvasController.getCanvas()
@@ -85,7 +79,7 @@ public class SelectionsController extends DrawingsController{
 			e.consume();
 		};
 	}
-	
+
 	@Override
 	public void disableUndoButton(){
 		ui.getToolsAreaBox().getRegionExtractionToolBox().setUndoButtonDisabled(true);
@@ -101,21 +95,21 @@ public class SelectionsController extends DrawingsController{
 		return (final ActionEvent e) -> {
 			ArrayList<Selection> selections = fitsCanvasController.getCanvas()
 					.getSelections();
-			selections.get(selections.size() - 1 ).undo();
+			if (!selections.isEmpty()) selections.get(selections.size() - 1 ).undo();
 			if (selections.size() > 1 &&
 					selections.get(selections.size() - 1 ).getRegions().size() == 0){
 				selections.remove(selections.size() - 1);
 			}
 			fitsCanvasController.getCanvas().clear();
 			fitsCanvasController.getCanvas().drawAll();
-			
+
 			if (selections.size() < 1) {
 				disableUndoButton();
 			}
 			e.consume();
 		};
 	}
-	
+
 	@Override
 	public EventHandler<ActionEvent> save() {
 		return (final ActionEvent e) -> {
@@ -123,7 +117,7 @@ public class SelectionsController extends DrawingsController{
 			fitsCanvasController.getCanvas().writeSelectionsToFile(file);
 		};
 	}
-	
+
 	@Override
 	public EventHandler<ActionEvent> open() {
 		return (final ActionEvent e) -> {
@@ -132,7 +126,7 @@ public class SelectionsController extends DrawingsController{
 			e.consume();
 		};
 	}
-	
+
 	@Override
 	public void hideAll() {
 		fitsCanvasController.getCanvas().clear();
@@ -149,7 +143,7 @@ public class SelectionsController extends DrawingsController{
 		});
 		allHidden = false;
 	}
-	
+
 	@Override
 	public EventHandler<ActionEvent> toggleVisible(
 			CheckBox hideSelectionsButton) {
