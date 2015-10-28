@@ -38,8 +38,8 @@ public class FitsImageViewBox extends ScrollPane{
 	}
 	
 	public void showImageLoadingProgressBar(){
-		pBar = new ImageLoadingProgressBar(this.getViewportBounds().getWidth());
-		g.getChildren().add(pBar);
+		pBar = new ImageLoadingProgressBar(this.getViewportBounds().getWidth(), this.getViewportBounds().getHeight());
+		this.getChildren().add(pBar);
 	}
 
 	public void setUpTabs(){
@@ -70,6 +70,8 @@ public class FitsImageViewBox extends ScrollPane{
 		g = new Group(view);
 		this.setContent(g);
 		//TODO: setup tabs here
+		
+		g.setStyle("-fx-text-alignment: center;");
 	}
 	
 	public void setImage(){
@@ -125,6 +127,6 @@ public class FitsImageViewBox extends ScrollPane{
 	}
 
 	public void removeImageLoadingProgressBar() {
-		g.getChildren().remove(pBar);
+		this.getChildren().remove(pBar);
 	}
 }

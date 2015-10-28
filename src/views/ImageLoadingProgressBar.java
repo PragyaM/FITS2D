@@ -7,11 +7,11 @@ import javafx.scene.layout.GridPane;
 
 public class ImageLoadingProgressBar extends GridPane{
 
-	public ImageLoadingProgressBar(double parentWidth) {
+	public ImageLoadingProgressBar(double parentWidth, double parentHeight) {
 		super();
 		
-		this.setWidth(this.maxWidthProperty().doubleValue());
-		this.setHeight(this.maxHeightProperty().doubleValue());
+		this.setWidth(parentWidth);//this.maxWidthProperty().doubleValue());
+		this.setHeight(parentHeight);//this.maxHeightProperty().doubleValue());
 		
 		ProgressBar pb = new ProgressBar();
 		pb.setProgress(-1);
