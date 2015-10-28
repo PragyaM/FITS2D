@@ -186,8 +186,6 @@ public class FitsImage{
 	public void writeImage(){
 		RenderImageTask renderImage = new RenderImageTask(nanColour, 
 				imageFriendlyData, hdu, height, width, histogram);
-		//		ProgressBar bar = new ProgressBar();
-		//		bar.progressProperty().bind(renderImage.progressProperty());
 
 		ChangeListener<Number> IMAGE_CREATED_LISTENER = new ChangeListener<Number>() {
 			@Override public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -195,6 +193,7 @@ public class FitsImage{
 					image = renderImage.getImage();
 					renderImage.workDoneProperty().removeListener(this);
 					controller.adjustViewForImage();
+					controller.reloadVisibleAnnotationsAndSelections();
 				}
 			}
 		};
@@ -203,8 +202,6 @@ public class FitsImage{
 		
 		ExecutorService es = controller.createExecutor("RenderImageExecutor");
 		es.submit(renderImage);
-
-		image = renderImage.getImage();
 	}
 
 	public void setImage(Image img){
