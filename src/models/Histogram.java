@@ -23,13 +23,13 @@ public class Histogram {
 	private double visibleRangeMin;
 	private double visibleRangeMax;
 	private int numTotalPixels;
+	private int numNaNs = 0;
 	private TreeMap<Double, Integer> histogramMap;
 	private TreeMap<Double, Integer> visibleRangeMap;
 	private ValueAxis<Number> xAxis;
 	private ValueAxis<Number> yAxis;
 	XYChart.Series<Number, Number> totalRange = new XYChart.Series<Number, Number>();
 	XYChart.Series<Number, Number> visibleRange = new XYChart.Series<Number, Number>();
-
 	private AreaChart<Number, Number> histogramChart;
 
 	public Histogram(double[] data, int width, int height){
@@ -45,9 +45,13 @@ public class Histogram {
 
 		for(int i = 0; i < data.length; i++){
 			/* populate histogram */
-			double key = (double) (int) data[i];
-			histogramMap.putIfAbsent(key, null);
-			histogramMap.compute(key, (k, v) -> v == null ? 1 : v+1);
+			if (Double.isNaN(data[i])){
+				numNaNs++;
+			} else{
+				double key = (double) (int) data[i];
+				histogramMap.putIfAbsent(key, null);
+				histogramMap.compute(key, (k, v) -> v == null ? 1 : v+1);
+			}
 		}
 	}
 
@@ -78,31 +82,39 @@ public class Histogram {
 
 	private void setUpDefaultVisibleRange(){
 
-		/* Find bottom of range */
 		visibleRangeMap = new TreeMap<Double, Integer>();
-		visibleRangeMap.putAll(histogramMap.entrySet().stream()
-				.filter(p -> p.getValue() == countMax)
-				.collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue())));
-		double bottomKey = visibleRangeMap.keySet().iterator().next();
 
-		TreeMap<Double, Integer> filtered = new TreeMap<Double, Integer>();
-		filtered.putAll(histogramMap.tailMap(bottomKey, true));
-		int count = 0;
-		double topKey = bottomKey;
-		for (Entry<Double, Integer> entry : filtered.entrySet()){
-			count = count + entry.getValue();
-			topKey = entry.getKey();
-			if (entry.getValue() < (filtered.get(bottomKey)/100000)){
-				break;
+		if ((countMax - countMin) < ((numTotalPixels - numNaNs)/10)){
+			visibleRangeMap.putAll(histogramMap);
+		}
+		else {
+			/* Find bottom of range */
+			visibleRangeMap.putAll(histogramMap.entrySet().stream()
+					.filter(p -> p.getValue() == countMax)
+					.collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue())));
+			double bottomKey = visibleRangeMap.keySet().iterator().next();
+
+			TreeMap<Double, Integer> filtered = new TreeMap<Double, Integer>();
+			filtered.putAll(histogramMap.tailMap(bottomKey, true));
+			int count = 0;
+			double topKey = bottomKey;
+
+			/* Set top of range */
+			for (Entry<Double, Integer> entry : filtered.entrySet()){
+				count = count + entry.getValue();
+				topKey = entry.getKey();
+				if (entry.getValue() < (filtered.get(bottomKey)/(numTotalPixels/100))){
+					break;
+				}
 			}
-		}
 
-		if (topKey == bottomKey) {
-			topKey = topKey + 1;
-		}
+			if (topKey == bottomKey) {
+				topKey = topKey + 1;
+			}
 
-		/* Set visible range entries */
-		visibleRangeMap.putAll(filtered.subMap(bottomKey, topKey + 1));
+			/* Set visible range entries */
+			visibleRangeMap.putAll(filtered.subMap(bottomKey, topKey + 1));
+		}
 
 		visibleRangeMin = visibleRangeMap.firstKey();
 		visibleRangeMax = visibleRangeMap.lastKey();
@@ -207,6 +219,10 @@ public class Histogram {
 
 	public AreaChart<Number, Number> getHistogramChart() {
 		return histogramChart;
+	}
+
+	public TreeMap<Double, Integer> getVisibleRangeMap() {
+		return visibleRangeMap;
 	}
 
 }
