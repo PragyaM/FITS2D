@@ -1,0 +1,8 @@
+Build 0.1.6 Release notes
+
+Fixes:
+ - improve default visible range
+ - fix broken annotation and selection loading from file
+
+ Issue tracker:
+https://github.com/PragyaM/FITS2D/issues
