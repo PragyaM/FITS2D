@@ -12,7 +12,7 @@ public class Annotation extends Drawing{
 			Color color) {
 		super(canvas, controller, color);
 	}
-	
+
 	@Override
 	public void handle(MouseEvent event) {
 		if (canvas.mode==Mode.ANNOTATION_DRAW){
@@ -24,7 +24,7 @@ public class Annotation extends Drawing{
 			((AnnotationsController) controller).enableUndoButton();
 		}
 	}
-	
+
 	public String toString(){
 		StringBuilder annotationString = new StringBuilder("\na"); //"Colour: " + color.toString();
 		//annotationString.append("\nColour: ");

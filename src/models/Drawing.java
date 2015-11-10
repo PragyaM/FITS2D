@@ -62,7 +62,7 @@ public abstract class Drawing implements EventHandler<MouseEvent>{
 	public void setRegions(ArrayList<PixelRegion> regions){
 		this.regions = regions;
 	}
-	
+
 	public ArrayList<PixelRegion> getRegions(){
 		return regions;
 	}
@@ -70,7 +70,7 @@ public abstract class Drawing implements EventHandler<MouseEvent>{
 	public void addRegion(PixelRegion region){
 		this.regions.add(region);
 	}
-	
+
 	public void undo(){
 		if (regions.size() == 0){
 			/* there are no regions left in this currentDrawing to be undone */
@@ -79,18 +79,18 @@ public abstract class Drawing implements EventHandler<MouseEvent>{
 			regions.remove(regions.size() - 1);
 		}
 	}
-	
+
 	public void handle(MouseEvent event) {
 		/*let subclasses define this*/
 	}
-	
+
 	public void drawAction(MouseEvent event){
 		if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)){
 			Point p = new Point((int) event.getX(), (int) event.getY());
 
 			ArrayList<Point> canvasPixels = (DrawLine.draw(currentPoint, p));
 			region.addAllCanvasPixels(canvasPixels);
-			
+
 			for (Point pixel : canvasPixels){
 				pw.setColor(pixel.x, pixel.y, color);
 			}
@@ -110,15 +110,15 @@ public abstract class Drawing implements EventHandler<MouseEvent>{
 		}
 		event.consume();
 	}
-	
+
 	public void floodFillAction(MouseEvent event){
 		if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED)){
 			region = new PixelRegion();
 			Point p = new Point((int) event.getX(), (int) event.getY());
-			
+
 			ArrayList<Point> canvasPixels = (FillRegion.fill(canvas, controller.getFitsCanvasController(), p, color));
 			region.addAllCanvasPixels(canvasPixels);
-			
+
 			for (Point pixel : canvasPixels){
 				pw.setColor(pixel.x, pixel.y, color);
 			}
@@ -129,10 +129,22 @@ public abstract class Drawing implements EventHandler<MouseEvent>{
 		}
 		event.consume();
 	}
-	
+
 	public String toString(){
 		/*let subclasses define this*/
 		return "toString must be defined by subclass";
+	}
+
+	public boolean isEmpty(){
+		boolean emptyRegions = true;
+
+		for (PixelRegion r : regions){
+			if (!region.isEmpty()){
+				emptyRegions = false;
+			}
+		}
+
+		return emptyRegions;
 	}
 
 }

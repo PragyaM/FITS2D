@@ -68,7 +68,6 @@ public class RenderImageTask extends Task<Image>{
 				nanColour.getGreen()*250, nanColour.getBlue()*250, nanColour.getOpacity()*250};
 		double[] white = new double[]{250, 250, 250,250};
 
-
 		for (int i = 0; i < imageData.length; i++){
 			double val = (double) (imageData[i]);
 			int x = i % width;
